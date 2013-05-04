@@ -4,8 +4,8 @@
  * This file is part of VirtPHP.
  *
  * (c) Jordan Kasper <github @jakerella> 
- *     Jacques Woodcock <github @jwoodcock> 
  *     Ben Ramsey <github @ramsey>
+ *     Jacques Woodcock <github @jwoodcock> 
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -51,7 +51,7 @@ class InstallCommand extends Command
         $env_name = $input->getArgument('name');
 
         // Check to make sure environment name is valid
-        if ($env_name || !validName($env_name)) {
+        if (!$env_name || !$this->validName($env_name)) {
             $output->writeln('The name provided is not valid.');
             return false;
         }
@@ -72,5 +72,6 @@ class InstallCommand extends Command
     function validName($env_name)
     {
         // Logic for validating name
+        return true;
     }
 }
