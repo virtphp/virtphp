@@ -3,6 +3,6 @@
         "symfony/finder": "2.1.*"
     },
     "autoload": {
-        "psr-0":{"VirtPHP":"src/"}
+        "psr-0":{"Virtphp":"src/"}
     }
 }

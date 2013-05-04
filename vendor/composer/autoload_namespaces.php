@@ -6,6 +6,6 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'VirtPHP' => $baseDir . '/src',
+    'Virtphp' => $baseDir . '/src',
     'Symfony\\Component\\Finder' => $vendorDir . '/symfony/finder',
 );
