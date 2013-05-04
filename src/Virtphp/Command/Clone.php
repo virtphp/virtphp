@@ -40,7 +40,7 @@ class Clone extends Command
                 'path',
                 InputArgument::OPTIONAL,
                 'Where is the version of PHP you want to clone from?'
-            )
+            );
     }
 
     /** 
