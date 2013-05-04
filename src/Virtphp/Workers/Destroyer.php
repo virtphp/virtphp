@@ -12,17 +12,30 @@
 
 namespace Virtphp\Workers;
 
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+
 
 class Destroyer
 {
 
+    /**
+     * @var InputInterface
+     */
+    protected $input = null;
+    /**
+     * @var OutputInterface
+     */
+    protected $output = null;
     /**
      * @var stirng
      */
     private $rootPath;
 
 
-    public function __construct($rootPath = ".") {
+    public function __construct(InputInterface $input, OutputInterface $output, $rootPath = ".") {
+        $this->input = $input;
+        $this->output = $output;
         $this->setRootPath($rootPath);
     }
 
@@ -40,6 +53,7 @@ class Destroyer
     }
 
     protected function removeStructure() {
+        $this->output->writeln("<info>Removing direcotry structure</info>");
         // TODO: remove all created folders
     }
 

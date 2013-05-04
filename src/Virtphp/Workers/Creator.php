@@ -12,25 +12,37 @@
 
 namespace Virtphp\Workers;
 
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+use Virtphp\Workers\Destroyer;
+
 
 class Creator
 {
 
     /**
-     * @var stirng
+     * @var InputInterface
      */
-    private $rootPath = ".";
+    protected $input = null;
+    /**
+     * @var OutputInterface
+     */
+    protected $output = null;
     /**
      * @var string
      */
-    private $phpBinary = null;
+    protected $rootPath = ".";
+    /**
+     * @var string
+     */
+    protected $phpBinary = null;
     /**
      * @var array
      */
-    private $pearConfigSettings = array();
+    protected $pearConfigSettings = array();
     
 
-    private static $DEFAULT_PEAR_CONFIG = array(
+    protected static $DEFAULT_PEAR_CONFIG = array(
         'php_dir'       => '/{base_path}/{env_name}/share/php',
         'data_dir'      => '/{base_path}/{env_name}/share/php/data',
         'www_dir'       => '/{base_path}/{env_name}/share/pear/www',
@@ -53,8 +65,14 @@ class Creator
     );
 
 
-    public function __construct($rootPath = ".") {
-      $this->setRootPath($rootPath);
+    public function __construct(InputInterface $input, OutputInterface $output, $rootPath = ".", $binary = null) {
+      $this->input = $input;
+      $this->output = $output;
+      $this->setRootPath(strval($rootPath));
+      if (!$binary) {
+        // TODO: determine php binary location
+      }
+      $this->setPhpBinary($binary);
     }
     
     
@@ -89,28 +107,33 @@ class Creator
             $this->createDeactivateScript();
 
         } catch (Exception $e) {
-            // TODO: need to destroy our environment if any part of setup failed
+            $this->output->writeln("<error>ERROR: ".$e->getMessage()."</error>");
+            $destroyer = new Destroyer($this->input, $this->output, $this->rootPath);
+            $destroyer->execute();
+            $this->output->writeln("<info>System reverted</info>");
         }
     }
 
     protected function createStructure() {
-      
+        $this->output->writeln("<info>Creating directory structure</info>");
     }
 
     protected function createPhpIni() {
+        $this->output->writeln("<info>Creating custom php.ini</info>");
         // TODO: copy php ini from VirtPHP to env structure
         //       change paths as necessary
     }
 
     protected function createPhpBinWrapper() {
-      
+        $this->output->writeln("<info>Wrapping PHP binary</info>");
     }
 
     protected function copyLibraries() {
-
+        $this->output->writeln("<info>Copying other libraries</info>");
     }
 
     protected function installPear() {
+        $this->output->writeln("<info>Installing PEAR locally</info>");
         // TODO: download PEAR phar
         //       run without user prompt (see notes in google doc)
         //       generate PEAR config
@@ -118,15 +141,15 @@ class Creator
     }
 
     protected function installComposer() {
-
+        $this->output->writeln("<info>Installing Composer locally</info>");
     }
 
     protected function createActivateScript() {
-
+        $this->output->writeln("<info>Creating activate script</info>");
     }
 
     protected function createDeactivateScript() {
-
+        $this->output->writeln("<info>Creating deactivate script</info>");
     }
 
 

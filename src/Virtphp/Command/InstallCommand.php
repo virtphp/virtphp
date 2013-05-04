@@ -18,6 +18,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Virtphp\Workers\Creator;
 
 class InstallCommand extends Command
 {
@@ -56,11 +57,14 @@ class InstallCommand extends Command
             return false;
         }
         // Check default locations for valid PHP
-        //
-        // Setup environment
         
+        // Setup environment
+        $creator = new Creator($input, $output, "./$env_name");
+        $creator->execute();
+
 
         $output->writeln("<bg=green;options=bold>Your're virtual php environment ($env_name) has been created.</bg=green;options=bold>");
+        $output->writeln("You can activate your new enviornment using: ~\$ virtphp activate $env_name");
     }
 
     /** 
