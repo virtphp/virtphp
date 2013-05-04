@@ -52,7 +52,7 @@ class InstallCommand extends Command
 
         // Check to make sure environment name is valid
         if (!$env_name || !$this->validName($env_name)) {
-            $output->writeln('The name provided is not valid.');
+            $output->writeln('<bg=red>The name provided is not valid.</bg=red>');
             return false;
         }
         // Check default locations for valid PHP
@@ -60,7 +60,7 @@ class InstallCommand extends Command
         // Setup environment
         
 
-        $output->writeln("Your're virtual php environment ($env_name) has been created.");
+        $output->writeln("<bg=green;options=bold>Your're virtual php environment ($env_name) has been created.</bg=green;options=bold>");
     }
 
     /** 
