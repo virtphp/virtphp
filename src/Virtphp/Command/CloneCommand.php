@@ -4,8 +4,8 @@
  * This file is part of VirtPHP.
  *
  * (c) Jordan Kasper <github @jakerella> 
- *     Jacques Woodcock <github @jwoodcock> 
  *     Ben Ramsey <github @ramsey>
+ *     Jacques Woodcock <github @jwoodcock> 
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -54,28 +54,30 @@ class CloneCommand extends Command
         $env_name = $input->getArgument('name');
         $path = $input->getArgument('path');
 
-        if (!$env_name && validName($env_name)) {
-            $output->writeln('To create a clone, you must first name your clone.');
+        if (!$env_name && $this->validName($env_name)) {
+            $output->writeln('<bg=red>To create a clone, you must first name your clone.</bg=red>');
             return false;
         }
 
         if (!$path) {
-            $output->writeln('To clone you must specify a location of a PHP binary to clonse from');
+            $output->writeln('<bg=red>We need a path to clone from.</bg=red>');
             return false;
         }
 
         // Validate the provided directory contains what we need
-        $validateError = checkPath($path);
-        if ($validateError) {
-            $output->writeln('To clone you must specify a location of a PHP binary to clonse from');
+        $validateError = $this->checkPath($path);
+        if ($validateError === false) {
+            $output->writeln('<bg=red>Path provided is invalid or is missing required assets.</bg=red>');
             return false;
         }
         // Process the clone 
-        $error = doClone($path);
-        if ($error) {
-            $output->writeln('To clone you must specify a location of a PHP binary to clonse from');
+        $cloneError = $this->doClone($path);
+        if (!$cloneError) {
+            $output->writeln($cloneError);
             return false;
         }
+
+        $output->writeln('<bg=green;options=bold>Congratulations, your new VirtPHP environment has been cloned!</bg=green;options=bold>');
     }
 
     /** 
@@ -86,6 +88,15 @@ class CloneCommand extends Command
     protected function checkPath($path)
     {
         // Logic to check directory before clone
+        if (is_dir($path) === false) {
+            if (file_exists($path)) {
+                echo 'Path provided is a file!
+';
+            }
+            return false; 
+        }
+
+        return true;
     }
 
     /** 
@@ -95,7 +106,8 @@ class CloneCommand extends Command
      */
     protected function doClone($path)
     {
-       // Logic for cloning directory 
+        // Logic for cloning directory 
+        return true;
     }
 
     /** 
@@ -107,5 +119,6 @@ class CloneCommand extends Command
     function validName($env_name)
     {
         // Logic for validating name
+        return true;
     }
 }
