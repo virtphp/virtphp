@@ -19,7 +19,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class Install extends Command
+class InstallCommand extends Command
 {
 
     /**
@@ -28,13 +28,15 @@ class Install extends Command
      */
     protected function configure()
     {
+        parent::configure();
+
         $this
             ->setName('install')
             ->setDescription('Create new virtphp from scratch.')
             ->addArgument(
                 'name',
-                InputArgument::OPTIONAL,
-                'What is the name of your environment'
+                InputArgument::REQUIRED,
+                'What is the name of your environment?'
             );
     }
 
@@ -49,13 +51,16 @@ class Install extends Command
         $env_name = $input->getArgument('name');
 
         // Check to make sure environment name is valid
-        if ($env_name && !validName($env_name)) {
+        if ($env_name || !validName($env_name)) {
             $output->writeln('The name provided is not valid.');
             return false;
         }
         // Check default locations for valid PHP
         //
         // Setup environment
+        
+
+        $output->writeln("Your're virtual php environment ($env_name) has been created.");
     }
 
     /** 
