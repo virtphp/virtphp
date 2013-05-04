@@ -18,6 +18,8 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Virtphp\Workers\Activator;
+
 
 class ActivateCommand extends Command
 {
@@ -56,6 +58,8 @@ class ActivateCommand extends Command
         }
 
         // Process for activating account
+        $activator = new Activator($input, $output);
+        $activator->execute();
 
         $output->writeln('<bg=green>Activated' . $virt_env . '</bg=green>'); // delete after setup
     }

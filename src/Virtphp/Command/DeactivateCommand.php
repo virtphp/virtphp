@@ -18,6 +18,8 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Virtphp\Workers\Deactivator;
+
 
 class DeactivateCommand extends Command
 {
@@ -50,6 +52,9 @@ class DeactivateCommand extends Command
         }
 
         // Process for deactivating active environment 
+        $deactivator = new Deactivator($input, $output);
+        $deactivator->execute();
+
 
         $output->writeln('<bg=green>Deactivated</bg=green>'); // delete after setup
     }
