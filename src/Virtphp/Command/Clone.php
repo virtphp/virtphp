@@ -22,11 +22,20 @@ use Symfony\Component\Console\Output\OutputInterface;
 class Clone extends Command
 {
 
+    /**
+     * Function that defines command name and what
+     * variables we are taking.
+     */
     protected function configure()
     {
         $this
             ->setName('clone')
             ->setDescription('Create new virtphp from existing path.')
+            ->addArgument(
+                'name',
+                InputArgument::OPTIONAL,
+                'What is the name of your environment'
+            )
             ->addArgument(
                 'path',
                 InputArgument::OPTIONAL,
@@ -34,14 +43,22 @@ class Clone extends Command
             )
     }
 
-    /* Function to process input options for command.
+    /** 
+     * Function to process input options for command.
      *
      * @param string $input
      * @param string $output
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $env_name = $input->getArgument('name');
         $path = $input->getArgument('path');
+
+        if (!$env_name && validName($env_name)) {
+            $output->writeln('To create a clone, you must first name your clone.');
+            return false;
+        }
+
         if (!$path) {
             $output->writeln('To clone you must specify a location of a PHP binary to clonse from');
             return false;
@@ -61,7 +78,8 @@ class Clone extends Command
         }
     }
 
-    /* Function to check path for valid binary
+    /** 
+     * Function to check path for valid binary
      *
      * @param string $path
      */
@@ -70,12 +88,24 @@ class Clone extends Command
         // Logic to check directory before clone
     }
 
-    /* Function to do the clone logic.
+    /** 
+     * Function to do the clone logic.
      *
      * @param string $path
      */
     protected function doClone($path)
     {
        // Logic for cloning directory 
+    }
+
+    /** 
+     * Function to make sure provided 
+     * environment name is valid.
+     *
+     * @param string $env_name
+     */
+    function validName($env_name)
+    {
+        // Logic for validating name
     }
 }
