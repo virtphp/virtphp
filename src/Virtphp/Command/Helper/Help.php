@@ -11,10 +11,11 @@
  * file that was distributed with this source code.
  */
 
-namespace Virtphp\Command;
+namespace Virtphp\Command\Helper;
 
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Helper\DialogHelper as BaseDialogHelper;
 
+clase DialogHelper extends BaseDialogHelper
+{
 
+}

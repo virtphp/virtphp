@@ -11,10 +11,12 @@
  * file that was distributed with this source code.
  */
 
-namespace Virtphp\Command;
+if (PHP_SAPI !== 'cli') {
+    echo 'Warning: VirtPHP should be invoked via the CLI version of PHP, not the '.PHP_SAPI.' SAPI'.PHP_EOL;
+}
 
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
+require __DIR__.'/../src/bootstrap.php';
 
-
+// run the command application
+$application = new Application();
+$application->run();
