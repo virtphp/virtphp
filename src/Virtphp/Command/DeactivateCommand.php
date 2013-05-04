@@ -55,10 +55,9 @@ class DeactivateCommand extends Command
     }
 
     /** 
-     * Function to make sure provided 
-     * environment name is valid.
+     * Function to see if currently in an active
+     * Virtphp environment
      *
-     * @param string $virt_env
      */
     function isActiveEnv()
     {

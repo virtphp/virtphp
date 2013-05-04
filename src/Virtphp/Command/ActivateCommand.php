@@ -61,10 +61,8 @@ class ActivateCommand extends Command
     }
 
     /** 
-     * Function to make sure provided 
-     * environment name is valid.
-     *
-     * @param string $virt_env
+     * Function to see if currently in an active
+     * Virtphp environment
      */
     function validEnvironment($virt_env)
     {
