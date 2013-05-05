@@ -25,6 +25,10 @@ deactivate () {
         unset VIRT_PHP_OLD_PS1 
     fi
 
+    if [ "$VIRTPHP_ENV_PATH" ]; then
+        unset VIRTPHP_ENV_PATH
+    fi
+
     # This should detect bash and zsh, which have a hash command that must
     # be called to get it to forget past commands.  Without forgetting
     # past commands the $PATH changes we made may not be respected
