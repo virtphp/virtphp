@@ -18,9 +18,34 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Filesystem\Filesystem;
 
 class CloneCommand extends Command
 {
+    /**
+     * @var InputInterface
+     */
+    protected $input = null;
+
+    /**
+     * @var OutputInterface
+     */
+    protected $output = null;
+
+    /**
+     * @var FileSystem 
+     */
+    protected $filesystem = null;
+
+    /**
+     * @var string
+     */
+    private $rootPath;
+
+    /**
+     * @var string
+     */
+    private $env_name;
 
     /**
      * Function that defines command name and what
@@ -33,13 +58,14 @@ class CloneCommand extends Command
             ->setDescription('Create new virtphp from existing path.')
             ->addArgument(
                 'name',
-                InputArgument::OPTIONAL,
+                InputArgument::REQUIRED,
                 'What is the name of your environment'
             )
-            ->addArgument(
-                'path',
-                InputArgument::OPTIONAL,
-                'Where is the version of PHP you want to clone from?'
+            ->addOption(
+                'original',
+                null,
+                InputOption::VALUE_REQUIRED,
+                'Location of existing VirtPHP to clone from.'
             );
     }
 
@@ -49,31 +75,30 @@ class CloneCommand extends Command
      * @param string $input
      * @param string $output
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output)
     {
-        $env_name = $input->getArgument('name');
-        $path = $input->getArgument('path');
+        $this->env_name = $input->getArgument('name');
+        $this->rootPath = $input->getOption('original');
+        $this->filesystem = new Filesystem();
+        $this->output = $output;
 
-        if (!$env_name && $this->validName($env_name)) {
-            $output->writeln('<bg=red>To create a clone, you must first name your clone.</bg=red>');
+        if (!$this->env_name && $this->validName()) {
+            $output->writeln('<bg=red>To create a new VirtPHP, you must provide a name.</bg=red>');
             return false;
         }
 
-        if (!$path) {
+        if (!$this->rootPath) {
             $output->writeln('<bg=red>We need a path to clone from.</bg=red>');
             return false;
         }
 
         // Validate the provided directory contains what we need
-        $validateError = $this->checkPath($path);
-        if ($validateError === false) {
-            $output->writeln('<bg=red>Path provided is invalid or is missing required assets.</bg=red>');
+        if ($validateError = $this->checkPath()) {
             return false;
         }
+
         // Process the clone 
-        $cloneError = $this->doClone($path);
-        if (!$cloneError) {
-            $output->writeln($cloneError);
+        if ($cloneError = $this->doClone()) {
             return false;
         }
 
@@ -85,14 +110,11 @@ class CloneCommand extends Command
      *
      * @param string $path
      */
-    protected function checkPath($path)
+    protected function checkPath()
     {
         // Logic to check directory before clone
-        if (is_dir($path) === false) {
-            if (file_exists($path)) {
-                echo 'Path provided is a file!
-';
-            }
+        if (!$this->filesystem->exists($this->rootPath.DIRECTORY_SEPARATOR.".virtphp")) {
+            $this->output->writeln("<error>This directory does not contain a valid VirtPHP environment!</error>");
             return false; 
         }
 
@@ -104,7 +126,7 @@ class CloneCommand extends Command
      *
      * @param string $path
      */
-    protected function doClone($path)
+    protected function doClone()
     {
         // Logic for cloning directory 
         return true;
@@ -116,8 +138,13 @@ class CloneCommand extends Command
      *
      * @param string $env_name
      */
-    function validName($env_name)
+    function validName()
     {
+        $name = $this->env_name;
+        if (is_numeric($name[0])) {
+            $this->output->writeln("<error>Project names can not start with a number.</error>");
+            return false;
+        }
         // Logic for validating name
         return true;
     }
