@@ -38,26 +38,25 @@ deactivate () {
 deactivate
 
 # Current is set when being written by install script
-VIRT_PHP_PATH_TO_ENV="`pwd`/Env/" #data is temp while building
-# CURRENT="__VIRTPHP_FOLDER_PATH__"
-export VIRT_PHP_PATH_TO_ENV 
+VIRTPHP_ENV_PATH="__VIRTPHP_ENV_PATH__"
+export VIRTPHP_ENV_PATH
 
 # Add current path to the bash PATH
 VIRT_PHP_OLD_VIRTUAL_PATH="$PATH"
-PATH="$VIRT_PHP_PATH_TO_ENV/bin:$PATH"
+PATH="$VIRTPHP_ENV_PATH/bin:$PATH"
 # Use the following if you want to make dynamic in
 # the future
 # PATH="$PATH_TO_ENV/__BIN_DIR__:$PATH" 
 export PATH
 
 # Create a PHP_INI_SCAN_DIR path
-PHP_INI_SCAN_DIR="$CURRENT/etc/php"
+PHP_INI_SCAN_DIR="$VIRTPHP_ENV_PATH/etc/php"
 export PHP_INI_SCAN_DIR
 
 # Update the shell prompt
 if [ -n "$PS1" ] ; then
     VIRT_PHP_OLD_PS1=$PS1
-    PS1="(Env) $PS1"
+    PS1="(`basename \"$VIRTPHP_ENV_PATH\"`)$PS1"
     export PS1
 fi
 

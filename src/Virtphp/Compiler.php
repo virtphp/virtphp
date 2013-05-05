@@ -74,6 +74,8 @@ class Compiler
         }
 
         $this->addFile($phar, new \SplFileInfo(__DIR__.'/../../res/php.ini'));
+        $this->addFile($phar, new \SplFileInfo(__DIR__.'/../../res/activate.sh'));
+
         $this->addFile($phar, new \SplFileInfo(__DIR__.'/../../vendor/autoload.php'));
         $this->addFile($phar, new \SplFileInfo(__DIR__.'/../../vendor/composer/autoload_namespaces.php'));
         $this->addFile($phar, new \SplFileInfo(__DIR__.'/../../vendor/composer/autoload_classmap.php'));

@@ -196,6 +196,7 @@ class Creator
             $this->copyLibraries();
             $this->installPear();
             $this->installComposer();
+            $this->copyActivateScript();
 
         } catch (Exception $e) {
             $this->output->writeln("<error>ERROR: ".$e->getMessage()."</error>");
@@ -301,6 +302,21 @@ EOD;
     protected function installComposer()
     {
         $this->output->writeln("<info>Installing Composer locally</info>");
+    }
+
+    protected function copyActivateScript()
+    {
+        $this->output->writeln("<info>Installing activate/deactive script</info>");
+
+        $activateScript = file_get_contents(__DIR__ . '/../../../res/activate.sh');
+
+        $activateScript = str_replace('__VIRTPHP_ENV_PATH__', $this->getEnvPath(), $activateScript);
+
+        $this->filesystem->dumpFile(
+            $this->getEnvPath() . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'activate',
+            $activateScript,
+            0644
+        );
     }
 
     protected function updatePearConfigSettings(array $pearConfig = array())
