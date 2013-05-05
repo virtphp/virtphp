@@ -231,6 +231,13 @@ class Creator
         $this->filesystem->mkdir($this->getEnvPath() . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'php');
         $this->filesystem->mkdir($this->getEnvPath() . DIRECTORY_SEPARATOR . 'share');
         $this->filesystem->mkdir($this->getEnvPath() . DIRECTORY_SEPARATOR . 'share' . DIRECTORY_SEPARATOR . 'php');
+        $this->filesystem->mkdir($this->getEnvPath() . DIRECTORY_SEPARATOR . 'share' . DIRECTORY_SEPARATOR . 'pear');
+        $this->filesystem->mkdir($this->getEnvPath() . DIRECTORY_SEPARATOR . 'share' . DIRECTORY_SEPARATOR . 'pear' . DIRECTORY_SEPARATOR . 'cache');
+        $this->filesystem->mkdir($this->getEnvPath() . DIRECTORY_SEPARATOR . 'share' . DIRECTORY_SEPARATOR . 'pear' . DIRECTORY_SEPARATOR . 'cfg');
+        $this->filesystem->mkdir($this->getEnvPath() . DIRECTORY_SEPARATOR . 'share' . DIRECTORY_SEPARATOR . 'pear' . DIRECTORY_SEPARATOR . 'download');
+        $this->filesystem->mkdir($this->getEnvPath() . DIRECTORY_SEPARATOR . 'share' . DIRECTORY_SEPARATOR . 'pear' . DIRECTORY_SEPARATOR . 'temp');
+        $this->filesystem->mkdir($this->getEnvPath() . DIRECTORY_SEPARATOR . 'share' . DIRECTORY_SEPARATOR . 'pear' . DIRECTORY_SEPARATOR . 'tests');
+        $this->filesystem->mkdir($this->getEnvPath() . DIRECTORY_SEPARATOR . 'share' . DIRECTORY_SEPARATOR . 'pear' . DIRECTORY_SEPARATOR . 'www');
     }
 
     protected function createVersionFile()
@@ -293,10 +300,66 @@ EOD;
     protected function installPear()
     {
         $this->output->writeln("<info>Installing PEAR locally</info>");
-        // TODO: download PEAR phar
-        //       run without user prompt (see notes in google doc)
-        //       generate PEAR config
-        //       run various commands to get pear and pecl working
+
+        $pearInstall = file_get_contents('http://pear.php.net/install-pear-nozlib.phar');
+
+        $pearBinWrapper = <<<EOD
+#!/bin/bash
+{$this->getEnvPath()}/bin/pear.pear -c {$this->getEnvPath()}/etc/pear.conf "$@"
+EOD;
+
+        $peclBinWrapper = <<<EOD
+#!/bin/bash
+{$this->getEnvPath()}/bin/pecl.pecl -c {$this->getEnvPath()}/etc/pear.conf "$@"
+EOD;
+
+        $this->filesystem->dumpFile(
+            $this->getEnvPath() . DIRECTORY_SEPARATOR . 'share' . DIRECTORY_SEPARATOR . 'install-pear-nozlib.phar',
+            $pearInstall,
+            0644
+        );
+
+        chdir($this->getEnvPath());
+
+        $process = new Process(
+            'php -n -dshort_open_tag=0 -dopen_basedir= -derror_reporting=1803 -dmemory_limit=-1 -ddetect_unicode=0 '
+            . 'share/install-pear-nozlib.phar '
+            . '-d "share/php" -b "bin" -c "etc"'
+        );
+
+        if ($process->run() != 0) {
+            throw new \RuntimeException('Encountered a problem while trying to install PEAR.');
+        }
+
+        $this->filesystem->remove($this->getEnvPath() . DIRECTORY_SEPARATOR . 'share' . DIRECTORY_SEPARATOR . 'install-pear-nozlib.phar');
+
+        $this->filesystem->dumpFile(
+            $this->getEnvPath() . DIRECTORY_SEPARATOR . 'etc' . DIRECTORY_SEPARATOR . 'pear.conf',
+            serialize($this->getPearConfigSettings()),
+            0644
+        );
+
+        $this->filesystem->rename(
+            $this->getEnvPath() . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'pear',
+            $this->getEnvPath() . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'pear.pear'
+        );
+
+        $this->filesystem->dumpFile(
+            $this->getEnvPath() . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'pear',
+            $pearBinWrapper,
+            0755
+        );
+
+        $this->filesystem->rename(
+            $this->getEnvPath() . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'pecl',
+            $this->getEnvPath() . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'pecl.pecl'
+        );
+
+        $this->filesystem->dumpFile(
+            $this->getEnvPath() . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'pecl',
+            $peclBinWrapper,
+            0755
+        );
     }
 
     protected function installComposer()
