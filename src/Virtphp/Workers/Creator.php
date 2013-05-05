@@ -365,6 +365,19 @@ EOD;
     protected function installComposer()
     {
         $this->output->writeln("<info>Installing Composer locally</info>");
+
+        $process = new Process(
+            'curl -sS https://getcomposer.org/installer | php -- --install-dir=' . $this->getEnvPath() . DIRECTORY_SEPARATOR . 'bin'
+        );
+
+        if ($process->run() != 0) {
+            throw new \RuntimeException('Could not install Composer.');
+        }
+
+        $this->filesystem->symlink(
+            $this->getEnvPath() . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'composer.phar',
+            $this->getEnvPath() . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'composer'
+        );
     }
 
     protected function copyActivateScript()
