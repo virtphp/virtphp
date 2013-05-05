@@ -51,7 +51,7 @@ class DestroyCommand extends Command
     {
         $path = $input->getArgument("path");
 
-        $virtPath = getenv("VIRT_PHP_PATH_TO_ENV");
+        $virtPath = getenv("VIRTPHP_ENV_PATH");
         if ($virtPath !== false && $virtPath == realpath($path))
         {
             $output->writeln("<error>You must deactivate this virtual environment before destroying it!</error>");
