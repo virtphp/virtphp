@@ -155,7 +155,19 @@ class Creator
 
     public function setPhpBinDir($phpBinDir)
     {
-        $this->phpBinDir = realpath($phpBinDir);
+        $dir = realpath($phpBinDir);
+        if (!$this->filesystem->exists($dir)) {
+            throw new InvalidArgumentException("The specified php bin directory does not exist.");
+        }
+        if (!$this->filesystem->exists($dir.DIRECTORY_SEPARATOR."php")) {
+            throw new InvalidArgumentException("There is no php binary in the specified directory.");
+        }
+        $process = new Process($dir.DIRECTORY_SEPARATOR."php -v");
+        if ($process->run() != 0) {
+            throw new InvalidArgumentException("The 'php' file in the specified directory is not a valid php binary executable.");
+        }
+
+        $this->phpBinDir = $dir;
     }
 
     public function setPearConfigSettings(array $settings = array())
