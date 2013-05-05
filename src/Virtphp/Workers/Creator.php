@@ -210,6 +210,11 @@ class Creator
     protected function createStructure()
     {
         $this->output->writeln("<info>Creating directory structure</info>");
+
+        $this->filesystem->mkdir($this->getEnvPath() . DIRECTORY_SEPARATOR . 'bin');
+        $this->filesystem->mkdir($this->getEnvPath() . DIRECTORY_SEPARATOR . 'etc');
+        $this->filesystem->mkdir($this->getEnvPath() . DIRECTORY_SEPARATOR . 'lib');
+        $this->filesystem->mkdir($this->getEnvPath() . DIRECTORY_SEPARATOR . 'share');
     }
 
     protected function createPhpIni()
