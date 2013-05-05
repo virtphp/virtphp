@@ -101,14 +101,15 @@ class CloneCommand extends Command
         //echo "Start cloning\n";
         // Logic for cloning directory 
         $clone_worker = new CloneWorker($this->rootPath, $this->env_name, $output);
-        if ($clone_worker->execute()) {
+        $cloneError = $clone_worker->execute();
+        echo 'h: ' . $cloneError;
+        if (!$cloneError) {
             $output->writeln("<bg=green;options=bold>Your new cloned virtual php environment has been created.</bg=green;options=bold>");
             $output->writeln("<info>Cloned from: $this->rootPath</info>");
         } else {
-            $output->writeln("<bg=red;options=bold>Issue cloning. " . $clone_worker . "</bg=green;options=bold>");
+            $output->writeln("<bg=red;options=bold>Issue cloning.</bg=red;options=bold>");
         }
 
-        $output->writeln('<bg=green;options=bold>Congratulations, your new VirtPHP environment has been cloned!</bg=green;options=bold>');
     }
 
     /** 

@@ -60,33 +60,27 @@ class CloneWorker
     {
         // Create virtphp directory
         $this->filesystem->mkdir($this->env_name);
-        echo "New directory: \n";
+
         $full_path = realpath($this->env_name);
-        echo "Full Path: " . $full_path."\n";
+
         // Copy over files from original directory
         $this->filesystem->mirror($this->original_path, $full_path);
-        echo "Mirror Called: \n";
 
         // GET activate of new directory to replace path variable
-        $original_contents = file($full_path.'/bin/activate');
-        echo "=========================\n";
-        echo $original_contents;
+        $original_contents = file_get_contents($full_path.'/bin/activate.sh');
 
-        // Read contents and update PATH TO ENV Line
-        $new_contents = '';
-        foreach ($original_contents as $line_num => $line) {
-            if (strpos($line, 'VIRT_PHP_PATH_TO_ENV') === true) {
-                $new_contents .= 'VIRT_PHP_PATH_TO_ENV="' . $full_path . '"';
-            } else {
-                $new_contents .= $line;
-            }
-        }
-        echo "=========================\n";
-        echo $new_contents;
+        // Replace V
+        $new_contents = str_replace($this->original_path, $full_path, $original_contents);
 
-        // Write out new contents
-        $this->filesystem->dumpFile($full_path.'bin/activate', $new_contents, 0644);
-        echo "Dump called.";
+        $this->filesystem->dumpFile(
+            $this->env_name . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'activate.sh',
+            $new_contents,
+            0644
+        );
+
+        // replace in php.ini "/home/ramsey/myenv/lib/php"
+        // replace in php.ini ".:/home/ramsey/myenv/share/php"
+        // Pear serialized 
     }
 
 }
