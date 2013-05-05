@@ -1,4 +1,4 @@
-virtPHP - Virtual PHP Environments
+VirtPHP - Virtual PHP Environments
 ==================================
 
 VirtPHP creates and manages virtual PHP environments.
