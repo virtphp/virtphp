@@ -56,7 +56,7 @@ export PHP_INI_SCAN_DIR
 # Update the shell prompt
 if [ -n "$PS1" ] ; then
     VIRT_PHP_OLD_PS1=$PS1
-    PS1="(`basename \"$VIRTPHP_ENV_PATH\"`)$PS1"
+    PS1="(`basename \"$VIRTPHP_ENV_PATH\"`) $PS1"
     export PS1
 fi
 
