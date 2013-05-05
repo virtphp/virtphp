@@ -249,7 +249,11 @@ class Creator
             $phpIni
         );
 
-        file_put_contents($this->getEnvPath() . DIRECTORY_SEPARATOR . 'etc' . DIRECTORY_SEPARATOR . 'php.ini', $phpIni);
+        $this->filesystem->dumpFile(
+            $this->getEnvPath() . DIRECTORY_SEPARATOR . 'etc' . DIRECTORY_SEPARATOR . 'php.ini',
+            $phpIni,
+            0644
+        );
     }
 
     protected function createPhpBinWrapper()
