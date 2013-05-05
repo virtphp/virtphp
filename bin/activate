@@ -44,7 +44,7 @@ export VIRT_PHP_PATH_TO_ENV
 
 # Add current path to the bash PATH
 VIRT_PHP_OLD_VIRTUAL_PATH="$PATH"
-PATH="$PATH_TO_ENV/bin:$PATH"
+PATH="$VIRT_PHP_PATH_TO_ENV/bin:$PATH"
 # Use the following if you want to make dynamic in
 # the future
 # PATH="$PATH_TO_ENV/__BIN_DIR__:$PATH" 
