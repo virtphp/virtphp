@@ -214,14 +214,30 @@ class Creator
         $this->filesystem->mkdir($this->getEnvPath() . DIRECTORY_SEPARATOR . 'bin');
         $this->filesystem->mkdir($this->getEnvPath() . DIRECTORY_SEPARATOR . 'etc');
         $this->filesystem->mkdir($this->getEnvPath() . DIRECTORY_SEPARATOR . 'lib');
+        $this->filesystem->mkdir($this->getEnvPath() . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'php');
         $this->filesystem->mkdir($this->getEnvPath() . DIRECTORY_SEPARATOR . 'share');
+        $this->filesystem->mkdir($this->getEnvPath() . DIRECTORY_SEPARATOR . 'share' . DIRECTORY_SEPARATOR . 'php');
     }
 
     protected function createPhpIni()
     {
         $this->output->writeln("<info>Creating custom php.ini</info>");
-        // TODO: copy php ini from VirtPHP to env structure
-        //       change paths as necessary
+
+        $phpIni = file_get_contents(__DIR__ . '/../../../res/php.ini');
+
+        $phpIni = str_replace(
+            '__VIRTPHP_ENV_PHP_INCLUDE_PATH__',
+            $this->getEnvPath() . DIRECTORY_SEPARATOR . 'share' . DIRECTORY_SEPARATOR . 'php',
+            $phpIni
+        );
+
+        $phpIni = str_replace(
+            '__VIRTPHP_ENV_PHP_EXTENSION_PATH__',
+            $this->getEnvPath() . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'php',
+            $phpIni
+        );
+
+        file_put_contents($this->getEnvPath() . DIRECTORY_SEPARATOR . 'etc' . DIRECTORY_SEPARATOR . 'php.ini', $phpIni);
     }
 
     protected function createPhpBinWrapper()
