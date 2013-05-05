@@ -2,22 +2,22 @@
 # File deactivates VirtPHP for BASH
 ##
 
-if [ "$CURRENT" ] ; then
-    unset CURRENT
+if [ "$VIRT_PHP_PATH_TO_ENV" ] ; then
+    unset VIRT_PHP_PATH_TO_ENV 
 fi
 
-if [ "$_OLD_VIRTUAL_PATH" ] ; then
-    PATH="$_OLD_VIRTUAL_PATH"
+if [ "$VIRT_PHP_OLD_VIRTUAL_PATH" ] ; then
+    PATH="$VIRT_PHP_OLD_VIRTUAL_PATH"
     export PATH
-    unset _OLD_VIRTUAL_PATH
+    unset VIRT_PHP_OLD_VIRTUAL_PATH
 fi
 
 if [ "$PHP_INI_SCAN_DIR" ] ; then
     unset PHP_INI_SCAN_DIR
 fi
 
-if [ "$_OLD_PS1" ] ; then
-    PS1="$_OLD_PS1"
+if [ "$VIRT_PHP_OLD_PS1" ] ; then
+    PS1="$VIRT_PHP_OLD_PS1"
     export PS1
-    unset _OLD_PS1
+    unset VIRT_PHP_OLD_PS1
 fi

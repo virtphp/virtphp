@@ -7,10 +7,10 @@
 # before environment is setup
 deactivate () {
 
-    if [ "$_OLD_VIRTUAL_PATH" ] ; then
-        PATH="$_OLD_VIRTUAL_PATH"
+    if [ "$VIRT_PHP_OLD_VIRTUAL_PATH" ] ; then
+        PATH="$VIRT_PHP_OLD_VIRTUAL_PATH"
         export PATH
-        unset _OLD_VIRTUAL_PATH
+        unset VIRT_PHP_OLD_VIRTUAL_PATH
     fi
 
     if [ "$PHP_INI_SCAN_DIR" ] ; then
@@ -19,8 +19,8 @@ deactivate () {
         unset PHP_INI_SCAN_DIR 
     fi
 
-    if [ "$_OLD_PS1" ] ; then
-        PS1="$_OLD_PS1"
+    if [ "$VIRT_PHP_OLD_PS1" ] ; then
+        PS1="$VIRT_PHP_OLD_PS1"
         export PS1 
         unset _OLD_PS1 
     fi
@@ -38,12 +38,12 @@ deactivate () {
 deactivate
 
 # Current is set when being written by install script
-PATH_TO_ENV="`pwd`/Env/" #data is temp while building
+VIRT_PHP_PATH_TO_ENV="`pwd`/Env/" #data is temp while building
 # CURRENT="__VIRTPHP_FOLDER_PATH__"
-export PATH_TO_ENV 
+export VIRT_PHP_PATH_TO_ENV 
 
 # Add current path to the bash PATH
-_OLD_VIRTUAL_PATH="$PATH"
+VIRT_PHP_OLD_VIRTUAL_PATH="$PATH"
 PATH="$PATH_TO_ENV/bin:$PATH"
 # Use the following if you want to make dynamic in
 # the future
@@ -56,7 +56,7 @@ export PHP_INI_SCAN_DIR
 
 # Update the shell prompt
 if [ -n "$PS1" ] ; then
-    _OLD_PS1=$PS1
+    VIRT_PHP_OLD_PS1=$PS1
     PS1="(Env) $PS1"
     export PS1
 fi
