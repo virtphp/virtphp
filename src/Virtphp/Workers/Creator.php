@@ -259,6 +259,17 @@ class Creator
     protected function createPhpBinWrapper()
     {
         $this->output->writeln("<info>Wrapping PHP binary</info>");
+
+        $phpBinWrapper = <<<EOD
+#!/bin/bash
+{$this->getPhpBinDir()}/php -c {$this->getEnvPath()}/etc/php.ini "$@"
+EOD;
+
+        $this->filesystem->dumpFile(
+            $this->getEnvPath() . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'php',
+            $phpBinWrapper,
+            0755
+        );
     }
 
     protected function copyLibraries()
