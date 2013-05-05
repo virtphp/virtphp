@@ -22,7 +22,7 @@ deactivate () {
     if [ "$VIRT_PHP_OLD_PS1" ] ; then
         PS1="$VIRT_PHP_OLD_PS1"
         export PS1 
-        unset _OLD_PS1 
+        unset VIRT_PHP_OLD_PS1 
     fi
 
     # This should detect bash and zsh, which have a hash command that must
