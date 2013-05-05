@@ -64,7 +64,7 @@ class InstallCommand extends Command
         // Check default locations for valid PHP
         
         // Setup environment
-        $creator = new Creator($input, $output, "./$env_name");
+        $creator = new Creator($input, $output, getcwd().DIRECTORY_SEPARATOR."$env_name");
         $creator->execute();
 
 

@@ -15,6 +15,7 @@ namespace Virtphp\Workers;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Virtphp\Workers\Destroyer;
+use InvalidArgumentException;
 
 
 class Creator
@@ -66,13 +67,13 @@ class Creator
 
 
     public function __construct(InputInterface $input, OutputInterface $output, $rootPath = ".", $binary = null) {
-      $this->input = $input;
-      $this->output = $output;
-      $this->setRootPath(strval($rootPath));
-      if (!$binary) {
-        // TODO: determine php binary location
-      }
-      $this->setPhpBinary($binary);
+        $this->input = $input;
+        $this->output = $output;
+        $this->setRootPath(strval($rootPath));
+        if (!$binary) {
+            // TODO: determine php binary location
+        }
+        $this->setPhpBinary($binary);
     }
     
     
@@ -94,7 +95,17 @@ class Creator
 
     
     public function execute() {
-      
+        
+        try {
+            
+            $this->checkEnvironment();
+
+        } catch (Exception $e) {
+            $this->output->writeln("<error>ERROR: ".$e->getMessage()."</error>");
+            return false;
+        }
+
+        // at this point, if anything fails we need to revert the install
         try {
             
             $this->createStructure();
@@ -103,15 +114,27 @@ class Creator
             $this->copyLibraries();
             $this->installPear();
             $this->installComposer();
-            $this->createActivateScript();
-            $this->createDeactivateScript();
 
         } catch (Exception $e) {
             $this->output->writeln("<error>ERROR: ".$e->getMessage()."</error>");
             $destroyer = new Destroyer($this->input, $this->output, $this->rootPath);
             $destroyer->execute();
             $this->output->writeln("<info>System reverted</info>");
+            return false;
         }
+
+        return true;
+    }
+
+    protected function checkEnvironment() {
+        $this->output->writeln("<info>Checking current environment</info>");
+        // if the directory exists, use it, otherwise see if it's relative
+        if (file_exists($this->rootPath)) {
+            throw new InvalidArgumentException("The directory for this environment already exists ({$this->rootPath})");
+        } else if (!is_writable(getcwd())) {
+            throw new InvalidArgumentException("The current directory is not writable, and thus we cannot create the environment");
+        }
+
     }
 
     protected function createStructure() {
@@ -143,14 +166,5 @@ class Creator
     protected function installComposer() {
         $this->output->writeln("<info>Installing Composer locally</info>");
     }
-
-    protected function createActivateScript() {
-        $this->output->writeln("<info>Creating activate script</info>");
-    }
-
-    protected function createDeactivateScript() {
-        $this->output->writeln("<info>Creating deactivate script</info>");
-    }
-
 
 }
