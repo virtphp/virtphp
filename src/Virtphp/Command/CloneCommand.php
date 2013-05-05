@@ -19,6 +19,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
+use Virtphp\Workers\CloneWorker;
 
 class CloneCommand extends Command
 {
@@ -83,23 +84,28 @@ class CloneCommand extends Command
         $this->output = $output;
 
         if (!$this->env_name && $this->validName()) {
-            $output->writeln('<bg=red>To create a new VirtPHP, you must provide a name.</bg=red>');
+            $output->writeln('<error>To create a new VirtPHP, you must provide a name.</error>');
             return false;
         }
 
         if (!$this->rootPath) {
-            $output->writeln('<bg=red>We need a path to clone from.</bg=red>');
+            $output->writeln('<error>We need a path to clone from.</error>');
             return false;
         }
 
         // Validate the provided directory contains what we need
-        if ($validateError = $this->checkPath()) {
+        if (!$this->checkPath()) {
             return false;
         }
 
-        // Process the clone 
-        if ($cloneError = $this->doClone()) {
-            return false;
+        //echo "Start cloning\n";
+        // Logic for cloning directory 
+        $clone_worker = new CloneWorker($this->rootPath, $this->env_name, $output);
+        if ($clone_worker->execute()) {
+            $output->writeln("<bg=green;options=bold>Your new cloned virtual php environment has been created.</bg=green;options=bold>");
+            $output->writeln("<info>Cloned from: $this->rootPath</info>");
+        } else {
+            $output->writeln("<bg=red;options=bold>Issue cloning. " . $clone_worker . "</bg=green;options=bold>");
         }
 
         $output->writeln('<bg=green;options=bold>Congratulations, your new VirtPHP environment has been cloned!</bg=green;options=bold>');
@@ -122,17 +128,6 @@ class CloneCommand extends Command
     }
 
     /** 
-     * Function to do the clone logic.
-     *
-     * @param string $path
-     */
-    protected function doClone()
-    {
-        // Logic for cloning directory 
-        return true;
-    }
-
-    /** 
      * Function to make sure provided 
      * environment name is valid.
      *
@@ -143,6 +138,9 @@ class CloneCommand extends Command
         $name = $this->env_name;
         if (is_numeric($name[0])) {
             $this->output->writeln("<error>Project names can not start with a number.</error>");
+            return false;
+        } else if (strpos($name, '/')) {
+            $this->output->writeln("<error>New environment name contains unsupported characters.</error>");
             return false;
         }
         // Logic for validating name
