@@ -18,6 +18,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Process\Process;
 use Virtphp\Workers\Activator;
 
 
@@ -57,11 +58,19 @@ class ActivateCommand extends Command
             return false;
         }
 
-        // Process for activating account
-        $activator = new Activator($input, $output);
-        $activator->execute();
+        /*$env_activate = new Process('sudo -u Kite bin/activate');
+        $env_activate->setTimeout(3600);
+        $env_activate->run();
 
-        $output->writeln('<bg=green>Activated' . $virt_env . '</bg=green>'); // delete after setup
+        if (!$env_activate->isSuccessful()) {
+            $output->writeln('<bg=red>There was an issue activating the environment</bg=red');
+            $output->writeln('<bg=red>"' . $env_activate->getErrorOutput() . '"</bg=red');
+        } else {
+            $output->writeln("<bg=yellow>" . $env_activate->getOutput() . "</bg=yellow>");
+        }*/
+        $here = exec('source bin/activate');
+        echo $here;
+        $output->writeln('<bg=green>Activated ' . $virt_env . '</bg=green>'); // delete after setup
     }
 
     /** 
