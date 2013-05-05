@@ -21,15 +21,7 @@ set_time_limit(0);
 
 require __DIR__.'/../src/bootstrap.php';
 
-use Virtphp\Command\InstallCommand;
-use Virtphp\Command\CloneCommand;
-use Virtphp\Command\ActivateCommand;
-use Virtphp\Command\DeactivateCommand;
-use Symfony\Component\Console\Application;
+use Virtphp\Console\Application;
 
-$app = new Application('Virtphp Console App', '0.0.1');
-$app->add(new InstallCommand);
-$app->add(new CloneCommand);
-$app->add(new ActivateCommand);
-$app->add(new DeactivateCommand);
+$app = new Application();
 $app->run();

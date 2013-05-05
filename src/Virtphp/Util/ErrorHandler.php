@@ -1,18 +1,20 @@
 <?php
- /*
- * (c) Nils Adermann <naderman@naderman.de>
- *     Jordi Boggiano <j.boggiano@seld.be>
+
+/*
+ * This file is part of VirtPHP.
+ *
+ * (c) Jordan Kasper <github @jakerella>
+ *     Ben Ramsey <github @ramsey>
+ *     Jacques Woodcock <github @jwoodcock>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace Composer\Util;
+namespace Virtphp\Util;
 
 /**
  * Convert PHP errors into exceptions
- *
- * @author Artem Lopata <biozshock@gmail.com>
  */
 class ErrorHandler
 {
