@@ -37,19 +37,18 @@ deactivate () {
 # Reset variables
 deactivate
 
-# Get current directory
-CURRENT="`pwd`/Env/"
-export CURRENT
+# Current is set when being written by install script
+PATH_TO_ENV="`pwd`/Env/" #data is temp while building
+# CURRENT="__VIRTPHP_FOLDER_PATH__"
+export PATH_TO_ENV 
 
 # Add current path to the bash PATH
 _OLD_VIRTUAL_PATH="$PATH"
-PATH="$CURRENT/bin:$PATH"
+PATH="$PATH_TO_ENV/bin:$PATH"
+# Use the following if you want to make dynamic in
+# the future
+# PATH="$PATH_TO_ENV/__BIN_DIR__:$PATH" 
 export PATH
-
-# Used for testing 
-# PATH="$_OLD_VIRTUAL_PATH"
-# export PATH
-# echo $PATH
 
 # Create a PHP_INI_SCAN_DIR path
 PHP_INI_SCAN_DIR="$CURRENT/etc/php"
