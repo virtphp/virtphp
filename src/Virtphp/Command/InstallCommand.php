@@ -52,7 +52,12 @@ class InstallCommand extends Command
         $env_name = $input->getArgument('name');
 
         // Check to make sure environment name is valid
-        if (!$env_name || !$this->validName($env_name)) {
+        $validName = $this->validName($env_name);
+        if ($validName) {
+            $output->writeln('<bg=red>' . $validName . '</bg=red>');
+            return false;
+        }
+        if (!$env_name) {
             $output->writeln('<bg=red>The name provided is not valid.</bg=red>');
             return false;
         }
