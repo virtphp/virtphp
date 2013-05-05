@@ -61,7 +61,7 @@ class DestroyCommand extends Command
         $dialog = $this->getHelperSet()->get('dialog');
         if (!$dialog->askConfirmation(
                 $output,
-                "<question>Are you sure you want to delete this virtual environment?\nDirectory: $path\nWARNING: ALL FILES WILL BE REMOVED IN THIS DIRECTORY! (Y/n): </question>",
+                "<question>Are you sure you want to delete this virtual environment?\nDirectory: $path\nWARNING: ALL FILES WILL BE REMOVED IN THIS DIRECTORY! (y/N): </question>",
                 false
             )) {
             $output->writeln("<info>This action has been cancelled.</info>");
