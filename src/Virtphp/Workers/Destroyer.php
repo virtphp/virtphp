@@ -12,6 +12,7 @@
 
 namespace Virtphp\Workers;
 
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use InvalidArgumentException;
@@ -29,43 +30,53 @@ class Destroyer
      */
     protected $output = null;
     /**
-     * @var stirng
+     * @var string
      */
     private $rootPath;
+    /**
+     * @var Filesystem
+     */
+    protected $filesystem;
 
 
-    public function __construct(InputInterface $input, OutputInterface $output, $rootPath = null) {
+    public function __construct(InputInterface $input, OutputInterface $output, $rootPath = null)
+    {
         $this->input = $input;
         $this->output = $output;
         $this->setRootPath($rootPath);
+        $this->filesystem = new Filesystem();
     }
 
 
     public function getRootPath() { return $this->rootPath; }
-    public function setRootPath($path = ".") {
+    public function setRootPath($path = ".")
+    {
         $this->rootPath = strval($path);
     }
 
 
-    public function execute() {
+    public function execute()
+    {
 
-        if (!file_exists($this->rootPath)) {
+        if (!$this->filesystem->exists($this->rootPath))
+        {
             $this->output->writeln("<error>This directory does not exist!</error>");
             return false;
         }
 
-        if (!file_exists($this->rootPath.DIRECTORY_SEPARATOR.".virtphp")) {
-            $this->output->writeln("<error>This directory does not contain a valid virtphp environment!</error>");
+        if (!$this->filesystem->exists($this->rootPath.DIRECTORY_SEPARATOR.".virtphp"))
+        {
+            $this->output->writeln("<error>This directory does not contain a valid VirtPHP environment!</error>");
             return false;
         }
 
         $this->removeStructure();
-        // TODO: what else?
     }
 
-    protected function removeStructure() {
-        $this->output->writeln("<info>Removing direcotry structure</info>");
-        // TODO: remove all created folders
+    protected function removeStructure()
+    {
+        $this->output->writeln("<info>Removing directory structure</info>");
+        $this->filesystem->remove($this->rootPath);
     }
 
 }
