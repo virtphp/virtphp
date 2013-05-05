@@ -33,11 +33,25 @@ class InstallCommand extends Command
 
         $this
             ->setName('install')
-            ->setDescription('Create new virtphp from scratch.')
+            ->setDescription('Create new virtphp environment.')
             ->addArgument(
                 'name',
                 InputArgument::REQUIRED,
                 'What is the name of your environment?'
+            )
+            ->addOption(
+              'php-bin-dir',
+              null,
+              InputOption::VALUE_REQUIRED,
+              'Path to the bin directory for the version of PHP you want to wrap.',
+              null
+            )
+            ->addOption(
+              'install-path',
+              null,
+              InputOption::VALUE_REQUIRED,
+              'Base path to install the virtual environment into (do not include the environment name).',
+              null
             );
     }
 
@@ -49,38 +63,39 @@ class InstallCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $env_name = $input->getArgument('name');
+        $envName = $input->getArgument('name');
 
         // Check to make sure environment name is valid
-        $validName = $this->validName($env_name);
-        if ($validName) {
-            $output->writeln('<bg=red>' . $validName . '</bg=red>');
+        if (!$this->validName($envName))
+        {
+            $output->writeln('<error>Sorry, but that is not a valid envronment name.</error>');
             return false;
         }
-        if (!$env_name) {
-            $output->writeln('<bg=red>The name provided is not valid.</bg=red>');
-            return false;
-        }
-        // Check default locations for valid PHP
         
+        $binDir = $input->getOption('php-bin-dir');
+        $installPath = $input->getOption('install-path');
+        if ($installPath === null)
+        {
+          $installPath = getcwd();
+        }
+
         // Setup environment
-        $creator = new Creator($input, $output, getcwd().DIRECTORY_SEPARATOR."$env_name");
+        $creator = new Creator($input, $output, $envName, $installPath, $binDir);
         $creator->execute();
 
 
-        $output->writeln("<bg=green;options=bold>Your're virtual php environment ($env_name) has been created.</bg=green;options=bold>");
-        $output->writeln("You can activate your new enviornment using: ~\$ virtphp activate $env_name");
+        $output->writeln("<bg=green;options=bold>Your're virtual php environment ($envName) has been created.</bg=green;options=bold>");
+        $output->writeln("You can activate your new enviornment using: ~\$ virtphp activate $envName");
     }
 
     /** 
      * Function to make sure provided 
      * environment name is valid.
      *
-     * @param string $env_name
+     * @param string $envName
      */
-    function validName($env_name)
+    protected function validName($envName)
     {
-        // Logic for validating name
-        return true;
+        return preg_match('/^[0-9a-zA-Z_\-]+$/', $envName);
     }
 }
