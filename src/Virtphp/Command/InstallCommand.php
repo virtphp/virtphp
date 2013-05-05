@@ -18,6 +18,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Virtphp\Virtphp;
 use Virtphp\Workers\Creator;
 
 class InstallCommand extends Command
@@ -66,7 +67,7 @@ class InstallCommand extends Command
         $envName = $input->getArgument('name');
 
         // Check to make sure environment name is valid
-        if (!$this->validName($envName))
+        if (!Virtphp::isValidName($envName))
         {
             $output->writeln('<error>Sorry, but that is not a valid envronment name.</error>');
             return false;
@@ -86,16 +87,5 @@ class InstallCommand extends Command
 
         $output->writeln("<bg=green;options=bold>Your're virtual php environment ($envName) has been created.</bg=green;options=bold>");
         $output->writeln("You can activate your new enviornment using: ~\$ virtphp activate $envName");
-    }
-
-    /** 
-     * Function to make sure provided 
-     * environment name is valid.
-     *
-     * @param string $envName
-     */
-    protected function validName($envName)
-    {
-        return preg_match('/^[0-9a-zA-Z_\-]+$/', $envName);
     }
 }
