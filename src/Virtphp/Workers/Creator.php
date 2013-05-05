@@ -190,6 +190,7 @@ class Creator
         try {
 
             $this->createStructure();
+            $this->createVersionFile();
             $this->createPhpIni();
             $this->createPhpBinWrapper();
             $this->copyLibraries();
@@ -229,6 +230,17 @@ class Creator
         $this->filesystem->mkdir($this->getEnvPath() . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'php');
         $this->filesystem->mkdir($this->getEnvPath() . DIRECTORY_SEPARATOR . 'share');
         $this->filesystem->mkdir($this->getEnvPath() . DIRECTORY_SEPARATOR . 'share' . DIRECTORY_SEPARATOR . 'php');
+    }
+
+    protected function createVersionFile()
+    {
+        $this->output->writeln("<info>Creating VirtPHP version file</info>");
+
+        $this->filesystem->dumpFile(
+            $this->getEnvPath() . DIRECTORY_SEPARATOR . '.virtphp',
+            Virtphp::VERSION,
+            0644
+        );
     }
 
     protected function createPhpIni()
