@@ -14,6 +14,7 @@ namespace Virtphp\Workers;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use InvalidArgumentException;
 
 
 class Destroyer
@@ -33,7 +34,7 @@ class Destroyer
     private $rootPath;
 
 
-    public function __construct(InputInterface $input, OutputInterface $output, $rootPath = ".") {
+    public function __construct(InputInterface $input, OutputInterface $output, $rootPath = null) {
         $this->input = $input;
         $this->output = $output;
         $this->setRootPath($rootPath);
@@ -47,6 +48,16 @@ class Destroyer
 
 
     public function execute() {
+
+        if (!file_exists($this->rootPath)) {
+            $this->output->writeln("<error>This directory does not exist!</error>");
+            return false;
+        }
+
+        if (!file_exists($this->rootPath.DIRECTORY_SEPARATOR.".virtphp")) {
+            $this->output->writeln("<error>This directory does not contain a valid virtphp environment!</error>");
+            return false;
+        }
 
         $this->removeStructure();
         // TODO: what else?
