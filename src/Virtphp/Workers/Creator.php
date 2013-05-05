@@ -299,8 +299,7 @@ EOD;
 
     protected function installPear()
     {
-        $this->output->writeln("<info>Installing PEAR locally</info>");
-
+        $this->output->writeln("<comment>Downloading pear phar file, this could take a while...</comment>");
         $pearInstall = file_get_contents('http://pear.php.net/install-pear-nozlib.phar');
 
         $pearBinWrapper = <<<EOD
@@ -321,6 +320,7 @@ EOD;
 
         chdir($this->getEnvPath());
 
+        $this->output->writeln("<info>Installing PEAR</info>");
         $process = new Process(
             'php -n -dshort_open_tag=0 -dopen_basedir= -derror_reporting=1803 -dmemory_limit=-1 -ddetect_unicode=0 '
             . 'share/install-pear-nozlib.phar '
