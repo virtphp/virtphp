@@ -102,7 +102,6 @@ class CloneCommand extends Command
         // Logic for cloning directory 
         $clone_worker = new CloneWorker($this->rootPath, $this->env_name, $output);
         $cloneError = $clone_worker->execute();
-        echo 'h: ' . $cloneError;
         if (!$cloneError) {
             $output->writeln("<bg=green;options=bold>Your new cloned virtual php environment has been created.</bg=green;options=bold>");
             $output->writeln("<info>Cloned from: $this->rootPath</info>");
