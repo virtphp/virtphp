@@ -103,7 +103,7 @@ class Application extends BaseApplication
     protected function getDefaultCommands()
     {
         $commands = parent::getDefaultCommands();
-        $commands[] = new Command\InstallCommand();
+        $commands[] = new Command\CreateCommand();
         $commands[] = new Command\CloneCommand();
         $commands[] = new Command\ActivateCommand();
         $commands[] = new Command\DeactivateCommand();
