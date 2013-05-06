@@ -21,7 +21,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Virtphp\Virtphp;
 use Virtphp\Workers\Creator;
 
-class InstallCommand extends Command
+class CreateCommand extends Command
 {
 
     /**
@@ -33,7 +33,7 @@ class InstallCommand extends Command
         parent::configure();
 
         $this
-            ->setName('install')
+            ->setName('create')
             ->setDescription('Create new virtphp environment.')
             ->addArgument(
                 'name',
