@@ -86,6 +86,6 @@ class CreateCommand extends Command
 
 
         $output->writeln("<bg=green;options=bold>Your're virtual php environment ($envName) has been created.</bg=green;options=bold>");
-        $output->writeln("You can activate your new enviornment using: ~\$ virtphp activate $envName");
+        $output->writeln("You can activate your new enviornment using: ~\$ source $envName/bin/activate");
     }
 }
