@@ -53,6 +53,11 @@ class Creator
     protected $phpBinDir;
 
     /**
+     * @var string
+     */
+    protected $customPhpIni = null;
+
+    /**
      * @var array
      */
     protected $pearConfigSettings = array();
@@ -139,6 +144,12 @@ class Creator
         return $this->pearConfigSettings;
     }
 
+    public function getCustomPhpIni()
+    {
+        return $this->customPhpIni;
+    }
+
+
     public function setEnvName($name)
     {
         if (!Virtphp::isValidName($name)) {
@@ -174,6 +185,18 @@ class Creator
     {
         $this->pearConfigSettings = array_merge(self::$DEFAULT_PEAR_CONFIG, $settings);
     }
+
+    public function setCustomPhpIni($phpIniFilePath = null)
+    {
+        if ($phpIniFilePath !== null) {
+            $phpIniFilePath = realpath($phpIniFilePath);
+            if ($phpIniFilePath === false) {
+                $phpIniFilePath = null;
+            }
+        }
+        $this->customPhpIni = $phpIniFilePath;
+    }
+
 
     public function execute()
     {
@@ -253,21 +276,74 @@ class Creator
 
     protected function createPhpIni()
     {
-        $this->output->writeln("<info>Creating custom php.ini</info>");
+        if ($this->getCustomPhpIni() !== null) {
+            $this->output->writeln("<info>Configuring custom php.ini from ".$this->getCustomPhpIni()."</info>");
+            $phpIniPath = $this->getCustomPhpIni();
+        } else {
+            $this->output->writeln("<info>Creating custom php.ini</info>");
+            $phpIniPath = realpath(__DIR__ . '/../../../res/php.ini');
+        }
 
-        $phpIni = file_get_contents(__DIR__ . '/../../../res/php.ini');
+        $phpIni = file_get_contents($phpIniPath);
 
-        $phpIni = str_replace(
-            '__VIRTPHP_ENV_PHP_INCLUDE_PATH__',
-            $this->getEnvPath() . DIRECTORY_SEPARATOR . 'share' . DIRECTORY_SEPARATOR . 'php',
-            $phpIni
-        );
+        if ($this->getCustomPhpIni() === null) {
+            // this is our custom php.ini, look for replacement values...
+            $phpIni = str_replace(
+                '__VIRTPHP_ENV_PHP_INCLUDE_PATH__',
+                $this->getEnvPath() . DIRECTORY_SEPARATOR . 'share' . DIRECTORY_SEPARATOR . 'php',
+                $phpIni
+            );
 
-        $phpIni = str_replace(
-            '__VIRTPHP_ENV_PHP_EXTENSION_PATH__',
-            $this->getEnvPath() . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'php',
-            $phpIni
-        );
+            $phpIni = str_replace(
+                '__VIRTPHP_ENV_PHP_EXTENSION_PATH__',
+                $this->getEnvPath() . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'php',
+                $phpIni
+            );
+
+        } else {
+            // user supplied php.ini, so we need to do a bit more work...
+            
+            // replace any active include_path settings with ours
+            if (preg_match("/^\s*include_path\s*\=\s*[^\n]+/im", $phpIni)) {
+                $this->output->writeln("  replacing active include_path with virtual env path");
+                $phpIni = preg_replace(
+                    "/^\s*(include_path\s*\=\s*[^\n]+)/im", 
+                    "\n\n;; Old include_path value\n; $1\n".
+                        ";; New VirtPHP include_path value:\n".
+                        'include_path = ".:'.$this->getEnvPath() . DIRECTORY_SEPARATOR . 'share' . DIRECTORY_SEPARATOR . "php\"\n", 
+                    $phpIni
+                );
+
+            } else {
+                // there was no active include_path, so add to the end
+                $this->output->writeln("  adding new include_path setting with virtual env path");
+                
+                $phpIni .= "\n\n;; New VirtPHP include_path value:\n".
+                           'include_path = ".:'.$this->getEnvPath() . DIRECTORY_SEPARATOR . 'share' . DIRECTORY_SEPARATOR . "php\"\n";
+
+            }
+
+            // and handle the extension_dir
+            // extension_dir = "__VIRTPHP_ENV_PHP_EXTENSION_PATH__"
+            if (preg_match("/^\s*extension_dir\s*\=\s*[^\n]+/im", $phpIni)) {
+                $this->output->writeln("  replacing active extension_dir with virtual env path");
+                $phpIni = preg_replace(
+                    "/^\s*(extension_dir\s*\=\s*[^\n]+)/im", 
+                    "\n\n;; Old extension_dir value\n; $1\n".
+                        ";; New VirtPHP extension_dir value:\n".
+                        'extension_dir = "'.$this->getEnvPath() . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . "php\"\n", 
+                    $phpIni
+                );
+
+            } else {
+                // there was no active extension_dir, so add to the end
+                $this->output->writeln("  adding new extension_dir setting with virtual env path");
+                
+                $phpIni .= "\n\n;; New VirtPHP extension_dir value:\n".
+                           'extension_dir = "'.$this->getEnvPath() . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . "php\"\n";
+            }
+
+        }
 
         $this->filesystem->dumpFile(
             $this->getEnvPath() . DIRECTORY_SEPARATOR . 'etc' . DIRECTORY_SEPARATOR . 'php.ini',
