@@ -1,7 +1,9 @@
 VirtPHP - Virtual PHP Environments
 ==================================
 
-VirtPHP creates and manages virtual PHP environments.
+VirtPHP is a tool for creating and managing multiple isolated PHP environments on a single machine. Think [virtualenv](http://virtualenv.org) for PHP.
+
+VirtPHP creates isolated environments so that you may run any number of PHP development projects, all using different versions of PEAR packages and different PECL extensions. You may even specify a different version of PHP, if your system has various installations of PHP (i.e. you've built multiple versions for testing).
 
 Installation
 ------------
