@@ -133,9 +133,9 @@ PHP 5.3.3 or above
 Authors
 -------
 
-Jordan Kasper - http://github.com/jakerella
-Jacques Woodcock - http://github.com/jwoodcock
-Ben Ramsey - http://github.com/ramsey
+* Jordan Kasper - http://github.com/jakerella
+* Jacques Woodcock - http://github.com/jwoodcock
+* Ben Ramsey - http://github.com/ramsey
 
 License
 -------
