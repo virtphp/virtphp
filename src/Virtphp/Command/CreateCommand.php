@@ -41,18 +41,25 @@ class CreateCommand extends Command
                 'What is the name of your environment?'
             )
             ->addOption(
-              'php-bin-dir',
-              null,
-              InputOption::VALUE_REQUIRED,
-              'Path to the bin directory for the version of PHP you want to wrap.',
-              null
+                'php-bin-dir',
+                null,
+                InputOption::VALUE_REQUIRED,
+                'Path to the bin directory for the version of PHP you want to wrap.',
+                null
             )
             ->addOption(
-              'install-path',
-              null,
-              InputOption::VALUE_REQUIRED,
-              'Base path to install the virtual environment into (do not include the environment name).',
-              null
+                'install-path',
+                null,
+                InputOption::VALUE_REQUIRED,
+                'Base path to install the virtual environment into (do not include the environment name).',
+                null
+            )
+            ->addOption(
+                'php-ini',
+                null,
+                InputOption::VALUE_REQUIRED,
+                'Path to a specific php.ini to use - WARNING: the include_path and extension_dir WILL BE OVERRIDDEN!',
+                null
             );
     }
 
@@ -82,10 +89,11 @@ class CreateCommand extends Command
 
         // Setup environment
         $creator = new Creator($input, $output, $envName, $installPath, $binDir);
+        $creator->setCustomPhpIni($input->getOption('php-ini'));
         $creator->execute();
 
 
         $output->writeln("<bg=green;options=bold>Your're virtual php environment ($envName) has been created.</bg=green;options=bold>");
-        $output->writeln("You can activate your new enviornment using: ~\$ virtphp activate $envName");
+        $output->writeln("You can activate your new enviornment using: ~\$ source $envName/bin/activate");
     }
 }
