@@ -93,12 +93,15 @@ class CloneCommand extends Command
             return false;
         }
 
+        if (substr($this->rootPath, -1) === '/') {
+            $this->rootPath = substr($this->rootPath, 0, -1);
+        }
+
         // Validate the provided directory contains what we need
         if (!$this->checkPath()) {
             return false;
         }
 
-        //echo "Start cloning\n";
         // Logic for cloning directory 
         $clone_worker = new CloneWorker($this->rootPath, $this->env_name, $output);
         $cloneError = $clone_worker->execute();
@@ -119,7 +122,9 @@ class CloneCommand extends Command
     protected function checkPath()
     {
         // Logic to check directory before clone
-        if (!$this->filesystem->exists($this->rootPath.DIRECTORY_SEPARATOR.".virtphp")) {
+        if (!$this->filesystem->exists(
+            $this->rootPath . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . ".virtphp"
+        )) {
             $this->output->writeln("<error>This directory does not contain a valid VirtPHP environment!</error>");
             return false; 
         }
