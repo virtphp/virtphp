@@ -27,12 +27,22 @@ class CloneWorker
     /** 
      * @var string
      */
-    protected $original_path = array();
+    protected $originalPath = array();
 
     /** 
      * @var string
      */
-    protected $env_name;
+    protected $fullPath;
+
+    /** 
+     * @var string
+     */
+    protected $envName;
+
+    /** 
+     * @var string
+     */
+    protected $realPath;
 
     /**
      * @var OutputInterface
@@ -44,10 +54,18 @@ class CloneWorker
      */
     protected $filesystem;
 
-    public function __construct($original_path, $env_name, $output)
+    /**
+     * Constructs the clone worker
+     *
+     * @param string $originalPath
+     * @param string $envName
+     * @param OutputInterface $output
+     */
+    public function __construct($originalPath, $envName, OutputInterface $output)
     {
-        $this->original_path = $original_path;
-        $this->env_name = $env_name;
+        $this->originalPath = realpath($originalPath);
+        $this->envName = $envName;
+        $this->realPath = realpath($envName);
         $this->filesystem = new Filesystem();
         $this->output = $output;
     }
@@ -58,29 +76,129 @@ class CloneWorker
      */
     public function execute()
     {
-        // Create virtphp directory
-        $this->filesystem->mkdir($this->env_name);
+        $this->output->writeln("<comment>Creating new virtPHP env.</comment>");
+        $this->filesystem->mkdir($this->envName);
 
-        $full_path = realpath($this->env_name);
+        try {
 
-        // Copy over files from original directory
-        $this->filesystem->mirror($this->original_path, $full_path);
+            $this->cloneEnv();
+            $this->updateActivateFile();
+            $this->updatePhpIni();
+            $this->createPhpBinWrapper();
+            $this->sourcePear();
+
+        } catch (Exception $e) {
+            $this->filesystem->remove($this->realPath);
+            $this->output->writeln("<error>Error: cloning directory failed.</error>");
+            return false;
+        }
+
+    }
+
+    /**
+     * Function gets the real path value of new virtPHP environment
+     * copies over all the files and folders to the new virtPHP environment
+     * and creates the fullPath property. 
+     */
+    protected function cloneEnv()
+    {
+        $this->output->writeln("<comment>Copying contents of " . $this->originalPath . ".</comment>");
+        $this->filesystem->mirror($this->originalPath, $this->realPath);
+    }
+
+    /**
+     * Function takes the contents of the original activate file, replaces the path
+     * with a reference to the new virtPHP, deletes the file, then saves an updated
+     * version.
+     */
+    protected function updateActivateFile()
+    {
+        $this->output->writeln('<comment>Updating activate file.</comment>');
+        // Get paths for files and folers
+        $binPath = $this->realPath . DIRECTORY_SEPARATOR . 'bin'; 
+        $activateFilePath = $binPath . DIRECTORY_SEPARATOR . 'activate.sh'; 
 
         // GET activate of new directory to replace path variable
-        $original_contents = file_get_contents($full_path.'/bin/activate.sh');
+        $originalContents = file_get_contents($activateFilePath);
 
-        // Replace V
-        $new_contents = str_replace($this->original_path, $full_path, $original_contents);
+        // Replace paths from old env to new cloned env
+        $newContents = str_replace($this->originalPath, $binPath, $originalContents);
+
+        // remove file to avoide collision
+        $this->filesystem->remove($activateFilePath);
+
+        // Write actiave file again
+        $this->filesystem->dumpFile($activateFilePath, $newContents, 0644);
+    }
+
+    protected function updatePhpIni()
+    {
+        $this->output->writeln('<comment>Updating PHP ini file.</comment>');
+        // Get paths for files and folers
+        $sharePath = DIRECTORY_SEPARATOR . 'share' . DIRECTORY_SEPARATOR . 'php';
+        $libPath = DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'php'; 
+        $iniPHPLocation = $this->realPath . DIRECTORY_SEPARATOR . 'etc' . DIRECTORY_SEPARATOR . 'php.ini'; 
+
+        $phpIni = file_get_contents($iniPHPLocation);
+
+        $phpIni = str_replace(
+            $this->originalPath . $sharePath,
+            $this->realPath . $sharePath,
+            $phpIni
+        );
+
+        $phpIni = str_replace(
+            $this->originalPath . $sharePath,
+            $this->realPath . $sharePath,
+            $phpIni
+        );
 
         $this->filesystem->dumpFile(
-            $this->env_name . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'activate.sh',
-            $new_contents,
+            $iniPHPLocation,
+            $phpIni,
+            0644
+        );
+    }
+
+    protected function createPhpBinWrapper()
+    {
+        $this->output->writeln('<comment>Updating PHP bin wrapper.</comment>');
+        $phpBinWrapPath = $this->realPath . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'php';
+        $newIniPath = $this->realPath . DIRECTORY_SEPARATOR . 'etc' . DIRECTORY_SEPARATOR . 'php.ini';
+
+        $currentWrapper = file_get_contents($phpBinWrapPath);
+
+        $newWrapper = str_replace(
+            $this->originalPath . DIRECTORY_SEPARATOR . 'etc' . DIRECTORY_SEPARATOR . 'php.ini',
+            $this->realPath . DIRECTORY_SEPARATOR . 'etc' . DIRECTORY_SEPARATOR . 'php.ini',
+            $currentWrapper
+        );
+ 
+        $this->filesystem->dumpFile(
+            $this->realPath . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'php',
+            $newWrapper,
+            0644
+        );
+    }
+
+    protected function sourcePear()
+    {
+        $this->output->writeln('<comment>Updating Pear</comment>');
+
+        $pearConfigContents = file_get_contents($this->realPath . DIRECTORY_SEPARATOR . 'etc' . DIRECTORY_SEPARATOR . 'pear.conf');
+
+        $newPearConfig = str_replace(
+            $this->originalPath,
+            $this->realPath,
+            $pearConfigContents
+        );
+
+        $this->filesystem->dumpFile(
+            $this->realPath . DIRECTORY_SEPARATOR . 'etc' . DIRECTORY_SEPARATOR . 'pear.conf',
+            $newPearConfig,
             0644
         );
 
-        // replace in php.ini "/home/ramsey/myenv/lib/php"
-        // replace in php.ini ".:/home/ramsey/myenv/share/php"
-        // Pear serialized 
     }
 
 }
