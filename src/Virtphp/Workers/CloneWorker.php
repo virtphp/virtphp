@@ -186,12 +186,9 @@ class CloneWorker
         $this->output->writeln('<comment>Updating Pear</comment>');
 
         $pearConfigContents = file_get_contents($this->realPath . DIRECTORY_SEPARATOR . 'etc' . DIRECTORY_SEPARATOR . 'pear.conf');
+        $pearConfigArray = unserialize($pearConfigContents);
 
-        $newPearConfig = str_replace(
-            $this->originalPath,
-            $this->realPath,
-            $pearConfigContents
-        );
+        $newPearConfig = serialize($this->processConfigSettings($pearConfigArray));
 
         $this->filesystem->dumpFile(
             $this->realPath . DIRECTORY_SEPARATOR . 'etc' . DIRECTORY_SEPARATOR . 'pear.conf',
@@ -199,6 +196,20 @@ class CloneWorker
             0644
         );
 
+    }
+
+    protected function processConfigSettings(array $pearConfig = array())
+    {
+        foreach($pearConfig as $key => &$value) {
+            if (is_array($value)) {
+                $value = $this->processConfigSettings($value);
+            }
+            if (is_string($value)) {
+                $value = str_replace($this->originalPath, $this->realPath, $value);
+            }
+        }
+
+        return $pearConfig;
     }
 
 }
