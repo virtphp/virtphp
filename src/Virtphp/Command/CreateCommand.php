@@ -18,6 +18,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Process\Process;
 use Virtphp\Virtphp;
 use Virtphp\Workers\Creator;
 
@@ -79,12 +80,21 @@ class CreateCommand extends Command
             $output->writeln('<error>Sorry, but that is not a valid envronment name.</error>');
             return false;
         }
-        
+
         $binDir = $input->getOption('php-bin-dir');
         $installPath = $input->getOption('install-path');
         if ($installPath === null)
         {
           $installPath = getcwd();
+        }
+
+        // Check for old .pearrc file conflict
+
+        $process = new Process('find ~/ -name ".pearrc"');
+        $process->run();
+        if ($process->getOutput()) {
+            $output->writeln('<error>There is an old .pearrc file on your system that will prevent creating this virtPHP env.</error>');
+            return false;
         }
 
         // Setup environment
