@@ -61,6 +61,13 @@ class CreateCommand extends Command
                 InputOption::VALUE_REQUIRED,
                 'Path to a specific php.ini to use - WARNING: the include_path and extension_dir WILL BE OVERRIDDEN!',
                 null
+            )
+            ->addOption(
+                'pear-conf',
+                null,
+                InputOption::VALUE_REQUIRED,
+                'Path to a specific pear.conf file to use - WARNING: many of the directory paths in thiw file WILL BE OVERRIDDEN in order for VirtPHP to work!',
+                null
             );
     }
 
@@ -100,6 +107,7 @@ class CreateCommand extends Command
         // Setup environment
         $creator = new Creator($input, $output, $envName, $installPath, $binDir);
         $creator->setCustomPhpIni($input->getOption('php-ini'));
+        $creator->setCustomPearConf($input->getOption('pear-conf'));
         $creator->execute();
 
 

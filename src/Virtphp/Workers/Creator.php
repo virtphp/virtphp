@@ -58,6 +58,11 @@ class Creator
     protected $customPhpIni = null;
 
     /**
+     * @var string
+     */
+    protected $customPearConf = null;
+
+    /**
      * @var array
      */
     protected $pearConfigSettings = array();
@@ -149,6 +154,11 @@ class Creator
         return $this->customPhpIni;
     }
 
+    public function getCustomPearConf()
+    {
+        return $this->customPearConf;
+    }
+
 
     public function setEnvName($name)
     {
@@ -195,6 +205,39 @@ class Creator
             }
         }
         $this->customPhpIni = $phpIniFilePath;
+    }
+
+    public function setCustomPearConf($pearConfFilePath = null)
+    {
+        if ($pearConfFilePath !== null) {
+            $pearConfFilePath = realpath($pearConfFilePath);
+            if ($pearConfFilePath === false) {
+                $pearConfFilePath = null;
+            }
+        }
+
+        $this->customPearConf = $pearConfFilePath;
+
+        if ($this->customPearConf !== null) {
+            $this->output->writeln("<info>Getting custom pear.conf info from ".$this->customPearConf."</info>");
+            $pearConfFile = file_get_contents($this->customPearConf);
+            if ($pearConfFile === false) {
+                throw new InvalidArgumentException("Unable to get contents of custom PEAR config file");
+            }
+
+            // kill all comment lines
+            $pearConfFile = preg_replace("/^\#.*?\n/m", '', $pearConfFile);
+            // kill all blank lines
+            $pearConfFile = preg_replace("/^\s*?\n/m", '', $pearConfFile);
+
+            $pearConfOptions = unserialize($pearConfFile);
+            if ($pearConfOptions === false) {
+                throw new InvalidArgumentException("Unable to unserialize custom PEAR config file");
+            }
+
+            $pearConfOptions = array_merge($pearConfOptions, self::$DEFAULT_PEAR_CONFIG);
+            $this->setPearConfigSettings($this->updatePearConfigSettings($pearConfOptions));
+        }
     }
 
 
