@@ -398,7 +398,8 @@ EOD;
 
         $this->output->writeln("<info>Installing PEAR</info>");
         $process = new Process(
-            'php -n -dshort_open_tag=0 -dopen_basedir= -derror_reporting=1803 -dmemory_limit=-1 -ddetect_unicode=0 '
+            '/usr/bin/php -n -dshort_open_tag=0 -dopen_basedir= '
+            . '-derror_reporting=1803 -dmemory_limit=-1 -ddetect_unicode=0 '
             . 'share/install-pear-nozlib.phar '
             . '-d "share/php" -b "bin" -c "etc"'
         );
@@ -409,12 +410,14 @@ EOD;
 
         $this->filesystem->remove($this->getEnvPath() . DIRECTORY_SEPARATOR . 'share' . DIRECTORY_SEPARATOR . 'install-pear-nozlib.phar');
 
+        $this->output->writeln("<info>Saving pear.conf file.</info>");
         $this->filesystem->dumpFile(
             $this->getEnvPath() . DIRECTORY_SEPARATOR . 'etc' . DIRECTORY_SEPARATOR . 'pear.conf',
             serialize($this->getPearConfigSettings()),
             0644
         );
 
+        $this->output->writeln("<info>Renaming pear file.</info>");
         $this->filesystem->rename(
             $this->getEnvPath() . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'pear',
             $this->getEnvPath() . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'pear.pear'
