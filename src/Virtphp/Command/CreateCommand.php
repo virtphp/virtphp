@@ -100,8 +100,10 @@ class CreateCommand extends Command
         $process = new Process('find ~/ -name ".pearrc"');
         $process->run();
         if ($process->getOutput()) {
-            $output->writeln('<error>There is an old .pearrc file on your system that will prevent creating this virtPHP env.</error>');
-            return false;
+            $output->writeln('<warning>There is an old .pearrc file on your '
+                . 'system that may prevent this virtPHP env from being created.'
+                . ' If an error occurs you can temporary move the .pearrc file '
+                . 'while creating your env.</warning>');
         }
 
         // Setup environment
