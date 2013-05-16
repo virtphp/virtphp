@@ -105,8 +105,6 @@ class Application extends BaseApplication
         $commands = parent::getDefaultCommands();
         $commands[] = new Command\CreateCommand();
         $commands[] = new Command\CloneCommand();
-        $commands[] = new Command\ActivateCommand();
-        $commands[] = new Command\DeactivateCommand();
         $commands[] = new Command\DestroyCommand();
 
         return $commands;
