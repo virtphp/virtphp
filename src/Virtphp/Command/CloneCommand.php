@@ -19,6 +19,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
+use Virtphp\Virtphp;
 use Virtphp\Workers\Cloner;
 
 class CloneCommand extends Command
@@ -57,18 +58,14 @@ class CloneCommand extends Command
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->envName = $input->getArgument('name');
-        $this->rootPath = $input->getArgument('original');
+        $this->envName = $input->getArgument("name");
+        $this->rootPath = realpath($input->getArgument("original"));
         $this->filesystem = new Filesystem();
         $this->output = $output;
 
         if (!Virtphp::isValidName($this->envName)) {
-            $output->writeln('<error>Sorry, but that is not a valid environment name.</error>');
+            $output->writeln("<error>Sorry, but that is not a valid environment name.</error>");
             return false;
-        }
-
-        if (substr($this->rootPath, -1) === '/') {
-            $this->rootPath = substr($this->rootPath, 0, -1);
         }
 
         // Validate the provided directory contains what we need
@@ -92,17 +89,17 @@ class CloneCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('clone')
-            ->setDescription('Create new virtphp from existing path.')
+            ->setName("clone")
+            ->setDescription("Create new virtphp from existing path.")
             ->addArgument(
-                'name',
+                "name",
                 InputArgument::REQUIRED,
-                'What is the name of your environment'
+                "What is the name of your environment"
             )
             ->addArgument(
-                'original',
+                "original",
                 InputArgument::REQUIRED,
-                'Location of existing VirtPHP to clone from.'
+                "Location of existing VirtPHP to clone from."
             );
     }
 
@@ -114,9 +111,13 @@ class CloneCommand extends Command
      */
     protected function isValidPath($rootPath)
     {
-        // Logic to check directory before clone
+        if (!$this->filesystem->exists($this->rootPath)) {
+            $output->writeln("<error>Sorry, but there is no VirtPHP environment at that location.</error>");
+            return false;
+        }
+
         if (!$this->filesystem->exists(
-            $rootPath . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . ".virtphp"
+            $rootPath . DIRECTORY_SEPARATOR . ".virtphp"
         )) {
             $this->output->writeln("<error>This directory does not contain a valid VirtPHP environment!</error>");
 
