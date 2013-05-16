@@ -21,7 +21,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
 
-class CloneWorker
+class Cloner
 {
 
     /** 
@@ -73,6 +73,8 @@ class CloneWorker
     /**
      * Function is the guts of the worker, reading the provided
      * directory and copying those files over.
+     *
+     * @return boolean Whether or not the action was successful
      */
     public function execute()
     {
@@ -87,9 +89,12 @@ class CloneWorker
             $this->createPhpBinWrapper();
             $this->sourcePear();
 
+            return true;
+
         } catch (Exception $e) {
             $this->filesystem->remove($this->realPath);
             $this->output->writeln("<error>Error: cloning directory failed.</error>");
+
             return false;
         }
 
@@ -131,6 +136,9 @@ class CloneWorker
         $this->filesystem->dumpFile($activateFilePath, $newContents, 0644);
     }
 
+    /**
+     * Updates paths in new php.ini file
+     */
     protected function updatePhpIni()
     {
         $this->output->writeln('<comment>Updating PHP ini file.</comment>');
@@ -160,6 +168,9 @@ class CloneWorker
         );
     }
 
+    /**
+     * Creates new PHP bin wrapper with new paths
+     */
     protected function createPhpBinWrapper()
     {
         $this->output->writeln('<comment>Updating PHP bin wrapper.</comment>');
@@ -181,6 +192,9 @@ class CloneWorker
         );
     }
 
+    /**
+     * Updates PEAR and config settings for new environment
+     */
     protected function sourcePear()
     {
         $this->output->writeln('<comment>Updating Pear</comment>');
@@ -195,9 +209,14 @@ class CloneWorker
             $newPearConfig,
             0644
         );
-
     }
 
+    /**
+     * Replaces original path with new path in pear config file
+     * 
+     * @param  array $pearConfig The old array of config options
+     * @return array The new array of config options
+     */
     protected function processConfigSettings(array $pearConfig = array())
     {
         foreach($pearConfig as $key => &$value) {
