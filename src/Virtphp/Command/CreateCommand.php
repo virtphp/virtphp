@@ -76,6 +76,7 @@ class CreateCommand extends Command
      *
      * @param InputInterface $input
      * @param OutputInterface $output
+     * @return boolean Whether the action completed successfully and Console activity should continue
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -84,7 +85,8 @@ class CreateCommand extends Command
         // Check to make sure environment name is valid
         if (!Virtphp::isValidName($envName)) {
             $output->writeln("<error>Sorry, but that is not a valid envronment name.</error>");
-            return;
+            
+            return false;
         }
 
         $binDir = $input->getOption("php-bin-dir");
@@ -109,10 +111,13 @@ class CreateCommand extends Command
         $creator = new Creator($input, $output, $envName, $installPath, $binDir);
         $creator->setCustomPhpIni($input->getOption("php-ini"));
         $creator->setCustomPearConf($input->getOption("pear-conf"));
-        $creator->execute();
+        if ($creator->execute()) {
+            $output->writeln("<bg=green;options=bold>Yourr virtual php environment ($envName) has been created!</bg=green;options=bold>");
+            $output->writeln("<success>You can activate your new enviornment using: ~\$ source $envName/bin/activate</success>\n");
 
+            return true;
+        }
 
-        $output->writeln("<bg=green;options=bold>Yourr virtual php environment ($envName) has been created!</bg=green;options=bold>");
-        $output->writeln("<success>You can activate your new enviornment using: ~\$ source $envName/bin/activate</success>\n");
+        return false;
     }
 }
