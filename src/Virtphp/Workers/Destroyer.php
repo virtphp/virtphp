@@ -55,24 +55,35 @@ class Destroyer
     }
 
 
+    /**
+     * Function is the guts of the worker, reading the provided
+     * options and destroying the old virtual env.
+     *
+     * @return boolean Whether or not the action was successful
+     */
     public function execute()
     {
 
-        if (!$this->filesystem->exists($this->rootPath))
-        {
+        if (!$this->filesystem->exists($this->rootPath)) {
             $this->output->writeln("<error>This directory does not exist!</error>");
+
             return false;
         }
 
-        if (!$this->filesystem->exists($this->rootPath.DIRECTORY_SEPARATOR.".virtphp"))
-        {
+        if (!$this->filesystem->exists($this->rootPath.DIRECTORY_SEPARATOR.".virtphp")) {
             $this->output->writeln("<error>This directory does not contain a valid VirtPHP environment!</error>");
+
             return false;
         }
 
         $this->removeStructure();
+
+        return true;
     }
 
+    /**
+     * Removes the directory structure for the old virtual env
+     */
     protected function removeStructure()
     {
         $this->output->writeln("<info>Removing directory structure</info>");
