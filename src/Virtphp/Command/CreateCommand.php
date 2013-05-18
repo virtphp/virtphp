@@ -26,7 +26,7 @@ class CreateCommand extends Command
 {
 
     /**
-     * Define command name and what arguments and options we are taking.
+     * {@inheritDoc}
      */
     protected function configure()
     {
@@ -71,12 +71,7 @@ class CreateCommand extends Command
     }
 
     /*
-     * Process input options for command and execute functionality.
-     * Automatically run by Symfony Console
-     *
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return boolean Whether the action completed successfully and Console activity should continue
+     * {@inheritDoc}
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {

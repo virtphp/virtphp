@@ -24,67 +24,9 @@ use Virtphp\Workers\Cloner;
 
 class CloneCommand extends Command
 {
-    /**
-     * @var InputInterface
-     */
-    protected $input = null;
 
     /**
-     * @var OutputInterface
-     */
-    protected $output = null;
-
-    /**
-     * @var FileSystem 
-     */
-    protected $filesystem = null;
-
-    /**
-     * @var string
-     */
-    private $rootPath;
-
-    /**
-     * @var string
-     */
-    private $envName;
-
-
-    /** 
-     * Function to process input options for command.
-     *
-     * @param string $input
-     * @param string $output
-     */
-    public function execute(InputInterface $input, OutputInterface $output)
-    {
-        $this->envName = $input->getArgument("name");
-        $this->rootPath = realpath($input->getArgument("original"));
-        $this->filesystem = new Filesystem();
-        $this->output = $output;
-
-        if (!Virtphp::isValidName($this->envName)) {
-            $output->writeln("<error>Sorry, but that is not a valid environment name.</error>");
-            return false;
-        }
-
-        // Validate the provided directory contains what we need
-        if (!$this->isValidPath($this->rootPath)) {
-            return false;
-        }
-
-        // Logic for cloning directory 
-        $cloner = new Cloner($this->rootPath, $this->envName, $output);
-        if ($cloner->execute()) {
-            $output->writeln("<bg=green;options=bold>Your new cloned virtual php environment has been created.</bg=green;options=bold>");
-            $output->writeln("<info>Cloned from: $this->rootPath</info>");
-        }
-
-    }
-
-    /**
-     * Function that defines command name and what
-     * variables we are taking.
+     * {@inheritDoc}
      */
     protected function configure()
     {
@@ -104,22 +46,55 @@ class CloneCommand extends Command
     }
 
     /** 
-     * Function to check path for valid binary
-     *
-     * @param string $path
-     * @return  boolean
+     * {@inheritDoc}
      */
-    protected function isValidPath($rootPath)
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
-        if (!$this->filesystem->exists($this->rootPath)) {
-            $output->writeln("<error>Sorry, but there is no VirtPHP environment at that location.</error>");
+        $envName = $input->getArgument("name");
+        $rootPath = realpath($input->getArgument("original"));
+
+        if (!Virtphp::isValidName($envName)) {
+            $output->writeln("<error>Sorry, but that is not a valid environment name.</error>");
+            
             return false;
         }
 
-        if (!$this->filesystem->exists(
-            $rootPath . DIRECTORY_SEPARATOR . ".virtphp"
-        )) {
-            $this->output->writeln("<error>This directory does not contain a valid VirtPHP environment!</error>");
+        // Validate the provided directory contains what we need
+        if (!$this->isValidPath($rootPath)) {
+            return false;
+        }
+
+        // Logic for cloning directory 
+        $cloner = new Cloner($rootPath, $envName, $output);
+        if ($cloner->execute()) {
+            $output->writeln("<bg=green;options=bold>Your new cloned virtual php environment has been created.</bg=green;options=bold>");
+            $output->writeln("<info>Cloned from: $rootPath</info>");
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /** 
+     * Function to check path for valid binary location
+     *
+     * @param string $path
+     * @param  OutputInterface $output The output to use for the messages
+     * @return  boolean
+     */
+    protected function isValidPath($rootPath, OutputInterface $output)
+    {
+        $filesystem = new Filesystem();
+
+        if (!$filesystem->exists($rootPath)) {
+            $output->writeln("<error>Sorry, but there is no VirtPHP environment at that location.</error>");
+            
+            return false;
+        }
+
+        if (!$filesystem->exists($rootPath . DIRECTORY_SEPARATOR . ".virtphp")) {
+            $output->writeln("<error>This directory does not contain a valid VirtPHP environment!</error>");
 
             return false;
         }
