@@ -34,7 +34,7 @@ class DestroyCommand extends Command
             ->setName("destroy")
             ->setDescription("Destroy an existing virtual environment.")
             ->addArgument(
-                "path",
+                "env-path",
                 InputArgument::REQUIRED,
                 "Please specify the path to the virtual environment you want to destroy."
             );

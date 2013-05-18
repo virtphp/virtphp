@@ -34,12 +34,12 @@ class CloneCommand extends Command
             ->setName("clone")
             ->setDescription("Create new virtphp from existing path.")
             ->addArgument(
-                "name",
+                "new-env-name",
                 InputArgument::REQUIRED,
-                "What is the name of your environment"
+                "What is the name of your new environment"
             )
             ->addArgument(
-                "original",
+                "existing-env-path",
                 InputArgument::REQUIRED,
                 "Location of existing VirtPHP to clone from."
             );

@@ -36,9 +36,9 @@ class CreateCommand extends Command
             ->setName("create")
             ->setDescription("Create new virtphp environment.")
             ->addArgument(
-                "name",
+                "env-name",
                 InputArgument::REQUIRED,
-                "What is the name of your environment?"
+                "What is the name of your new environment?"
             )
             ->addOption(
                 "php-bin-dir",
