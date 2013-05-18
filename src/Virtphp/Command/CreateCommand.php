@@ -26,94 +26,93 @@ class CreateCommand extends Command
 {
 
     /**
-     * Function that defines command name and what
-     * variables we are taking.
+     * Define command name and what arguments and options we are taking.
      */
     protected function configure()
     {
         parent::configure();
 
         $this
-            ->setName('create')
-            ->setDescription('Create new virtphp environment.')
+            ->setName("create")
+            ->setDescription("Create new virtphp environment.")
             ->addArgument(
-                'name',
+                "name",
                 InputArgument::REQUIRED,
-                'What is the name of your environment?'
+                "What is the name of your environment?"
             )
             ->addOption(
-                'php-bin-dir',
+                "php-bin-dir",
                 null,
                 InputOption::VALUE_REQUIRED,
-                'Path to the bin directory for the version of PHP you want to wrap.',
+                "Path to the bin directory for the version of PHP you want to wrap.",
                 null
             )
             ->addOption(
-                'install-path',
+                "install-path",
                 null,
                 InputOption::VALUE_REQUIRED,
-                'Base path to install the virtual environment into (do not include the environment name).',
+                "Base path to install the virtual environment into (do not include the environment name).",
                 null
             )
             ->addOption(
-                'php-ini',
+                "php-ini",
                 null,
                 InputOption::VALUE_REQUIRED,
-                'Path to a specific php.ini to use - WARNING: the include_path and extension_dir WILL BE OVERRIDDEN!',
+                "Path to a specific php.ini to use - WARNING: the include_path and extension_dir WILL BE OVERRIDDEN!",
                 null
             )
             ->addOption(
-                'pear-conf',
+                "pear-conf",
                 null,
                 InputOption::VALUE_REQUIRED,
-                'Path to a specific pear.conf file to use - WARNING: many of the directory paths in thiw file WILL BE OVERRIDDEN in order for VirtPHP to work!',
+                "Path to a specific pear.conf file to use - WARNING: many of the directory paths in thiw file WILL BE OVERRIDDEN in order for VirtPHP to work!",
                 null
             );
     }
 
     /*
-     * Function to process input options for command.
+     * Process input options for command and execute functionality.
+     * Automatically run by Symfony Console
      *
-     * @param string $input
-     * @param string $output
+     * @param InputInterface $input
+     * @param OutputInterface $output
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $envName = $input->getArgument('name');
+        $envName = $input->getArgument("name");
 
         // Check to make sure environment name is valid
-        if (!Virtphp::isValidName($envName))
-        {
-            $output->writeln('<error>Sorry, but that is not a valid envronment name.</error>');
-            return false;
+        if (!Virtphp::isValidName($envName)) {
+            $output->writeln("<error>Sorry, but that is not a valid envronment name.</error>");
+            return;
         }
 
-        $binDir = $input->getOption('php-bin-dir');
-        $installPath = $input->getOption('install-path');
-        if ($installPath === null)
-        {
-          $installPath = getcwd();
+        $binDir = $input->getOption("php-bin-dir");
+        $installPath = $input->getOption("install-path");
+        if ($installPath === null) {
+            $installPath = getcwd();
         }
 
         // Check for old .pearrc file conflict
-
-        $process = new Process('find ~/ -name ".pearrc"');
+        $process = new Process("find ~/ -name \".pearrc\"");
         $process->run();
         if ($process->getOutput()) {
-            $output->writeln('<warning>There is an old .pearrc file on your '
-                . 'system that may prevent this virtPHP env from being created.'
-                . ' If an error occurs you can temporary move the .pearrc file '
-                . 'while creating your env.</warning>');
+            $output->writeln(
+                "<warning>There is an old .pearrc file on your "
+                . "system that may prevent this virtPHP env from being created."
+                . " If an error occurs you can temporary move the .pearrc file "
+                . "while creating your virtual env.</warning>"
+            );
         }
 
         // Setup environment
         $creator = new Creator($input, $output, $envName, $installPath, $binDir);
-        $creator->setCustomPhpIni($input->getOption('php-ini'));
-        $creator->setCustomPearConf($input->getOption('pear-conf'));
+        $creator->setCustomPhpIni($input->getOption("php-ini"));
+        $creator->setCustomPearConf($input->getOption("pear-conf"));
         $creator->execute();
 
 
-        $output->writeln("<bg=green;options=bold>Your're virtual php environment ($envName) has been created.</bg=green;options=bold>");
-        $output->writeln("You can activate your new enviornment using: ~\$ source $envName/bin/activate");
+        $output->writeln("<bg=green;options=bold>Yourr virtual php environment ($envName) has been created!</bg=green;options=bold>");
+        $output->writeln("<success>You can activate your new enviornment using: ~\$ source $envName/bin/activate</success>\n");
     }
 }
