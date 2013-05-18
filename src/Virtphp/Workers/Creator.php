@@ -220,7 +220,7 @@ class Creator
         }
         $process = new Process($dir.DIRECTORY_SEPARATOR."php -v");
         if ($process->run() != 0) {
-            throw new InvalidArgumentException("The "php" file in the specified directory is not a valid php binary executable.");
+            throw new InvalidArgumentException("The \"php\" file in the specified directory is not a valid php binary executable.");
         }
 
         $this->phpBinDir = $dir;
@@ -263,7 +263,7 @@ class Creator
         $this->customPearConf = $pearConfFilePath;
 
         if ($this->customPearConf !== null) {
-            $this->output->writeln("<info>Getting custom pear.conf info from ".$this->customPearConf."</info>");
+            $this->output->writeln("Getting custom pear.conf info from ".$this->customPearConf);
             $pearConfFile = file_get_contents($this->customPearConf);
             if ($pearConfFile === false) {
                 throw new InvalidArgumentException("Unable to get contents of custom PEAR config file");
@@ -335,7 +335,7 @@ class Creator
      */
     protected function checkEnvironment()
     {
-        $this->output->writeln("<info>Checking current environment</info>");
+        $this->output->writeln("Checking current environment");
 
         // if the directory exists, use it, otherwise see if it"s relative
         if ($this->filesystem->exists($this->getEnvPath())) {
@@ -350,7 +350,7 @@ class Creator
      */
     protected function createStructure()
     {
-        $this->output->writeln("<info>Creating directory structure</info>");
+        $this->output->writeln("Creating directory structure");
 
         $this->filesystem->mkdir($this->getEnvPath() . DIRECTORY_SEPARATOR . "bin");
         $this->filesystem->mkdir($this->getEnvPath() . DIRECTORY_SEPARATOR . "etc");
@@ -374,7 +374,7 @@ class Creator
      */
     protected function createVersionFile()
     {
-        $this->output->writeln("<info>Creating VirtPHP version file</info>");
+        $this->output->writeln("Creating VirtPHP version file");
 
         $this->filesystem->dumpFile(
             $this->getEnvPath() . DIRECTORY_SEPARATOR . ".virtphp",
@@ -390,10 +390,10 @@ class Creator
     protected function createPhpIni()
     {
         if ($this->getCustomPhpIni() !== null) {
-            $this->output->writeln("<info>Configuring custom php.ini from ".$this->getCustomPhpIni()."</info>");
+            $this->output->writeln("Configuring custom php.ini from ".$this->getCustomPhpIni());
             $phpIniPath = $this->getCustomPhpIni();
         } else {
-            $this->output->writeln("<info>Creating custom php.ini</info>");
+            $this->output->writeln("Creating custom php.ini");
             $phpIniPath = realpath(__DIR__ . "/../../../res/php.ini");
         }
 
@@ -423,7 +423,7 @@ class Creator
                     "/^\s*(include_path\s*\=\s*[^\n]+)/im", 
                     "\n\n;; Old include_path value\n; $1\n".
                         ";; New VirtPHP include_path value:\n".
-                        "include_path = ".:".$this->getEnvPath() . DIRECTORY_SEPARATOR . "share" . DIRECTORY_SEPARATOR . "php\"\n", 
+                        "include_path = \".:".$this->getEnvPath() . DIRECTORY_SEPARATOR . "share" . DIRECTORY_SEPARATOR . "php\"\n", 
                     $phpIni
                 );
 
@@ -432,7 +432,7 @@ class Creator
                 $this->output->writeln("  adding new include_path setting with virtual env path");
                 
                 $phpIni .= "\n\n;; New VirtPHP include_path value:\n".
-                           "include_path = ".:".$this->getEnvPath() . DIRECTORY_SEPARATOR . "share" . DIRECTORY_SEPARATOR . "php\"\n";
+                           "include_path = \".:".$this->getEnvPath() . DIRECTORY_SEPARATOR . "share" . DIRECTORY_SEPARATOR . "php\"\n";
 
             }
 
@@ -444,7 +444,7 @@ class Creator
                     "/^\s*(extension_dir\s*\=\s*[^\n]+)/im", 
                     "\n\n;; Old extension_dir value\n; $1\n".
                         ";; New VirtPHP extension_dir value:\n".
-                        "extension_dir = "".$this->getEnvPath() . DIRECTORY_SEPARATOR . "lib" . DIRECTORY_SEPARATOR . "php\"\n", 
+                        "extension_dir = \"".$this->getEnvPath() . DIRECTORY_SEPARATOR . "lib" . DIRECTORY_SEPARATOR . "php\"\n", 
                     $phpIni
                 );
 
@@ -453,7 +453,7 @@ class Creator
                 $this->output->writeln("  adding new extension_dir setting with virtual env path");
                 
                 $phpIni .= "\n\n;; New VirtPHP extension_dir value:\n".
-                           "extension_dir = "".$this->getEnvPath() . DIRECTORY_SEPARATOR . "lib" . DIRECTORY_SEPARATOR . "php\"\n";
+                           "extension_dir = \"".$this->getEnvPath() . DIRECTORY_SEPARATOR . "lib" . DIRECTORY_SEPARATOR . "php\"\n";
             }
 
         }
@@ -471,7 +471,7 @@ class Creator
      */
     protected function createPhpBinWrapper()
     {
-        $this->output->writeln("<info>Wrapping PHP binary</info>");
+        $this->output->writeln("Wrapping PHP binary");
 
         $phpBinWrapper = <<<EOD
 #!/bin/bash
@@ -490,7 +490,7 @@ EOD;
      */
     protected function copyLibraries()
     {
-        //$this->output->writeln("<info>Copying other libraries</info>");
+        //$this->output->writeln("Copying other libraries");
     }
 
     /**
@@ -519,12 +519,12 @@ EOD;
 
         chdir($this->getEnvPath());
 
-        $this->output->writeln("<info>Installing PEAR</info>");
+        $this->output->writeln("Installing PEAR");
         $process = new Process(
             "/usr/bin/php -n -dshort_open_tag=0 -dopen_basedir= "
             . "-derror_reporting=1803 -dmemory_limit=-1 -ddetect_unicode=0 "
             . "share/install-pear-nozlib.phar "
-            . "-d "share/php" -b "bin" -c "etc""
+            . "-d \"share/php\" -b \"bin\" -c \"etc\""
         );
 
         if ($process->run() != 0) {
@@ -533,14 +533,14 @@ EOD;
 
         $this->filesystem->remove($this->getEnvPath() . DIRECTORY_SEPARATOR . "share" . DIRECTORY_SEPARATOR . "install-pear-nozlib.phar");
 
-        $this->output->writeln("<info>Saving pear.conf file.</info>");
+        $this->output->writeln("Saving pear.conf file.");
         $this->filesystem->dumpFile(
             $this->getEnvPath() . DIRECTORY_SEPARATOR . "etc" . DIRECTORY_SEPARATOR . "pear.conf",
             serialize($this->getPearConfigSettings()),
             0644
         );
 
-        $this->output->writeln("<info>Renaming pear file.</info>");
+        $this->output->writeln("Renaming pear file.");
         $this->filesystem->rename(
             $this->getEnvPath() . DIRECTORY_SEPARATOR . "bin" . DIRECTORY_SEPARATOR . "pear",
             $this->getEnvPath() . DIRECTORY_SEPARATOR . "bin" . DIRECTORY_SEPARATOR . "pear.pear"
@@ -569,10 +569,10 @@ EOD;
      */
     protected function installComposer()
     {
-        $this->output->writeln("<info>Installing Composer locally</info>");
+        $this->output->writeln("Installing Composer locally");
 
         $process = new Process(
-            "curl -sS https://getcomposer.org/installer | php -- --install-dir=" . $this->getEnvPath() . DIRECTORY_SEPARATOR . "bin"
+            "curl -sS https://getcomposer.org/installer | php -- --install-dir=\"" . $this->getEnvPath() . DIRECTORY_SEPARATOR . "bin\""
         );
 
         if ($process->run() != 0) {
@@ -591,7 +591,7 @@ EOD;
      */
     protected function copyActivateScript()
     {
-        $this->output->writeln("<info>Installing activate/deactive script</info>");
+        $this->output->writeln("Installing activate/deactive script");
 
         $activateScript = file_get_contents(__DIR__ . "/../../../res/activate.sh");
 

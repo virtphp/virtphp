@@ -60,7 +60,7 @@ class CloneCommand extends Command
         }
 
         // Validate the provided directory contains what we need
-        if (!$this->isValidPath($rootPath)) {
+        if (!$this->isValidPath($rootPath, $output)) {
             return false;
         }
 
