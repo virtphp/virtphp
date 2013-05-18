@@ -15,17 +15,17 @@ namespace Virtphp;
 
 class Virtphp
 {
-    const VERSION = '@package_version@';
+    const VERSION = "@package_version@";
 
     /**
-     * Function to make sure provided
-     * environment name is valid.
+     * Make sure provided environment name is valid.
      *
-     * @param string $envName
+     * @param string $envName The environment name to check
+     * @return boolean Whether or not the provided name is valid for this system
      */
     public static function isValidName($envName)
     {
-        if (preg_match('/^[a-zA-Z][0-9a-zA-Z_\-]*$/', $envName)) {
+        if (preg_match("/^[a-zA-Z][0-9a-zA-Z_\-]*$/", $envName)) {
             return true;
         }
 
