@@ -50,8 +50,8 @@ class CloneCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $envName = $input->getArgument("name");
-        $rootPath = realpath($input->getArgument("original"));
+        $envName = $input->getArgument("new-env-name");
+        $rootPath = realpath($input->getArgument("existing-env-path"));
 
         if (!Virtphp::isValidName($envName)) {
             $output->writeln("<error>Sorry, but that is not a valid environment name.</error>");

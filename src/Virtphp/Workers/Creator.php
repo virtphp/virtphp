@@ -521,10 +521,11 @@ EOD;
 
         $this->output->writeln("Installing PEAR");
         $process = new Process(
-            "/usr/bin/php -n -dshort_open_tag=0 -dopen_basedir= "
+            $this->getPhpBinDir()
+            . DIRECTORY_SEPARATOR . "php -n -dshort_open_tag=0 -dopen_basedir= "
             . "-derror_reporting=1803 -dmemory_limit=-1 -ddetect_unicode=0 "
-            . "share/install-pear-nozlib.phar "
-            . "-d \"share/php\" -b \"bin\" -c \"etc\""
+            . "share" . DIRECTORY_SEPARATOR . "install-pear-nozlib.phar "
+            . "-d \"".$this->getEnvPath() . DIRECTORY_SEPARATOR . "share" . DIRECTORY_SEPARATOR . "php\" -b \"bin\" -c \"etc\""
         );
 
         if ($process->run() != 0) {

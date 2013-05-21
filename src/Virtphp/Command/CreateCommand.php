@@ -75,7 +75,7 @@ class CreateCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $envName = $input->getArgument("name");
+        $envName = $input->getArgument("env-name");
 
         // Check to make sure environment name is valid
         if (!Virtphp::isValidName($envName)) {
