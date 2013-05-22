@@ -5,7 +5,7 @@ VirtPHP is a tool for creating and managing multiple isolated PHP environments o
 
 VirtPHP creates isolated environments so that you may run any number of PHP development projects, all using different versions of PEAR packages and different PECL extensions. You may even specify a different version of PHP, if your system has various installations of PHP (i.e. you've built multiple versions for testing).
 
-__Note: VirtPHP is currently only targeted to command line `php` (php-cli)!__
+__Note: VirtPHP is currently only targeted to command line `php` (php-cli) for *nix based systems.__
 
 Installation
 ------------
