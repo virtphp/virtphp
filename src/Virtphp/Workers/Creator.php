@@ -335,6 +335,7 @@ class Creator
             $this->createPhpIni();
             $this->createPhpBinWrapper();
             $this->installPear();
+            $this->installPhpConfigPhpize();
             $this->installComposer();
             $this->copyActivateScript();
 
@@ -566,6 +567,83 @@ EOD;
             $this->getEnvBinDir() . DIRECTORY_SEPARATOR . "pecl",
             $peclBinSource,
             0755
+        );
+    }
+
+    /**
+     * Sets up php-config and phpize for use with the local pecl
+     */
+    protected function installPhpConfigPhpize()
+    {
+        $phpConfigPath = $this->getPhpBinDir() . DIRECTORY_SEPARATOR . "php-config";
+        $phpizePath = $this->getPhpBinDir() . DIRECTORY_SEPARATOR . "phpize";
+        $phpBuildIncludeDir = null;
+
+        if (!$this->filesystem->exists($phpConfigPath)) {
+            $this->output->writeln("<comment>Could not find php-config in {$this->getPhpBinDir()}. You will be unable to use pecl in this virtual environment. Install the PHP development package first, and then re-run VirtPHP.</comment>");
+            return;
+        }
+
+        if (!$this->filesystem->exists($phpizePath)) {
+            $this->output->writeln("<comment>Could not find phpize in {$this->getPhpBinDir()}. You will be unable to use pecl in this virtual environment. Install the PHP development package first, and then re-run VirtPHP.</comment>");
+            return;
+        }
+
+        $phpConfigSource = file_get_contents($phpConfigPath);
+
+        $process = new Process("{$phpConfigPath} --include-dir");
+        if ($process->run() == 0) {
+            $phpBuildIncludeDir = trim($process->getOutput());
+        }
+
+        // Replace prefix in php-config
+        $phpConfigSource = preg_replace(
+            "/^(prefix\=[^\n]+)/im",
+            "\n# Old prefix value\n# $1\n" .
+                "# New VirtPHP prefix value:\n" .
+                "prefix=\"{$this->getEnvPath()}\"\n",
+            $phpConfigSource
+        );
+
+        // Replace exec_prefix in php-config
+        $phpConfigSource = preg_replace(
+            "/^(exec_prefix\=[^\n]+)/im",
+            "\n# Old exec_prefix value\n# $1\n" .
+                "# New VirtPHP exec_prefix value:\n" .
+                "exec_prefix=\"{$this->getEnvPath()}\"\n",
+            $phpConfigSource
+        );
+
+        if ($phpBuildIncludeDir) {
+            // Replace include_dir in php-config
+            $phpConfigSource = preg_replace(
+                "/^(include_dir\=[^\n]+)/im",
+                "\n# Old include_dir value\n# $1\n" .
+                    "# New VirtPHP include_dir value:\n" .
+                    "include_dir=\"{$phpBuildIncludeDir}\"\n",
+                $phpConfigSource
+            );
+        }
+
+        // Replace extension_dir in php-config
+        $phpConfigSource = preg_replace(
+            "/^(extension_dir\=[^\n]+)/im",
+            "\n# Old extension_dir value\n# $1\n" .
+                "# New VirtPHP extension_dir value:\n" .
+                "extension_dir=\"{$this->getEnvPhpExtDir()}\"\n",
+            $phpConfigSource
+        );
+
+        $this->filesystem->dumpFile(
+            $this->getEnvBinDir() . DIRECTORY_SEPARATOR . "php-config",
+            $phpConfigSource,
+            0755
+        );
+
+        // Symlink to system phpize
+        $this->filesystem->symlink(
+            $this->getPhpBinDir() . DIRECTORY_SEPARATOR . "phpize",
+            $this->getEnvBinDir() . DIRECTORY_SEPARATOR . "phpize"
         );
     }
 
