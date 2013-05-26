@@ -156,6 +156,30 @@ class Creator
     /**
      * @return string
      */
+    public function getEnvBinDir()
+    {
+        return $this->getEnvPath() . DIRECTORY_SEPARATOR . "bin";
+    }
+
+    /**
+     * @return string
+     */
+    public function getEnvPhpExtDir()
+    {
+        return $this->getEnvPath() . DIRECTORY_SEPARATOR . "lib" . DIRECTORY_SEPARATOR . "php";
+    }
+
+    /**
+     * @return string
+     */
+    public function getEnvPhpIncDir()
+    {
+        return $this->getEnvPath() . DIRECTORY_SEPARATOR . "share" . DIRECTORY_SEPARATOR . "php";
+    }
+
+    /**
+     * @return string
+     */
     public function getPhpBinDir()
     {
         return $this->phpBinDir;
@@ -403,13 +427,13 @@ class Creator
             // this is our custom php.ini, look for replacement values...
             $phpIni = str_replace(
                 "__VIRTPHP_ENV_PHP_INCLUDE_PATH__",
-                $this->getEnvPath() . DIRECTORY_SEPARATOR . "share" . DIRECTORY_SEPARATOR . "php",
+                $this->getEnvPhpIncDir(),
                 $phpIni
             );
 
             $phpIni = str_replace(
                 "__VIRTPHP_ENV_PHP_EXTENSION_PATH__",
-                $this->getEnvPath() . DIRECTORY_SEPARATOR . "lib" . DIRECTORY_SEPARATOR . "php",
+                $this->getEnvPhpExtDir(),
                 $phpIni
             );
 
@@ -423,7 +447,7 @@ class Creator
                     "/^\s*(include_path\s*\=\s*[^\n]+)/im", 
                     "\n\n;; Old include_path value\n; $1\n".
                         ";; New VirtPHP include_path value:\n".
-                        "include_path = \".:".$this->getEnvPath() . DIRECTORY_SEPARATOR . "share" . DIRECTORY_SEPARATOR . "php\"\n", 
+                        "include_path = \".:" . $this->getEnvPhpIncDir() . "\"\n",
                     $phpIni
                 );
 
@@ -432,7 +456,7 @@ class Creator
                 $this->output->writeln("  adding new include_path setting with virtual env path");
                 
                 $phpIni .= "\n\n;; New VirtPHP include_path value:\n".
-                           "include_path = \".:".$this->getEnvPath() . DIRECTORY_SEPARATOR . "share" . DIRECTORY_SEPARATOR . "php\"\n";
+                           "include_path = \".:" . $this->getEnvPhpIncDir() . "\"\n";
 
             }
 
@@ -444,7 +468,7 @@ class Creator
                     "/^\s*(extension_dir\s*\=\s*[^\n]+)/im", 
                     "\n\n;; Old extension_dir value\n; $1\n".
                         ";; New VirtPHP extension_dir value:\n".
-                        "extension_dir = \"".$this->getEnvPath() . DIRECTORY_SEPARATOR . "lib" . DIRECTORY_SEPARATOR . "php\"\n", 
+                        "extension_dir = \"" . $this->getEnvPhpExtDir() . "\"\n",
                     $phpIni
                 );
 
@@ -453,7 +477,7 @@ class Creator
                 $this->output->writeln("  adding new extension_dir setting with virtual env path");
                 
                 $phpIni .= "\n\n;; New VirtPHP extension_dir value:\n".
-                           "extension_dir = \"".$this->getEnvPath() . DIRECTORY_SEPARATOR . "lib" . DIRECTORY_SEPARATOR . "php\"\n";
+                           "extension_dir = \"" . $this->getEnvPhpExtDir() . "\"\n";
             }
 
         }
@@ -479,7 +503,7 @@ class Creator
 EOD;
 
         $this->filesystem->dumpFile(
-            $this->getEnvPath() . DIRECTORY_SEPARATOR . "bin" . DIRECTORY_SEPARATOR . "php",
+            $this->getEnvBinDir() . DIRECTORY_SEPARATOR . "php",
             $phpBinWrapper,
             0755
         );
@@ -503,12 +527,12 @@ EOD;
 
         $pearBinWrapper = <<<EOD
 #!/bin/bash
-{$this->getEnvPath()}/bin/pear.pear -c {$this->getEnvPath()}/etc/pear.conf "$@"
+{$this->getEnvBinDir()}/pear.pear -c {$this->getEnvPath()}/etc/pear.conf "$@"
 EOD;
 
         $peclBinWrapper = <<<EOD
 #!/bin/bash
-{$this->getEnvPath()}/bin/pecl.pecl -c {$this->getEnvPath()}/etc/pear.conf "$@"
+{$this->getEnvBinDir()}/pecl.pecl -c {$this->getEnvPath()}/etc/pear.conf "$@"
 EOD;
 
         $this->filesystem->dumpFile(
@@ -543,23 +567,23 @@ EOD;
 
         $this->output->writeln("Renaming pear file.");
         $this->filesystem->rename(
-            $this->getEnvPath() . DIRECTORY_SEPARATOR . "bin" . DIRECTORY_SEPARATOR . "pear",
-            $this->getEnvPath() . DIRECTORY_SEPARATOR . "bin" . DIRECTORY_SEPARATOR . "pear.pear"
+            $this->getEnvBinDir() . DIRECTORY_SEPARATOR . "pear",
+            $this->getEnvBinDir() . DIRECTORY_SEPARATOR . "pear.pear"
         );
 
         $this->filesystem->dumpFile(
-            $this->getEnvPath() . DIRECTORY_SEPARATOR . "bin" . DIRECTORY_SEPARATOR . "pear",
+            $this->getEnvBinDir() . DIRECTORY_SEPARATOR . "pear",
             $pearBinWrapper,
             0755
         );
 
         $this->filesystem->rename(
-            $this->getEnvPath() . DIRECTORY_SEPARATOR . "bin" . DIRECTORY_SEPARATOR . "pecl",
-            $this->getEnvPath() . DIRECTORY_SEPARATOR . "bin" . DIRECTORY_SEPARATOR . "pecl.pecl"
+            $this->getEnvBinDir() . DIRECTORY_SEPARATOR . "pecl",
+            $this->getEnvBinDir() . DIRECTORY_SEPARATOR . "pecl.pecl"
         );
 
         $this->filesystem->dumpFile(
-            $this->getEnvPath() . DIRECTORY_SEPARATOR . "bin" . DIRECTORY_SEPARATOR . "pecl",
+            $this->getEnvBinDir() . DIRECTORY_SEPARATOR . "pecl",
             $peclBinWrapper,
             0755
         );
@@ -573,7 +597,7 @@ EOD;
         $this->output->writeln("Installing Composer locally");
 
         $process = new Process(
-            "curl -sS https://getcomposer.org/installer | php -- --install-dir=\"" . $this->getEnvPath() . DIRECTORY_SEPARATOR . "bin\""
+            "curl -sS https://getcomposer.org/installer | php -- --install-dir=\"{$this->getEnvBinDir()}\""
         );
 
         if ($process->run() != 0) {
@@ -581,8 +605,8 @@ EOD;
         }
 
         $this->filesystem->symlink(
-            $this->getEnvPath() . DIRECTORY_SEPARATOR . "bin" . DIRECTORY_SEPARATOR . "composer.phar",
-            $this->getEnvPath() . DIRECTORY_SEPARATOR . "bin" . DIRECTORY_SEPARATOR . "composer"
+            $this->getEnvBinDir() . DIRECTORY_SEPARATOR . "composer.phar",
+            $this->getEnvBinDir() . DIRECTORY_SEPARATOR . "composer"
         );
     }
 
@@ -599,7 +623,7 @@ EOD;
         $activateScript = str_replace("__VIRTPHP_ENV_PATH__", $this->getEnvPath(), $activateScript);
 
         $this->filesystem->dumpFile(
-            $this->getEnvPath() . DIRECTORY_SEPARATOR . "bin" . DIRECTORY_SEPARATOR . "activate",
+            $this->getEnvBinDir() . DIRECTORY_SEPARATOR . "activate",
             $activateScript,
             0644
         );
