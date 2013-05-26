@@ -516,14 +516,14 @@ EOD;
         $this->output->writeln("<comment>Downloading pear phar file, this could take a while...</comment>");
         $pearInstall = file_get_contents("http://pear.php.net/install-pear-nozlib.phar");
 
-        $pearBinWrapper = <<<EOD
-#!/bin/bash
-{$this->getEnvBinDir()}/pear.pear -c {$this->getEnvPath()}/etc/pear.conf "$@"
+        $pearBinSource = <<<EOD
+#!/bin/sh
+exec {$this->getEnvBinDir()}/php -C -q -d include_path={$this->getEnvPhpIncDir()} -d date.timezone=UTC -d output_buffering=1 -d variables_order=EGPCS -d open_basedir="" -d safe_mode=0 -d register_argc_argv="On" -d auto_prepend_file="" -d auto_append_file="" {$this->getEnvPhpIncDir()}/pearcmd.php -c {$this->getEnvPath()}/etc/pear.conf "$@"
 EOD;
 
-        $peclBinWrapper = <<<EOD
-#!/bin/bash
-{$this->getEnvBinDir()}/pecl.pecl -c {$this->getEnvPath()}/etc/pear.conf "$@"
+        $peclBinSource = <<<EOD
+#!/bin/sh
+exec {$this->getEnvBinDir()}/php -C -n -q -d include_path={$this->getEnvPhpIncDir()} -d date.timezone=UTC -d output_buffering=1 -d variables_order=EGPCS -d safe_mode=0 -d register_argc_argv="On" {$this->getEnvPhpIncDir()}/peclcmd.php -c {$this->getEnvPath()}/etc/pear.conf "$@"
 EOD;
 
         $this->filesystem->dumpFile(
@@ -556,26 +556,15 @@ EOD;
             0644
         );
 
-        $this->output->writeln("Renaming pear file.");
-        $this->filesystem->rename(
-            $this->getEnvBinDir() . DIRECTORY_SEPARATOR . "pear",
-            $this->getEnvBinDir() . DIRECTORY_SEPARATOR . "pear.pear"
-        );
-
         $this->filesystem->dumpFile(
             $this->getEnvBinDir() . DIRECTORY_SEPARATOR . "pear",
-            $pearBinWrapper,
+            $pearBinSource,
             0755
         );
 
-        $this->filesystem->rename(
-            $this->getEnvBinDir() . DIRECTORY_SEPARATOR . "pecl",
-            $this->getEnvBinDir() . DIRECTORY_SEPARATOR . "pecl.pecl"
-        );
-
         $this->filesystem->dumpFile(
             $this->getEnvBinDir() . DIRECTORY_SEPARATOR . "pecl",
-            $peclBinWrapper,
+            $peclBinSource,
             0755
         );
     }
