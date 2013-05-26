@@ -394,7 +394,7 @@ class Creator
             $phpIniPath = $this->getCustomPhpIni();
         } else {
             $this->output->writeln("Creating custom php.ini");
-            $phpIniPath = realpath(__DIR__ . "/../../../res/php.ini");
+            $phpIniPath = __DIR__ . "/../../../res/php.ini";
         }
 
         $phpIni = file_get_contents($phpIniPath);
