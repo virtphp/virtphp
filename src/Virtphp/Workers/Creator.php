@@ -334,7 +334,6 @@ class Creator
             $this->createVersionFile();
             $this->createPhpIni();
             $this->createPhpBinWrapper();
-            $this->copyLibraries();
             $this->installPear();
             $this->installComposer();
             $this->copyActivateScript();
@@ -507,14 +506,6 @@ EOD;
             $phpBinWrapper,
             0755
         );
-    }
-
-    /**
-     * [Placeholder method, not currently used]
-     */
-    protected function copyLibraries()
-    {
-        //$this->output->writeln("Copying other libraries");
     }
 
     /**
