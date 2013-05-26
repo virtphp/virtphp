@@ -497,8 +497,8 @@ class Creator
         $this->output->writeln("Wrapping PHP binary");
 
         $phpBinWrapper = <<<EOD
-#!/bin/bash
-{$this->getPhpBinDir()}/php -c {$this->getEnvPath()}/etc/php.ini "$@"
+#!/bin/sh
+exec {$this->getPhpBinDir()}/php -c {$this->getEnvPath()}/etc/php.ini "$@"
 EOD;
 
         $this->filesystem->dumpFile(
