@@ -24,6 +24,7 @@ package { [
         "php5-dev",
         "php5-curl",
         "php-pear",
+        "php5-xdebug"
     ]:
     ensure => "installed",
 }
