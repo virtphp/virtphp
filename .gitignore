@@ -3,3 +3,4 @@ composer.lock
 virtphp.phar
 composer.phar
 .vagrant/
+build/

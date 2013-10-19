@@ -5,9 +5,12 @@
         "symfony/finder": "~2.3",
         "symfony/process": "~2.3"
     },
+    "require-dev": {
+        "phpunit/phpunit": "~3.7"
+    },
     "autoload": {
         "psr-0": {
-            "Virtphp": "src/"
+            "Virtphp\\": "src/"
         }
     }
 }
