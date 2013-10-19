@@ -18,8 +18,21 @@ use Virtphp\Virtphp;
 
 class VirtphpTest extends TestCase
 {
-    public function testFoo()
+    /**
+     * @covers Virtphp\Virtphp::isValidName
+     */
+    public function testIsValidName()
     {
-        $this->assertTrue(true);
+        $names = array(
+            'foo-Bar_2013' => true,
+            'f123bar' => true,
+            'Afoobar' => true,
+            '5foo' => false,
+            'foo.bar' => false,
+        );
+
+        foreach ($names as $name => $expected) {
+            $this->assertEquals($expected, Virtphp::isValidName($name));
+        }
     }
 }
