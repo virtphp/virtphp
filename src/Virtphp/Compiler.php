@@ -66,7 +66,7 @@ class Compiler
             ->ignoreVCS(true)
             ->name("*.php")
             ->exclude("Tests")
-            ->in(__DIR__."/../../vendor/symfony/")
+            ->in(__DIR__."/../../vendor/")
         ;
 
         foreach ($finder as $file) {
@@ -76,14 +76,6 @@ class Compiler
         $this->addFile($phar, new \SplFileInfo(__DIR__."/../../res/php.ini"));
         $this->addFile($phar, new \SplFileInfo(__DIR__."/../../res/activate.sh"));
 
-        $this->addFile($phar, new \SplFileInfo(__DIR__."/../../vendor/autoload.php"));
-        $this->addFile($phar, new \SplFileInfo(__DIR__."/../../vendor/composer/autoload_namespaces.php"));
-        $this->addFile($phar, new \SplFileInfo(__DIR__."/../../vendor/composer/autoload_classmap.php"));
-        $this->addFile($phar, new \SplFileInfo(__DIR__."/../../vendor/composer/autoload_real.php"));
-        if (file_exists(__DIR__."/../../vendor/composer/include_paths.php")) {
-            $this->addFile($phar, new \SplFileInfo(__DIR__."/../../vendor/composer/include_paths.php"));
-        }
-        $this->addFile($phar, new \SplFileInfo(__DIR__."/../../vendor/composer/ClassLoader.php"));
         $this->addVirtphpBin($phar);
 
         // Stubs
