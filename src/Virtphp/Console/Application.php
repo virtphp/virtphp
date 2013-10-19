@@ -77,7 +77,7 @@ class Application extends BaseApplication
             $output->writeln("<warning>VirtPHP only officially supports PHP 5.3.3 and above, you will most likely encounter problems with your PHP ".PHP_VERSION.", upgrading is strongly recommended.</warning>");
         }
 
-        if (defined("COMPOSER_DEV_WARNING_TIME") && $this->getCommandName($input) !== "self-update") {
+        if (defined("VIRTPHP_DEV_WARNING_TIME") && $this->getCommandName($input) !== "self-update") {
             if (time() > VIRTPHP_DEV_WARNING_TIME) {
                 $output->writeln(sprintf("<warning>Warning: This development build of VirtPHP is over 30 days old. It is recommended to update it by running \"%s self-update\" to get the latest version.</warning>", $_SERVER["PHP_SELF"]));
             }
