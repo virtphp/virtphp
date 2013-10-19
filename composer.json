@@ -1,4 +1,27 @@
 {
+    "name": "virtphp/virtphp",
+    "description": "Virtual environment manager for PHP",
+    "keywords": ["virtual", "environment", "vm"],
+    "homepage": "http://virtphp.org/",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jordan Kasper",
+            "homepage": "http://jordankasper.com",
+            "role": "Developer"
+        },
+        {
+            "name": "Ben Ramsey",
+            "homepage": "http://benramsey.com",
+            "role": "Developer"
+        },
+        {
+            "name": "Jacques Woodcock",
+            "homepage": "http://jacqueswoodcock.tumblr.com",
+            "role": "Developer"
+        }
+    ],
     "require": {
         "symfony/console": "~2.3",
         "symfony/filesystem": "~2.3",
@@ -12,5 +35,8 @@
         "psr-0": {
             "Virtphp\\": "src/"
         }
-    }
+    },
+    "bin": [
+        "bin/virtphp"
+    ]
 }
