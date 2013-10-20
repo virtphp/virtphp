@@ -141,4 +141,12 @@ class ApplicationTest extends TestCase
             $this->assertInstanceOf('Symfony\Component\Console\Command\Command', $command);
         }
     }
+
+    /**
+     * @covers Virtphp\Console\Application::getLongVersion
+     */
+    public function testGetLongVersion()
+    {
+        $this->assertInternalType('string', $this->app->getLongVersion());
+    }
 }
