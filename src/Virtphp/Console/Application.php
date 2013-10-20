@@ -116,6 +116,14 @@ class Application extends BaseApplication
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function getLongVersion()
+    {
+        return parent::getLongVersion() . ' ' . Virtphp::RELEASE_DATE;
+    }
+
+    /**
      * Calls the parent run() method; used to mock in tests
      *
      * @codeCoverageIgnore
