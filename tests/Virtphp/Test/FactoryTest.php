@@ -27,7 +27,7 @@ class FactoryTest extends TestCase
 
         foreach (Factory::createAdditionalStyles() as $k => $v) {
             $this->assertInstanceOf(
-                'Symfony\Component\Console\Formatter\OutputFormatterStyle',
+                'Symfony\\Component\\Console\\Formatter\\OutputFormatterStyle',
                 $v
             );
         }

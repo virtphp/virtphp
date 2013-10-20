@@ -33,7 +33,7 @@ class CommandTest extends TestCase
     public function testGetFilesystem()
     {
         $this->assertInstanceOf(
-            'Symfony\Component\Filesystem\Filesystem',
+            'Symfony\\Component\\Filesystem\\Filesystem',
             $this->command->getFilesystem()
         );
     }
@@ -44,7 +44,7 @@ class CommandTest extends TestCase
     public function testGetProcess()
     {
         $this->assertInstanceOf(
-            'Symfony\Component\Process\Process',
+            'Symfony\\Component\\Process\\Process',
             $this->command->getProcess('ls .')
         );
     }
@@ -59,9 +59,9 @@ class CommandTest extends TestCase
         $rootPath = '/example/foo/bar/baz/d7c4fec4-392c-11e3-9a96-ce3f5508acd9';
 
         $this->assertInstanceOf(
-            'Virtphp\Workers\Destroyer',
+            'Virtphp\\Workers\\Destroyer',
             $this->command->getWorker(
-                'Virtphp\Workers\Destroyer',
+                'Virtphp\\Workers\\Destroyer',
                 array($input, $output, $rootPath)
             )
         );
@@ -77,7 +77,7 @@ class CommandTest extends TestCase
         $rootPath = '/example/foo/bar/baz/d7c4fec4-392c-11e3-9a96-ce3f5508acd9';
 
         $this->assertInstanceOf(
-            'Virtphp\Workers\Destroyer',
+            'Virtphp\\Workers\\Destroyer',
             $this->command->getWorker(
                 'Destroyer',
                 array($input, $output, $rootPath)

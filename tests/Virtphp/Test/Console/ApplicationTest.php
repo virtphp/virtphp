@@ -56,7 +56,7 @@ class ApplicationTest extends TestCase
         date_default_timezone_set('UTC');
         $app = new Application();
 
-        $this->assertInstanceOf('Virtphp\Console\Application', $app);
+        $this->assertInstanceOf('Virtphp\\Console\\Application', $app);
         $this->assertEquals('VirtPHP', $app->getName());
         $this->assertEquals('@package_version@', $app->getVersion());
         $this->assertEmpty(ini_get('xdebug.show_exception_trace'));
@@ -138,7 +138,7 @@ class ApplicationTest extends TestCase
         $this->assertInternalType('array', $commands);
 
         foreach ($commands as $command) {
-            $this->assertInstanceOf('Symfony\Component\Console\Command\Command', $command);
+            $this->assertInstanceOf('Symfony\\Component\\Console\\Command\\Command', $command);
         }
     }
 
