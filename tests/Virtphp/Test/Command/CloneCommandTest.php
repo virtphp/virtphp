@@ -14,6 +14,7 @@
 namespace Virtphp\Test\Command;
 
 use Virtphp\Command\CloneCommand;
+use Virtphp\Test\Mock\ClonerMock;
 use Virtphp\TestCase;
 use Virtphp\TestOutput;
 
@@ -37,12 +38,7 @@ class CloneCommandTest extends TestCase
      */
     public function testExecute()
     {
-        $cloner = $this->getMockBuilder('Virtphp\Workers\Cloner', array('execute'))
-            ->disableOriginalConstructor()
-            ->getMock();
-        $cloner->expects($this->any())
-            ->method('execute')
-            ->will($this->returnValue(true));
+        $cloner = new ClonerMock();
 
         $command = $this->getMock('Virtphp\Command\CloneCommand', array('isValidPath', 'getWorker'));
         $command->expects($this->any())
@@ -81,12 +77,7 @@ class CloneCommandTest extends TestCase
      */
     public function testExecuteWithInvalidName()
     {
-        $cloner = $this->getMockBuilder('Virtphp\Workers\Cloner', array('execute'))
-            ->disableOriginalConstructor()
-            ->getMock();
-        $cloner->expects($this->any())
-            ->method('execute')
-            ->will($this->returnValue(true));
+        $cloner = new ClonerMock();
 
         $command = $this->getMock('Virtphp\Command\CloneCommand', array('isValidPath', 'getWorker'));
         $command->expects($this->any())
@@ -121,12 +112,7 @@ class CloneCommandTest extends TestCase
      */
     public function testExecuteWithInvalidPath()
     {
-        $cloner = $this->getMockBuilder('Virtphp\Workers\Cloner', array('execute'))
-            ->disableOriginalConstructor()
-            ->getMock();
-        $cloner->expects($this->any())
-            ->method('execute')
-            ->will($this->returnValue(true));
+        $cloner = new ClonerMock();
 
         $command = $this->getMock('Virtphp\Command\CloneCommand', array('isValidPath', 'getWorker'));
         $command->expects($this->any())
@@ -157,12 +143,7 @@ class CloneCommandTest extends TestCase
      */
     public function testExecuteWithFailedExecution()
     {
-        $cloner = $this->getMockBuilder('Virtphp\Workers\Cloner', array('execute'))
-            ->disableOriginalConstructor()
-            ->getMock();
-        $cloner->expects($this->any())
-            ->method('execute')
-            ->will($this->returnValue(false));
+        $cloner = new ClonerMock(false);
 
         $command = $this->getMock('Virtphp\Command\CloneCommand', array('isValidPath', 'getWorker'));
         $command->expects($this->any())
