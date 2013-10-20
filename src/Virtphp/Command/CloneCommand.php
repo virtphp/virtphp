@@ -13,14 +13,11 @@
 
 namespace Virtphp\Command;
 
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Filesystem\Filesystem;
 use Virtphp\Virtphp;
-use Virtphp\Workers\Cloner;
 
 class CloneCommand extends Command
 {
@@ -64,8 +61,8 @@ class CloneCommand extends Command
             return false;
         }
 
-        // Logic for cloning directory 
-        $cloner = new Cloner($rootPath, $envName, $output);
+        // Logic for cloning directory
+        $cloner = $this->getWorker('Cloner', array($rootPath, $envName, $output));
         if ($cloner->execute()) {
             $output->writeln("<bg=green;options=bold>Your new cloned virtual php environment has been created.</bg=green;options=bold>");
             $output->writeln("<info>Cloned from: $rootPath</info>");
@@ -85,7 +82,7 @@ class CloneCommand extends Command
      */
     protected function isValidPath($rootPath, OutputInterface $output)
     {
-        $filesystem = new Filesystem();
+        $filesystem = $this->getFilesystem();
 
         if (!$filesystem->exists($rootPath)) {
             $output->writeln("<error>Sorry, but there is no VirtPHP environment at that location.</error>");
