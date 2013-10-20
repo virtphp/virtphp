@@ -21,6 +21,8 @@ use Symfony\Component\Process\Process;
  */
 class Compiler
 {
+    public $testNoTokenGetAll = false;
+
     private $version;
     private $versionDate;
 
@@ -36,13 +38,13 @@ class Compiler
             unlink($pharFile);
         }
 
-        $process = new Process('git log --pretty="%H" -n1 HEAD', __DIR__);
+        $process = $this->getProcess('git log --pretty="%H" -n1 HEAD', __DIR__);
         if ($process->run() != 0) {
             throw new \RuntimeException('Can\'t run git log. You must ensure to run compile from virtphp git repository clone and that git binary is available.');
         }
         $this->version = trim($process->getOutput());
 
-        $process = new Process('git log -n1 --pretty=%ci HEAD', __DIR__);
+        $process = $this->getProcess('git log -n1 --pretty=%ci HEAD', __DIR__);
         if ($process->run() != 0) {
             throw new \RuntimeException('Can\'t run git log. You must ensure to run compile from virtphp git repository clone and that git binary is available.');
         }
@@ -50,7 +52,7 @@ class Compiler
         $date->setTimezone(new \DateTimeZone('UTC'));
         $this->versionDate = $date->format('Y-m-d H:i:s');
 
-        $process = new Process('git describe --tags HEAD');
+        $process = $this->getProcess('git describe --tags HEAD');
         if ($process->run() == 0) {
             $this->version = trim($process->getOutput());
         }
@@ -60,7 +62,7 @@ class Compiler
 
         $phar->startBuffering();
 
-        $finder = new Finder();
+        $finder = $this->getFinder();
         $finder->files()
             ->ignoreVCS(true)
             ->name("*.php")
@@ -72,7 +74,7 @@ class Compiler
             $this->addFile($phar, $file);
         }
 
-        $finder = new Finder();
+        $finder = $this->getFinder();
         $finder->files()
             ->ignoreVCS(true)
             ->name("*.php")
@@ -131,7 +133,7 @@ class Compiler
      */
     private function stripWhitespace($source)
     {
-        if (!function_exists("token_get_all")) {
+        if (!function_exists("token_get_all") || $this->testNoTokenGetAll) {
             return $source;
         }
 
@@ -188,5 +190,27 @@ require "phar://virtphp.phar/bin/virtphp";
 
 __HALT_COMPILER();
 EOF;
+    }
+
+    /**
+     * Returns a Finder object for finding files/dirs
+     *
+     * @return Symfony\Component\Finder\Finder
+     */
+    public function getFinder()
+    {
+        return new Finder();
+    }
+
+    /**
+     * Returns a Process object for executing system commands
+     *
+     * @param string $command The system command to run
+     *
+     * @return Symfony\Component\Process\Process
+     */
+    public function getProcess($command)
+    {
+        return new Process($command);
     }
 }
