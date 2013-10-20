@@ -1,17 +1,6 @@
 <?php
 namespace Virtphp\Test\Mock;
 
-class ClonerMock
+class ClonerMock extends WorkerMock
 {
-    protected $executeReturn = true;
-
-    public function __construct($executeReturn = true)
-    {
-        $this->executeReturn = $executeReturn;
-    }
-
-    public function execute()
-    {
-        return $this->executeReturn;
-    }
 }

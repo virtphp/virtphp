@@ -38,15 +38,15 @@ class CloneCommandTest extends TestCase
      */
     public function testExecute()
     {
-        $cloner = new ClonerMock();
-
         $command = $this->getMock('Virtphp\Command\CloneCommand', array('isValidPath', 'getWorker'));
         $command->expects($this->any())
             ->method('isValidPath')
             ->will($this->returnValue(true));
         $command->expects($this->any())
             ->method('getWorker')
-            ->will($this->returnValue($cloner));
+            ->will($this->returnCallback(function($name, $args) {
+                return new ClonerMock($name, $args);
+            }));
 
         $execute = new \ReflectionMethod('Virtphp\Command\CloneCommand', 'execute');
         $execute->setAccessible(true);
@@ -77,15 +77,15 @@ class CloneCommandTest extends TestCase
      */
     public function testExecuteWithInvalidName()
     {
-        $cloner = new ClonerMock();
-
         $command = $this->getMock('Virtphp\Command\CloneCommand', array('isValidPath', 'getWorker'));
         $command->expects($this->any())
             ->method('isValidPath')
             ->will($this->returnValue(true));
         $command->expects($this->any())
             ->method('getWorker')
-            ->will($this->returnValue($cloner));
+            ->will($this->returnCallback(function($name, $args) {
+                return new ClonerMock($name, $args);
+            }));
 
         $execute = new \ReflectionMethod('Virtphp\Command\CloneCommand', 'execute');
         $execute->setAccessible(true);
@@ -112,15 +112,15 @@ class CloneCommandTest extends TestCase
      */
     public function testExecuteWithInvalidPath()
     {
-        $cloner = new ClonerMock();
-
         $command = $this->getMock('Virtphp\Command\CloneCommand', array('isValidPath', 'getWorker'));
         $command->expects($this->any())
             ->method('isValidPath')
             ->will($this->returnValue(false));
         $command->expects($this->any())
             ->method('getWorker')
-            ->will($this->returnValue($cloner));
+            ->will($this->returnCallback(function($name, $args) {
+                return new ClonerMock($name, $args);
+            }));
 
         $execute = new \ReflectionMethod('Virtphp\Command\CloneCommand', 'execute');
         $execute->setAccessible(true);
@@ -143,15 +143,15 @@ class CloneCommandTest extends TestCase
      */
     public function testExecuteWithFailedExecution()
     {
-        $cloner = new ClonerMock(false);
-
         $command = $this->getMock('Virtphp\Command\CloneCommand', array('isValidPath', 'getWorker'));
         $command->expects($this->any())
             ->method('isValidPath')
             ->will($this->returnValue(true));
         $command->expects($this->any())
             ->method('getWorker')
-            ->will($this->returnValue($cloner));
+            ->will($this->returnCallback(function($name, $args) {
+                return new ClonerMock($name, $args, false);
+            }));
 
         $execute = new \ReflectionMethod('Virtphp\Command\CloneCommand', 'execute');
         $execute->setAccessible(true);
