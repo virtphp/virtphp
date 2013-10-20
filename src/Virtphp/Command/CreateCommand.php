@@ -13,14 +13,11 @@
 
 namespace Virtphp\Command;
 
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Process\Process;
 use Virtphp\Virtphp;
-use Virtphp\Workers\Creator;
 
 class CreateCommand extends Command
 {
@@ -91,24 +88,24 @@ class CreateCommand extends Command
         }
 
         // Check for old .pearrc file conflict
-        $process = new Process("find ~/ -name \".pearrc\"");
+        $process = $this->getProcess("find ~/ -name \".pearrc\"");
         $process->run();
         if ($process->getOutput()) {
             $output->writeln(
                 "<warning>There is an old .pearrc file on your "
-                . "system that may prevent this virtPHP env from being created."
-                . " If an error occurs you can temporary move the .pearrc file "
+                . "system that may prevent this VirtPHP env from being created."
+                . " If an error occurs, you may temporarily move the .pearrc file "
                 . "while creating your virtual env.</warning>"
             );
         }
 
         // Setup environment
-        $creator = new Creator($input, $output, $envName, $installPath, $binDir);
+        $creator = $this->getWorker('Creator', array($input, $output, $envName, $installPath, $binDir));
         $creator->setCustomPhpIni($input->getOption("php-ini"));
         $creator->setCustomPearConf($input->getOption("pear-conf"));
         if ($creator->execute()) {
-            $output->writeln("<bg=green;options=bold>Yourr virtual php environment ($envName) has been created!</bg=green;options=bold>");
-            $output->writeln("<info>You can activate your new enviornment using: ~\$ source $envName/bin/activate</info>\n");
+            $output->writeln("<bg=green;options=bold>Your virtual php environment ($envName) has been created!</bg=green;options=bold>");
+            $output->writeln("<info>You can activate your new environment using: ~\$ source $envName/bin/activate</info>\n");
 
             return true;
         }
