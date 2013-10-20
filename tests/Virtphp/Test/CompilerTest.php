@@ -177,9 +177,12 @@ class CompilerTest extends TestCase
         $cmdOutput = null;
         exec("php {$this->testPhar} -V", $cmdOutput);
 
-        $this->assertEquals(
-            'VirtPHP version 2.4.0-9-g3645455 2013-09-17 22:34:06',
-            $cmdOutput[0]
-        );
+        // The expected string reads "VirtPHP version 2.4.0-9-g3645455 2013-09-17 22:34:06"
+        // but since it has console coloring, it comes out as a binary string,
+        // so we have it base64-encoded for testing
+        $expected = base64_decode('G1szMm1WaXJ0UEhQG1swbSB2ZXJzaW9uIBtbMzNtMi40LjAtOS1nMzY0NTQ1NRtbMG0gMjAxMy0wOS0xNyAyMjozNDowNg==');
+        $actual = $cmdOutput[0];
+
+        $this->assertEquals($expected, $actual);
     }
 }
