@@ -18,10 +18,9 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Virtphp\Util\Filesystem;
 
 
-class Cloner
+class Cloner extends AbstractWorker
 {
 
     /** 
@@ -48,11 +47,6 @@ class Cloner
      * @var OutputInterface
      */
     protected $output;
-
-    /**
-     * @var Virtphp\Util\Filesystem
-     */
-    protected $filesystem;
 
     /**
      * Constructs the clone worker
@@ -239,19 +233,5 @@ class Cloner
         }
 
         return $pearConfig;
-    }
-
-    /**
-     * Returns a filesystem object for use with operations in this class
-     *
-     * @return Virtphp\Util\Filesystem
-     */
-    public function getFilesystem()
-    {
-        if ($this->filesystem === null) {
-            $this->filesystem = new Filesystem();
-        }
-
-        return $this->filesystem;
     }
 }

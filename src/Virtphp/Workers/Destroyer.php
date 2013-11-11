@@ -15,10 +15,9 @@ namespace Virtphp\Workers;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use InvalidArgumentException;
-use Virtphp\Util\Filesystem;
 
 
-class Destroyer
+class Destroyer extends AbstractWorker
 {
 
     /**
@@ -33,10 +32,6 @@ class Destroyer
      * @var string
      */
     private $rootPath;
-    /**
-     * @var Virtphp\Util\Filesystem
-     */
-    protected $filesystem;
 
 
     public function __construct(InputInterface $input, OutputInterface $output, $rootPath = null)
@@ -87,19 +82,5 @@ class Destroyer
     {
         $this->output->writeln("<info>Removing directory structure</info>");
         $this->getFilesystem()->remove($this->rootPath);
-    }
-
-    /**
-     * Returns a filesystem object for use with operations in this class
-     *
-     * @return Virtphp\Util\Filesystem
-     */
-    public function getFilesystem()
-    {
-        if ($this->filesystem === null) {
-            $this->filesystem = new Filesystem();
-        }
-
-        return $this->filesystem;
     }
 }

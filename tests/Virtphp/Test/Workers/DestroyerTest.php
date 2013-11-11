@@ -135,14 +135,4 @@ class DestroyerTest extends TestCase
             $this->output->messages[0]
         );
     }
-
-    /**
-     * @covers Virtphp\Workers\Destroyer::getFilesystem
-     */
-    public function testGetFilesystem()
-    {
-        $destroyer = new Destroyer($this->input, $this->output, '/foo/bar');
-
-        $this->assertInstanceOf('Virtphp\\Util\\Filesystem', $destroyer->getFilesystem());
-    }
 }

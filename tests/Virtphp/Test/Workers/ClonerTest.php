@@ -67,16 +67,6 @@ class ClonerTest extends TestCase
     }
 
     /**
-     * @covers Virtphp\Workers\Cloner::getFilesystem
-     */
-    public function testGetFilesystem()
-    {
-        $cloner = new Cloner($this->testOriginalEnv, $this->testClonedEnv, $this->output);
-
-        $this->assertInstanceOf('Virtphp\\Util\\Filesystem', $cloner->getFilesystem());
-    }
-
-    /**
      * @covers Virtphp\Workers\Cloner::execute
      * @covers Virtphp\Workers\Cloner::cloneEnv
      * @covers Virtphp\Workers\Cloner::updateActivateFile
