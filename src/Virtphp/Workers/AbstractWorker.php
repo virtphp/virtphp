@@ -12,6 +12,7 @@
 
 namespace Virtphp\Workers;
 
+use Symfony\Component\Process\Process;
 use Virtphp\Util\Filesystem;
 
 abstract class AbstractWorker
@@ -40,5 +41,17 @@ abstract class AbstractWorker
         }
 
         return $this->filesystem;
+    }
+
+    /**
+     * Returns a Process object for executing system commands
+     *
+     * @param string $command The system command to run
+     *
+     * @return Symfony\Component\Process\Process
+     */
+    public function getProcess($command)
+    {
+        return new Process($command);
     }
 }

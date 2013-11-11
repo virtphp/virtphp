@@ -35,4 +35,15 @@ class AbstractWorkerTest extends TestCase
     {
         $this->assertInstanceOf('Virtphp\\Util\\Filesystem', $this->worker->getFilesystem());
     }
+
+    /**
+     * @covers Virtphp\Workers\AbstractWorker::getProcess
+     */
+    public function testGetProcess()
+    {
+        $this->assertInstanceOf(
+            'Symfony\\Component\\Process\\Process',
+            $this->worker->getProcess('ls .')
+        );
+    }
 }
