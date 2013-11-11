@@ -13,10 +13,10 @@
 
 namespace Virtphp\Test\Workers;
 
-use Symfony\Component\Filesystem\Filesystem;
 use Virtphp\TestCase;
 use Virtphp\TestOutput;
 use Virtphp\Test\Mock\FilesystemMock;
+use Virtphp\Util\Filesystem;
 use Virtphp\Workers\Cloner;
 
 class ClonerTest extends TestCase
@@ -73,7 +73,7 @@ class ClonerTest extends TestCase
     {
         $cloner = new Cloner($this->testOriginalEnv, $this->testClonedEnv, $this->output);
 
-        $this->assertInstanceOf('Symfony\Component\Filesystem\Filesystem', $cloner->getFilesystem());
+        $this->assertInstanceOf('Virtphp\\Util\\Filesystem', $cloner->getFilesystem());
     }
 
     /**

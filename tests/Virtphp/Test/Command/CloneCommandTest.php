@@ -15,6 +15,7 @@ namespace Virtphp\Test\Command;
 
 use Virtphp\Command\CloneCommand;
 use Virtphp\Test\Mock\ClonerMock;
+use Virtphp\Test\Mock\FilesystemMock;
 use Virtphp\TestCase;
 use Virtphp\TestOutput;
 
@@ -174,15 +175,10 @@ class CloneCommandTest extends TestCase
      */
     public function testIsValidPath()
     {
-        $filesystem = $this->getMock('Symfony\Component\Filesystem\Filesystem', array('exists'));
-        $filesystem->expects($this->any())
-            ->method('exists')
-            ->will($this->returnValue(true));
-
         $command = $this->getMock('Virtphp\Command\CloneCommand', array('getFilesystem'));
         $command->expects($this->any())
             ->method('getFilesystem')
-            ->will($this->returnValue($filesystem));
+            ->will($this->returnValue(new FilesystemMock()));
 
         $isValidPath = new \ReflectionMethod('Virtphp\Command\CloneCommand', 'isValidPath');
         $isValidPath->setAccessible(true);
@@ -200,7 +196,7 @@ class CloneCommandTest extends TestCase
      */
     public function testIsValidPathNotExists()
     {
-        $filesystem = $this->getMock('Symfony\Component\Filesystem\Filesystem', array('exists'));
+        $filesystem = $this->getMock('Virtphp\Test\Mock\FilesystemMock', array('exists'));
         $filesystem->expects($this->any())
             ->method('exists')
             ->will($this->returnValue(false));
@@ -230,7 +226,7 @@ class CloneCommandTest extends TestCase
      */
     public function testIsValidPathNotValidVirtPhp()
     {
-        $filesystem = $this->getMock('Symfony\Component\Filesystem\Filesystem', array('exists'));
+        $filesystem = $this->getMock('Virtphp\Test\Mock\FilesystemMock', array('exists'));
         $filesystem->expects($this->any())
             ->method('exists')
             ->will($this->onConsecutiveCalls(true, false));
