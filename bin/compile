@@ -7,10 +7,12 @@ use Virtphp\Compiler;
 
 error_reporting(-1);
 ini_set('display_errors', 1);
+$file = 'virtphp.phar';
 
 try {
     $compiler = new Compiler();
-    $compiler->compile();
+    $compiler->compile($file);
+    chmod($file, 0755);
 } catch (\Exception $e) {
     echo 'Failed to compile phar: ['.get_class($e).'] '.$e->getMessage().' at '.$e->getFile().':'.$e->getLine();
     exit(1);
