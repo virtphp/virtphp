@@ -14,16 +14,16 @@ namespace Virtphp\Workers;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
 use Virtphp\Virtphp;
+use Virtphp\Util\Filesystem;
 use Virtphp\Workers\Destroyer;
 use InvalidArgumentException;
 
 class Creator
 {
     /**
-     * @var Filesystem
+     * @var Virtphp\Util\Filesystem
      */
     protected $filesystem;
 

@@ -18,7 +18,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Filesystem\Filesystem;
+use Virtphp\Util\Filesystem;
 
 
 class Cloner
@@ -50,7 +50,7 @@ class Cloner
     protected $output;
 
     /**
-     * @var Filesystem
+     * @var Virtphp\Util\Filesystem
      */
     protected $filesystem;
 
@@ -244,7 +244,7 @@ class Cloner
     /**
      * Returns a filesystem object for use with operations in this class
      *
-     * @return Symfony\Component\Filesystem\Filesystem
+     * @return Virtphp\Util\Filesystem
      */
     public function getFilesystem()
     {

@@ -12,10 +12,10 @@
 
 namespace Virtphp\Workers;
 
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use InvalidArgumentException;
+use Virtphp\Util\Filesystem;
 
 
 class Destroyer
@@ -34,7 +34,7 @@ class Destroyer
      */
     private $rootPath;
     /**
-     * @var Filesystem
+     * @var Virtphp\Util\Filesystem
      */
     protected $filesystem;
 

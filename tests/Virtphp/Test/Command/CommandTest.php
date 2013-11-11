@@ -33,7 +33,7 @@ class CommandTest extends TestCase
     public function testGetFilesystem()
     {
         $this->assertInstanceOf(
-            'Symfony\\Component\\Filesystem\\Filesystem',
+            'Virtphp\\Util\\Filesystem',
             $this->command->getFilesystem()
         );
     }

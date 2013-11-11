@@ -14,15 +14,15 @@
 namespace Virtphp\Command;
 
 use Symfony\Component\Console\Command\Command as ConsoleCommand;
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
+use Virtphp\Util\Filesystem;
 
 class Command extends ConsoleCommand
 {
     /**
      * Returns a Filesystem object for executing filesystem operations
      *
-     * @return Symfony\Component\Filesystem\Filesystem
+     * @return Virtphp\Util\Filesystem
      */
     public function getFilesystem()
     {
