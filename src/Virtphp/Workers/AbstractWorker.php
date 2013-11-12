@@ -20,7 +20,7 @@ abstract class AbstractWorker
     /**
      * @var Virtphp\Util\Filesystem
      */
-    protected $filesystem;
+    protected $filesystem = null;
 
     /**
      * Executes the worker, performing the primary job of the worker

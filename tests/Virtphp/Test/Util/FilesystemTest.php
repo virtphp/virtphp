@@ -22,6 +22,17 @@ use Virtphp\Util\Filesystem;
 class FilesystemTest extends TestCase
 {
     /**
+     * @covers Virtphp\Util\Filesystem::dirname
+     */
+    public function testDirname()
+    {
+        $expected = dirname(__FILE__);
+        $fs = new Filesystem();
+
+        $this->assertEquals($expected, $fs->dirname(__FILE__));
+    }
+
+    /**
      * @covers Virtphp\Util\Filesystem::getContents
      */
     public function testGetContents()
@@ -38,5 +49,16 @@ class FilesystemTest extends TestCase
 
         $deleted = unlink($file);
         $this->assertTrue($deleted);
+    }
+
+    /**
+     * @covers Virtphp\Util\Filesystem::realpath
+     */
+    public function testRealpath()
+    {
+        $expected = realpath(__FILE__);
+        $fs = new Filesystem();
+
+        $this->assertEquals($expected, $fs->realpath(__FILE__));
     }
 }

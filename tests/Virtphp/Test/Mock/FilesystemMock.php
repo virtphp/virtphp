@@ -40,4 +40,14 @@ class FilesystemMock
     {
         return 'foobar';
     }
+
+    public function realpath($path)
+    {
+        return $path;
+    }
+
+    public function dirname($path)
+    {
+        return dirname($path);
+    }
 }

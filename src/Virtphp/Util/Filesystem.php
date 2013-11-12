@@ -18,6 +18,18 @@ use Symfony\Component\Filesystem\Filesystem as SymfonyFilesystem;
 class Filesystem extends SymfonyFilesystem
 {
     /**
+     * Given a string containing the path of a file or directory, this will
+     * return the parent directory's path.
+     *
+     * @param string $path
+     * @return string
+     */
+    public function dirname($path)
+    {
+        return dirname($path);
+    }
+
+    /**
      * Returns the content of the specified file
      *
      * @param string $filename
@@ -37,5 +49,16 @@ class Filesystem extends SymfonyFilesystem
             $useIncludePath,
             $context
         );
+    }
+
+    /**
+     * Returns the canonicalized absolute pathname for the input $path
+     *
+     * @param string $path
+     * @return string|boolean The absolute path or boolean FALSE on failure
+     */
+    public function realpath($path)
+    {
+        return realpath($path);
     }
 }

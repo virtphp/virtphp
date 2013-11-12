@@ -21,6 +21,20 @@ use Virtphp\Util\ErrorHandler;
  */
 class ErrorHandlerTest extends TestCase
 {
+    protected $screamSetting;
+
+    protected function setUp()
+    {
+        $this->screamSetting = ini_get('xdebug.scream');
+    }
+
+    protected function tearDown()
+    {
+        // Return the scream setting back to its original setting
+        // so that other tests are not affected by this
+        ini_set('xdebug.scream', $this->screamSetting);
+    }
+
     /**
      * Test ErrorHandler handles notices
      */
@@ -70,6 +84,6 @@ class ErrorHandlerTest extends TestCase
 
         ErrorHandler::register();
 
-        array_merge(array(), 'string');
+        @array_merge(array(), 'string');
     }
 }
