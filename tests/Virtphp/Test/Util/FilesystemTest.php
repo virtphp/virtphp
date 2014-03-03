@@ -61,4 +61,29 @@ class FilesystemTest extends TestCase
 
         $this->assertEquals($expected, $fs->realpath(__FILE__));
     }
+
+    /**
+     * @covers Virtphp\Util\Filesystem::chdir
+     */
+    public function testChdir()
+    {
+        $cwd = getcwd();
+        $parentDir = dirname($cwd);
+        $fs = new Filesystem();
+
+        $this->assertTrue($fs->chdir('..'));
+        $this->assertEquals($parentDir, getcwd());
+
+        chdir($cwd);
+    }
+
+    /**
+     * @covers Virtphp\Util\Filesystem::isWritable
+     */
+    public function testIsWritable()
+    {
+        $fs = new Filesystem();
+
+        $this->assertTrue($fs->isWritable(__DIR__));
+    }
 }
