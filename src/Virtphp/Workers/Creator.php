@@ -313,7 +313,7 @@ class Creator extends AbstractWorker
 
             $this->checkEnvironment();
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->output->writeln("<error>ERROR: ".$e->getMessage()."</error>");
 
             return false;
@@ -331,10 +331,9 @@ class Creator extends AbstractWorker
             $this->installComposer();
             $this->copyActivateScript();
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->output->writeln("<error>ERROR: ".$e->getMessage()."</error>");
-            $destroyer = new Destroyer($this->input, $this->output, $this->getEnvBasePath());
-            $destroyer->execute();
+            $this->getDestroyer()->execute();
             $this->output->writeln("<info>System reverted</info>");
 
             return false;
@@ -356,8 +355,8 @@ class Creator extends AbstractWorker
         // if the directory exists, use it, otherwise see if it"s relative
         if ($this->getFilesystem()->exists($this->getEnvPath())) {
             throw new InvalidArgumentException("The directory for this environment already exists ({$this->getEnvPath()}).");
-        } else if (!is_writable($this->getEnvBasePath())) {
-            throw new InvalidArgumentException("The distination directory is not writable, and thus we cannot create the environment.");
+        } else if (!$this->getFilesystem()->isWritable($this->getEnvBasePath())) {
+            throw new InvalidArgumentException("The destination directory is not writable, and thus we cannot create the environment.");
         }
     }
 
@@ -525,7 +524,7 @@ EOD;
             0644
         );
 
-        chdir($this->getEnvPath());
+        $this->getFilesystem()->chdir($this->getEnvPath());
 
         $this->output->writeln("Installing PEAR");
         $process = $this->getProcess(
@@ -698,5 +697,16 @@ EOD;
         }
 
         return $pearConfig;
+    }
+
+    /**
+     * Returns a Destroyer object for use with rolling back, in the event of an error
+     *
+     * @return Destroyer
+     * @codeCoverageIgnore
+     */
+    protected function getDestroyer()
+    {
+        return new Destroyer($this->input, $this->output, $this->getEnvBasePath());
     }
 }

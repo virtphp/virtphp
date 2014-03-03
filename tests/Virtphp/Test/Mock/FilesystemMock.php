@@ -46,8 +46,23 @@ class FilesystemMock
         return $path;
     }
 
+    public function chdir()
+    {
+        return true;
+    }
+
     public function dirname($path)
     {
         return dirname($path);
+    }
+
+    public function isWritable($path)
+    {
+        return true;
+    }
+
+    public function symlink()
+    {
+        return true;
     }
 }

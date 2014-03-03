@@ -494,4 +494,524 @@ class CreatorTest extends TestCase
 
         $this->assertEquals($expectedSettings, $updatedConfig);
     }
+
+    /**
+     * @covers Virtphp\Workers\Creator::execute
+     * @covers Virtphp\Workers\Creator::checkEnvironment
+     * @covers Virtphp\Workers\Creator::createStructure
+     * @covers Virtphp\Workers\Creator::createVersionFile
+     * @covers Virtphp\Workers\Creator::createPhpIni
+     * @covers Virtphp\Workers\Creator::createPhpBinWrapper
+     * @covers Virtphp\Workers\Creator::installPear
+     * @covers Virtphp\Workers\Creator::installPhpConfigPhpize
+     * @covers Virtphp\Workers\Creator::installComposer
+     * @covers Virtphp\Workers\Creator::copyActivateScript
+     */
+    public function testExecute()
+    {
+        $filesystemMock = $this->getMock('Virtphp\Test\Mock\FilesystemMock', array('exists'));
+        $filesystemMock->expects($this->any())
+            ->method('exists')
+            ->will($this->onConsecutiveCalls(true, true, false, true, true));
+
+        $creator = $this->getMockBuilder('Virtphp\Workers\Creator')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getFilesystem', 'getProcess'))
+            ->getMock();
+        $creator->expects($this->any())
+            ->method('getFilesystem')
+            ->will($this->returnValue($filesystemMock));
+        $creator->expects($this->any())
+            ->method('getProcess')
+            ->will($this->returnCallback(function($command) {
+                return new ProcessMock($command, '/path/to/foo');
+            }));
+
+        $creator->__construct(
+            $this->input,
+            $this->output,
+            'myenv',
+            '/path/to/virtphp/project',
+            '/path/to/bin'
+        );
+
+
+        $this->assertTrue($creator->execute());
+
+        // Assert for output messages
+        $this->assertEquals(
+            'Checking current environment',
+            $this->output->messages[0]
+        );
+        $this->assertEquals(
+            'Creating directory structure',
+            $this->output->messages[1]
+        );
+        $this->assertEquals(
+            'Creating VirtPHP version file',
+            $this->output->messages[2]
+        );
+        $this->assertEquals(
+            'Creating custom php.ini',
+            $this->output->messages[3]
+        );
+        $this->assertEquals(
+            'Wrapping PHP binary',
+            $this->output->messages[4]
+        );
+        $this->assertEquals(
+            'Downloading pear phar file, this could take a while...',
+            $this->output->messages[5]
+        );
+        $this->assertEquals(
+            'Installing PEAR',
+            $this->output->messages[6]
+        );
+        $this->assertEquals(
+            'Saving pear.conf file.',
+            $this->output->messages[7]
+        );
+        $this->assertEquals(
+            'Installing Composer locally',
+            $this->output->messages[8]
+        );
+        $this->assertEquals(
+            'Installing activate/deactive script',
+            $this->output->messages[9]
+        );
+    }
+
+    /**
+     * @covers Virtphp\Workers\Creator::execute
+     * @covers Virtphp\Workers\Creator::checkEnvironment
+     */
+    public function testExecuteFailsEnvironmentCheck1()
+    {
+        $creator = $this->getMockBuilder('Virtphp\Workers\Creator')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getFilesystem', 'getProcess'))
+            ->getMock();
+        $creator->expects($this->any())
+            ->method('getFilesystem')
+            ->will($this->returnValue(new FilesystemMock()));
+        $creator->expects($this->any())
+            ->method('getProcess')
+            ->will($this->returnCallback(function($command) {
+                return new ProcessMock($command, '/path/to/foo');
+            }));
+
+        $creator->__construct(
+            $this->input,
+            $this->output,
+            'myenv',
+            '/path/to/virtphp/project',
+            '/path/to/bin'
+        );
+
+        $this->assertFalse($creator->execute());
+        $this->assertEquals(
+            'ERROR: The directory for this environment already exists (/path/to/virtphp/project/myenv).',
+            $this->output->messages[1]
+        );
+    }
+
+    /**
+     * @covers Virtphp\Workers\Creator::execute
+     * @covers Virtphp\Workers\Creator::checkEnvironment
+     */
+    public function testExecuteFailsEnvironmentCheck2()
+    {
+        $filesystemMock = $this->getMock('Virtphp\Test\Mock\FilesystemMock', array('exists', 'isWritable'));
+        $filesystemMock->expects($this->any())
+            ->method('exists')
+            ->will($this->onConsecutiveCalls(true, true, false));
+        $filesystemMock->expects($this->any())
+            ->method('isWritable')
+            ->will($this->returnValue(false));
+
+        $creator = $this->getMockBuilder('Virtphp\Workers\Creator')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getFilesystem', 'getProcess'))
+            ->getMock();
+        $creator->expects($this->any())
+            ->method('getFilesystem')
+            ->will($this->returnValue($filesystemMock));
+        $creator->expects($this->any())
+            ->method('getProcess')
+            ->will($this->returnCallback(function($command) {
+                return new ProcessMock($command, '/path/to/foo');
+            }));
+
+        $creator->__construct(
+            $this->input,
+            $this->output,
+            'myenv',
+            '/path/to/virtphp/project',
+            '/path/to/bin'
+        );
+
+        $this->assertFalse($creator->execute());
+        $this->assertEquals(
+            'ERROR: The destination directory is not writable, and thus we cannot create the environment.',
+            $this->output->messages[1]
+        );
+    }
+
+    /**
+     * @covers Virtphp\Workers\Creator::execute
+     * @covers Virtphp\Workers\Creator::checkEnvironment
+     * @covers Virtphp\Workers\Creator::setCustomPhpIni
+     * @covers Virtphp\Workers\Creator::createPhpIni
+     */
+    public function testCustomPhpIniNoIncludePathNoExtensionDir()
+    {
+        $customPhpIni = <<<EOD
+foo = "myfoo"
+bar = "mybar"
+EOD;
+
+        $expectedCustomPhpIniOutput = <<<EOD
+foo = "myfoo"
+bar = "mybar"
+
+;; New VirtPHP include_path value:
+include_path = ".:/path/to/virtphp/project/myenv/share/php"
+
+
+;; New VirtPHP extension_dir value:
+extension_dir = "/path/to/virtphp/project/myenv/lib/php"
+
+EOD;
+
+        $filesystemMock = $this->getMock('Virtphp\Test\Mock\FilesystemMock', array('exists', 'getContents'));
+        $filesystemMock->expects($this->any())
+            ->method('exists')
+            ->will($this->onConsecutiveCalls(true, true, false, true, true));
+        $filesystemMock->expects($this->any())
+            ->method('getContents')
+            ->will($this->returnValue($customPhpIni));
+
+        $creator = $this->getMockBuilder('Virtphp\Workers\Creator')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getFilesystem', 'getProcess'))
+            ->getMock();
+        $creator->expects($this->any())
+            ->method('getFilesystem')
+            ->will($this->returnValue($filesystemMock));
+        $creator->expects($this->any())
+            ->method('getProcess')
+            ->will($this->returnCallback(function($command) {
+                return new ProcessMock($command, '/path/to/foo');
+            }));
+
+        $creator->__construct(
+            $this->input,
+            $this->output,
+            'myenv',
+            '/path/to/virtphp/project',
+            '/path/to/bin'
+        );
+        $creator->setCustomPhpIni('/foo/php.ini');
+
+        $this->assertTrue($creator->execute());
+
+        $this->assertEquals(
+            'Configuring custom php.ini from /foo/php.ini',
+            $this->output->messages[3]
+        );
+        $this->assertEquals(
+            '  adding new include_path setting with virtual env path',
+            $this->output->messages[4]
+        );
+        $this->assertEquals(
+            '  adding new extension_dir setting with virtual env path',
+            $this->output->messages[5]
+        );
+        $this->assertEquals('/path/to/virtphp/project/myenv/etc/php.ini', $filesystemMock->dumpFile[1][0]);
+        $this->assertEquals($expectedCustomPhpIniOutput, $filesystemMock->dumpFile[1][1]);
+    }
+
+    /**
+     * @covers Virtphp\Workers\Creator::execute
+     * @covers Virtphp\Workers\Creator::checkEnvironment
+     * @covers Virtphp\Workers\Creator::setCustomPhpIni
+     * @covers Virtphp\Workers\Creator::createPhpIni
+     */
+    public function testCustomPhpIniWithIncludePathWithExtensionDir()
+    {
+        $customPhpIni = <<<EOD
+foo = "myfoo"
+bar = "mybar"
+include_path = ".:/path/to/old/share/php"
+extension_dir = "/path/to/old/lib/php"
+EOD;
+
+        $expectedCustomPhpIniOutput = <<<EOD
+foo = "myfoo"
+bar = "mybar"
+
+
+;; Old include_path value
+; include_path = ".:/path/to/old/share/php"
+;; New VirtPHP include_path value:
+include_path = ".:/path/to/virtphp/project/myenv/share/php"
+
+
+;; Old extension_dir value
+; extension_dir = "/path/to/old/lib/php"
+;; New VirtPHP extension_dir value:
+extension_dir = "/path/to/virtphp/project/myenv/lib/php"
+
+EOD;
+
+        $filesystemMock = $this->getMock('Virtphp\Test\Mock\FilesystemMock', array('exists', 'getContents'));
+        $filesystemMock->expects($this->any())
+            ->method('exists')
+            ->will($this->onConsecutiveCalls(true, true, false, true, true));
+        $filesystemMock->expects($this->any())
+            ->method('getContents')
+            ->will($this->returnValue($customPhpIni));
+
+        $creator = $this->getMockBuilder('Virtphp\Workers\Creator')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getFilesystem', 'getProcess'))
+            ->getMock();
+        $creator->expects($this->any())
+            ->method('getFilesystem')
+            ->will($this->returnValue($filesystemMock));
+        $creator->expects($this->any())
+            ->method('getProcess')
+            ->will($this->returnCallback(function($command) {
+                return new ProcessMock($command, '/path/to/foo');
+            }));
+
+        $creator->__construct(
+            $this->input,
+            $this->output,
+            'myenv',
+            '/path/to/virtphp/project',
+            '/path/to/bin'
+        );
+        $creator->setCustomPhpIni('/foo/php.ini');
+
+        $this->assertTrue($creator->execute());
+
+        $this->assertEquals(
+            'Configuring custom php.ini from /foo/php.ini',
+            $this->output->messages[3]
+        );
+        $this->assertEquals(
+            '  replacing active include_path with virtual env path',
+            $this->output->messages[4]
+        );
+        $this->assertEquals(
+            '  replacing active extension_dir with virtual env path',
+            $this->output->messages[5]
+        );
+        $this->assertEquals('/path/to/virtphp/project/myenv/etc/php.ini', $filesystemMock->dumpFile[1][0]);
+        $this->assertEquals($expectedCustomPhpIniOutput, $filesystemMock->dumpFile[1][1]);
+    }
+
+    /**
+     * @covers Virtphp\Workers\Creator::execute
+     * @covers Virtphp\Workers\Creator::installPear
+     */
+    public function testExecuteFailsWhenEncounteringProblemInstallingPear()
+    {
+        $destroyerMock = $this->getMockBuilder('Virtphp\Workers\Destroyer')
+            ->disableOriginalConstructor()
+            ->setMethods(array('execute'))
+            ->getMock();
+        $destroyerMock->expects($this->any())
+            ->method('execute')
+            ->will($this->returnValue(true));
+
+        $filesystemMock = $this->getMock('Virtphp\Test\Mock\FilesystemMock', array('exists'));
+        $filesystemMock->expects($this->any())
+            ->method('exists')
+            ->will($this->onConsecutiveCalls(true, true, false));
+
+        $processMock = $this->getMockBuilder('Virtphp\Test\Mock\ProcessMock')
+            ->disableOriginalConstructor()
+            ->setMethods(array('run'))
+            ->getMock();
+        $processMock->expects($this->any())
+            ->method('run')
+            ->will($this->onConsecutiveCalls(0, 1));
+
+        $creator = $this->getMockBuilder('Virtphp\Workers\Creator')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getDestroyer', 'getFilesystem', 'getProcess'))
+            ->getMock();
+        $creator->expects($this->any())
+            ->method('getDestroyer')
+            ->will($this->returnValue($destroyerMock));
+        $creator->expects($this->any())
+            ->method('getFilesystem')
+            ->will($this->returnValue($filesystemMock));
+        $creator->expects($this->any())
+            ->method('getProcess')
+            ->will($this->returnValue($processMock));
+
+        $creator->__construct(
+            $this->input,
+            $this->output,
+            'myenv',
+            '/path/to/virtphp/project',
+            '/path/to/bin'
+        );
+
+        $this->assertFalse($creator->execute());
+        $this->assertEquals(
+            'ERROR: Encountered a problem while trying to install PEAR.',
+            $this->output->messages[7]
+        );
+        $this->assertEquals(
+            'System reverted',
+            $this->output->messages[8]
+        );
+    }
+
+    /**
+     * @covers Virtphp\Workers\Creator::execute
+     * @covers Virtphp\Workers\Creator::installPhpConfigPhpize
+     */
+    public function testExecuteWithMissingPhpConfig()
+    {
+        $filesystemMock = $this->getMock('Virtphp\Test\Mock\FilesystemMock', array('exists'));
+        $filesystemMock->expects($this->any())
+            ->method('exists')
+            ->will($this->onConsecutiveCalls(true, true, false, false));
+
+        $creator = $this->getMockBuilder('Virtphp\Workers\Creator')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getFilesystem', 'getProcess'))
+            ->getMock();
+        $creator->expects($this->any())
+            ->method('getFilesystem')
+            ->will($this->returnValue($filesystemMock));
+        $creator->expects($this->any())
+            ->method('getProcess')
+            ->will($this->returnCallback(function($command) {
+                return new ProcessMock($command, '/path/to/foo');
+            }));
+
+        $creator->__construct(
+            $this->input,
+            $this->output,
+            'myenv',
+            '/path/to/virtphp/project',
+            '/path/to/bin'
+        );
+
+
+        $this->assertTrue($creator->execute());
+
+        $this->assertEquals(
+            'Could not find php-config in /path/to/bin. You will be unable to use pecl in this virtual environment. Install the PHP development package first, and then re-run VirtPHP.',
+            $this->output->messages[8]
+        );
+    }
+
+    /**
+     * @covers Virtphp\Workers\Creator::execute
+     * @covers Virtphp\Workers\Creator::installPhpConfigPhpize
+     */
+    public function testExecuteWithMissingPhpize()
+    {
+        $filesystemMock = $this->getMock('Virtphp\Test\Mock\FilesystemMock', array('exists'));
+        $filesystemMock->expects($this->any())
+            ->method('exists')
+            ->will($this->onConsecutiveCalls(true, true, false, true, false));
+
+        $creator = $this->getMockBuilder('Virtphp\Workers\Creator')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getFilesystem', 'getProcess'))
+            ->getMock();
+        $creator->expects($this->any())
+            ->method('getFilesystem')
+            ->will($this->returnValue($filesystemMock));
+        $creator->expects($this->any())
+            ->method('getProcess')
+            ->will($this->returnCallback(function($command) {
+                return new ProcessMock($command, '/path/to/foo');
+            }));
+
+        $creator->__construct(
+            $this->input,
+            $this->output,
+            'myenv',
+            '/path/to/virtphp/project',
+            '/path/to/bin'
+        );
+
+
+        $this->assertTrue($creator->execute());
+
+        $this->assertEquals(
+            'Could not find phpize in /path/to/bin. You will be unable to use pecl in this virtual environment. Install the PHP development package first, and then re-run VirtPHP.',
+            $this->output->messages[8]
+        );
+    }
+
+    /**
+     * @covers Virtphp\Workers\Creator::execute
+     * @covers Virtphp\Workers\Creator::installComposer
+     */
+    public function testExecuteFailsWhenEncounteringProblemInstallingComposer()
+    {
+        $destroyerMock = $this->getMockBuilder('Virtphp\Workers\Destroyer')
+            ->disableOriginalConstructor()
+            ->setMethods(array('execute'))
+            ->getMock();
+        $destroyerMock->expects($this->any())
+            ->method('execute')
+            ->will($this->returnValue(true));
+
+        $filesystemMock = $this->getMock('Virtphp\Test\Mock\FilesystemMock', array('exists'));
+        $filesystemMock->expects($this->any())
+            ->method('exists')
+            ->will($this->onConsecutiveCalls(true, true, false, true, true));
+
+        $processMock = $this->getMockBuilder('Virtphp\Test\Mock\ProcessMock')
+            ->disableOriginalConstructor()
+            ->setMethods(array('run'))
+            ->getMock();
+        $processMock->expects($this->any())
+            ->method('run')
+            ->will($this->onConsecutiveCalls(0, 0, 0, 1));
+
+        $creator = $this->getMockBuilder('Virtphp\Workers\Creator')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getDestroyer', 'getFilesystem', 'getProcess'))
+            ->getMock();
+        $creator->expects($this->any())
+            ->method('getDestroyer')
+            ->will($this->returnValue($destroyerMock));
+        $creator->expects($this->any())
+            ->method('getFilesystem')
+            ->will($this->returnValue($filesystemMock));
+        $creator->expects($this->any())
+            ->method('getProcess')
+            ->will($this->returnValue($processMock));
+
+        $creator->__construct(
+            $this->input,
+            $this->output,
+            'myenv',
+            '/path/to/virtphp/project',
+            '/path/to/bin'
+        );
+
+        $this->assertFalse($creator->execute());
+
+        $this->assertEquals(
+            'ERROR: Could not install Composer.',
+            $this->output->messages[9]
+        );
+        $this->assertEquals(
+            'System reverted',
+            $this->output->messages[10]
+        );
+    }
 }

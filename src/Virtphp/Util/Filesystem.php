@@ -18,6 +18,16 @@ use Symfony\Component\Filesystem\Filesystem as SymfonyFilesystem;
 class Filesystem extends SymfonyFilesystem
 {
     /**
+     * Changes the current working directory to the one provided
+     *
+     * @param string $path
+     */
+    public function chdir($path)
+    {
+        return chdir($path);
+    }
+
+    /**
      * Given a string containing the path of a file or directory, this will
      * return the parent directory's path.
      *
@@ -49,6 +59,17 @@ class Filesystem extends SymfonyFilesystem
             $useIncludePath,
             $context
         );
+    }
+
+    /**
+     * Returns true if the given path is writable
+     *
+     * @param string $path
+     * @return boolean
+     */
+    public function isWritable($path)
+    {
+        return is_writable($path);
     }
 
     /**
