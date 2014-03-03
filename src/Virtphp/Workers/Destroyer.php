@@ -12,13 +12,12 @@
 
 namespace Virtphp\Workers;
 
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use InvalidArgumentException;
 
 
-class Destroyer
+class Destroyer extends AbstractWorker
 {
 
     /**
@@ -33,10 +32,6 @@ class Destroyer
      * @var string
      */
     private $rootPath;
-    /**
-     * @var Filesystem
-     */
-    protected $filesystem;
 
 
     public function __construct(InputInterface $input, OutputInterface $output, $rootPath = null)
@@ -44,7 +39,6 @@ class Destroyer
         $this->input = $input;
         $this->output = $output;
         $this->setRootPath($rootPath);
-        $this->filesystem = new Filesystem();
     }
 
 
@@ -64,13 +58,13 @@ class Destroyer
     public function execute()
     {
 
-        if (!$this->filesystem->exists($this->rootPath)) {
+        if (!$this->getFilesystem()->exists($this->rootPath)) {
             $this->output->writeln("<error>This directory does not exist!</error>");
 
             return false;
         }
 
-        if (!$this->filesystem->exists($this->rootPath.DIRECTORY_SEPARATOR.".virtphp")) {
+        if (!$this->getFilesystem()->exists($this->rootPath.DIRECTORY_SEPARATOR.".virtphp")) {
             $this->output->writeln("<error>This directory does not contain a valid VirtPHP environment!</error>");
 
             return false;
@@ -87,7 +81,6 @@ class Destroyer
     protected function removeStructure()
     {
         $this->output->writeln("<info>Removing directory structure</info>");
-        $this->filesystem->remove($this->rootPath);
+        $this->getFilesystem()->remove($this->rootPath);
     }
-
 }

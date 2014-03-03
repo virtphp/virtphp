@@ -39,6 +39,8 @@ class Application extends BaseApplication
 |___/_/_/   \__/_/   /_/ /_/_/
 ";
 
+    public static $testPhpVersion = false;
+
     public function __construct()
     {
         if (function_exists("ini_set")) {
@@ -65,7 +67,7 @@ class Application extends BaseApplication
             $output = new ConsoleOutput(ConsoleOutput::VERBOSITY_NORMAL, null, $formatter);
         }
 
-        return parent::run($input, $output);
+        return $this->parentRun($input, $output);
     }
 
     /**
@@ -73,28 +75,24 @@ class Application extends BaseApplication
      */
     public function doRun(InputInterface $input, OutputInterface $output)
     {
-        if (version_compare(PHP_VERSION, "5.3.3", "<")) {
+        if (version_compare(PHP_VERSION, "5.3.3", "<") || self::$testPhpVersion) {
             $output->writeln("<warning>VirtPHP only officially supports PHP 5.3.3 and above, you will most likely encounter problems with your PHP ".PHP_VERSION.", upgrading is strongly recommended.</warning>");
         }
 
-        if (defined("COMPOSER_DEV_WARNING_TIME") && $this->getCommandName($input) !== "self-update") {
+        if (defined("VIRTPHP_DEV_WARNING_TIME") && $this->getCommandName($input) !== "self-update") {
             if (time() > VIRTPHP_DEV_WARNING_TIME) {
                 $output->writeln(sprintf("<warning>Warning: This development build of VirtPHP is over 30 days old. It is recommended to update it by running \"%s self-update\" to get the latest version.</warning>", $_SERVER["PHP_SELF"]));
             }
         }
 
-        $result = parent::doRun($input, $output);
-
-        if (isset($startTime)) {
-            $output->writeln("<info>Memory usage: ".round(memory_get_usage() / 1024 / 1024, 2)."MB (peak: ".round(memory_get_peak_usage() / 1024 / 1024, 2)."MB), time: ".round(microtime(true) - $startTime, 2)."s");
-        }
+        $result = $this->parentDoRun($input, $output);
 
         return $result;
     }
 
     /**
      * Return all help information and the VirtPHP ASCII logo
-     * 
+     *
      * @return string
      */
     public function getHelp()
@@ -115,5 +113,33 @@ class Application extends BaseApplication
         $commands[] = new Command\DestroyCommand();
 
         return $commands;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getLongVersion()
+    {
+        return parent::getLongVersion() . ' ' . Virtphp::RELEASE_DATE;
+    }
+
+    /**
+     * Calls the parent run() method; used to mock in tests
+     *
+     * @codeCoverageIgnore
+     */
+    protected function parentRun($input, $output)
+    {
+        return parent::run($input, $output);
+    }
+
+    /**
+     * Calls the parent doRun() method; used to mock in tests
+     *
+     * @codeCoverageIgnore
+     */
+    protected function parentDoRun($input, $output)
+    {
+        return parent::doRun($input, $output);
     }
 }

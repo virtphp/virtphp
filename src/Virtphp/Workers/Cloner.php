@@ -18,10 +18,9 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Filesystem\Filesystem;
 
 
-class Cloner
+class Cloner extends AbstractWorker
 {
 
     /** 
@@ -50,11 +49,6 @@ class Cloner
     protected $output;
 
     /**
-     * @var Filesystem
-     */
-    protected $filesystem;
-
-    /**
      * Constructs the clone worker
      *
      * @param string $originalPath
@@ -65,7 +59,6 @@ class Cloner
     {
         $this->originalPath = realpath($originalPath);
         $this->envName = $envName;
-        $this->filesystem = new Filesystem();
         $this->output = $output;
     }
 
@@ -77,9 +70,9 @@ class Cloner
      */
     public function execute()
     {
-        $this->output->writeln("<comment>Cloning virtPHP env from " . $this->originalPath . " to ./" . $this->envName . "</comment>");
-        $this->filesystem->mkdir($this->envName);
+        $this->getFilesystem()->mkdir($this->envName);
         $this->realPath = realpath($this->envName);
+        $this->output->writeln("<comment>Cloning virtPHP env from " . $this->originalPath . " to " . $this->realPath . "</comment>");
 
         try {
 
@@ -89,15 +82,17 @@ class Cloner
             $this->createPhpBinWrapper();
             $this->sourcePear();
             $this->output->writeln("Setting proper permissions on cloned bin directory");
-            $this->filesystem->chmod($this->realPath . DIRECTORY_SEPARATOR . "bin", 0755, 0000, true);
+            $this->getFilesystem()->chmod($this->realPath . DIRECTORY_SEPARATOR . "bin", 0755, 0000, true);
 
             return true;
 
-        } catch (Exception $e) {
-            //$this->filesystem->remove($this->realPath);
+        } catch (\Exception $e) {
+
+            $this->getFilesystem()->remove($this->realPath);
             $this->output->writeln("<error>Error: cloning directory failed.</error>");
 
             return false;
+
         }
 
     }
@@ -110,7 +105,7 @@ class Cloner
     protected function cloneEnv()
     {
         $this->output->writeln("Copying contents of " . $this->originalPath . " to " . $this->realPath);
-        $this->filesystem->mirror($this->originalPath, $this->realPath);
+        $this->getFilesystem()->mirror($this->originalPath, $this->realPath);
     }
 
     /**
@@ -123,23 +118,23 @@ class Cloner
         $this->output->writeln("Updating activate file.");
         // Get paths for files and folers
         $activateFilePath = $this->realPath . DIRECTORY_SEPARATOR . "bin" . DIRECTORY_SEPARATOR . "activate";
-        if (!file_exists($activateFilePath)) {
+        if (!$this->getFilesystem()->exists($activateFilePath)) {
             $activateFilePath .= ".sh";
         }
 
         // GET activate of new directory to replace path variable
-        $originalContents = file_get_contents($activateFilePath);
+        $originalContents = $this->getFilesystem()->getContents($activateFilePath);
 
         // Replace paths from old env to new cloned env
         $newContents = str_replace($this->originalPath, $this->realPath, $originalContents);
 
         // remove file to avoide collision
-        if (file_exists($activateFilePath)) {
-            $this->filesystem->remove($activateFilePath);
+        if ($this->getFilesystem()->exists($activateFilePath)) {
+            $this->getFilesystem()->remove($activateFilePath);
         }
 
         // Write activate file again
-        $this->filesystem->dumpFile($activateFilePath, $newContents, 0644);
+        $this->getFilesystem()->dumpFile($activateFilePath, $newContents, 0644);
     }
 
     /**
@@ -148,26 +143,29 @@ class Cloner
     protected function updatePhpIni()
     {
         $this->output->writeln("Updating PHP ini file.");
+
         // Get paths for files and folers
         $sharePath = DIRECTORY_SEPARATOR . "share" . DIRECTORY_SEPARATOR . "php";
-        $libPath = DIRECTORY_SEPARATOR . "lib" . DIRECTORY_SEPARATOR . "php"; 
+        $libPath = DIRECTORY_SEPARATOR . "lib" . DIRECTORY_SEPARATOR . "php";
         $iniPHPLocation = $this->realPath . DIRECTORY_SEPARATOR . "etc" . DIRECTORY_SEPARATOR . "php.ini"; 
 
-        $phpIni = file_get_contents($iniPHPLocation);
+        $phpIni = $this->getFilesystem()->getContents($iniPHPLocation);
 
+        // Replace the share path
         $phpIni = str_replace(
             $this->originalPath . $sharePath,
             $this->realPath . $sharePath,
             $phpIni
         );
 
+        // Replace the lib path
         $phpIni = str_replace(
-            $this->originalPath . $sharePath,
-            $this->realPath . $sharePath,
+            $this->originalPath . $libPath,
+            $this->realPath . $libPath,
             $phpIni
         );
 
-        $this->filesystem->dumpFile(
+        $this->getFilesystem()->dumpFile(
             $iniPHPLocation,
             $phpIni,
             0644
@@ -183,7 +181,7 @@ class Cloner
         $phpBinWrapPath = $this->realPath . DIRECTORY_SEPARATOR . "bin" . DIRECTORY_SEPARATOR . "php";
         $newIniPath = $this->realPath . DIRECTORY_SEPARATOR . "etc" . DIRECTORY_SEPARATOR . "php.ini";
 
-        $currentWrapper = file_get_contents($phpBinWrapPath);
+        $currentWrapper = $this->getFilesystem()->getContents($phpBinWrapPath);
 
         $newWrapper = str_replace(
             $this->originalPath . DIRECTORY_SEPARATOR . "etc" . DIRECTORY_SEPARATOR . "php.ini",
@@ -191,7 +189,7 @@ class Cloner
             $currentWrapper
         );
  
-        $this->filesystem->dumpFile(
+        $this->getFilesystem()->dumpFile(
             $this->realPath . DIRECTORY_SEPARATOR . "bin" . DIRECTORY_SEPARATOR . "php",
             $newWrapper,
             0644
@@ -205,12 +203,12 @@ class Cloner
     {
         $this->output->writeln("Updating virtual PEAR install and config");
 
-        $pearConfigContents = file_get_contents($this->realPath . DIRECTORY_SEPARATOR . "etc" . DIRECTORY_SEPARATOR . "pear.conf");
+        $pearConfigContents = $this->getFilesystem()->getContents($this->realPath . DIRECTORY_SEPARATOR . "etc" . DIRECTORY_SEPARATOR . "pear.conf");
         $pearConfigArray = unserialize($pearConfigContents);
 
         $newPearConfig = serialize($this->processConfigSettings($pearConfigArray));
 
-        $this->filesystem->dumpFile(
+        $this->getFilesystem()->dumpFile(
             $this->realPath . DIRECTORY_SEPARATOR . "etc" . DIRECTORY_SEPARATOR . "pear.conf",
             $newPearConfig,
             0644
@@ -236,5 +234,4 @@ class Cloner
 
         return $pearConfig;
     }
-
 }

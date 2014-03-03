@@ -21,6 +21,11 @@ use Symfony\Component\Process\Process;
  */
 class Compiler
 {
+    public $testNoTokenGetAll = false;
+
+    private $version;
+    private $versionDate;
+
     /**
      * Compiles virtphp into a single phar file
      *
@@ -33,13 +38,21 @@ class Compiler
             unlink($pharFile);
         }
 
-        $process = new Process("git log --pretty=\"%H\" -n1 HEAD", __DIR__);
+        $process = $this->getProcess('git log --pretty="%H" -n1 HEAD', __DIR__);
         if ($process->run() != 0) {
-            throw new \RuntimeException("Can\"t run git log. You must ensure to run compile from virtphp git repository clone and that git binary is available.");
+            throw new \RuntimeException('Can\'t run git log. You must ensure to run compile from virtphp git repository clone and that git binary is available.');
         }
         $this->version = trim($process->getOutput());
 
-        $process = new Process("git describe --tags HEAD");
+        $process = $this->getProcess('git log -n1 --pretty=%ci HEAD', __DIR__);
+        if ($process->run() != 0) {
+            throw new \RuntimeException('Can\'t run git log. You must ensure to run compile from virtphp git repository clone and that git binary is available.');
+        }
+        $date = new \DateTime(trim($process->getOutput()));
+        $date->setTimezone(new \DateTimeZone('UTC'));
+        $this->versionDate = $date->format('Y-m-d H:i:s');
+
+        $process = $this->getProcess('git describe --tags HEAD');
         if ($process->run() == 0) {
             $this->version = trim($process->getOutput());
         }
@@ -49,7 +62,7 @@ class Compiler
 
         $phar->startBuffering();
 
-        $finder = new Finder();
+        $finder = $this->getFinder();
         $finder->files()
             ->ignoreVCS(true)
             ->name("*.php")
@@ -61,12 +74,12 @@ class Compiler
             $this->addFile($phar, $file);
         }
 
-        $finder = new Finder();
+        $finder = $this->getFinder();
         $finder->files()
             ->ignoreVCS(true)
             ->name("*.php")
             ->exclude("Tests")
-            ->in(__DIR__."/../../vendor/symfony/")
+            ->in(__DIR__."/../../vendor/")
         ;
 
         foreach ($finder as $file) {
@@ -76,14 +89,6 @@ class Compiler
         $this->addFile($phar, new \SplFileInfo(__DIR__."/../../res/php.ini"));
         $this->addFile($phar, new \SplFileInfo(__DIR__."/../../res/activate.sh"));
 
-        $this->addFile($phar, new \SplFileInfo(__DIR__."/../../vendor/autoload.php"));
-        $this->addFile($phar, new \SplFileInfo(__DIR__."/../../vendor/composer/autoload_namespaces.php"));
-        $this->addFile($phar, new \SplFileInfo(__DIR__."/../../vendor/composer/autoload_classmap.php"));
-        $this->addFile($phar, new \SplFileInfo(__DIR__."/../../vendor/composer/autoload_real.php"));
-        if (file_exists(__DIR__."/../../vendor/composer/include_paths.php")) {
-            $this->addFile($phar, new \SplFileInfo(__DIR__."/../../vendor/composer/include_paths.php"));
-        }
-        $this->addFile($phar, new \SplFileInfo(__DIR__."/../../vendor/composer/ClassLoader.php"));
         $this->addVirtphpBin($phar);
 
         // Stubs
@@ -107,7 +112,8 @@ class Compiler
             $content = "\n".$content."\n";
         }
 
-        $content = str_replace("@package_version@", $this->version, $content);
+        $content = str_replace('@package_version@', $this->version, $content);
+        $content = str_replace('@release_date@', $this->versionDate, $content);
 
         $phar->addFromString($path, $content);
     }
@@ -127,7 +133,7 @@ class Compiler
      */
     private function stripWhitespace($source)
     {
-        if (!function_exists("token_get_all")) {
+        if (!function_exists("token_get_all") || $this->testNoTokenGetAll) {
             return $source;
         }
 
@@ -184,5 +190,27 @@ require "phar://virtphp.phar/bin/virtphp";
 
 __HALT_COMPILER();
 EOF;
+    }
+
+    /**
+     * Returns a Finder object for finding files/dirs
+     *
+     * @return Symfony\Component\Finder\Finder
+     */
+    public function getFinder()
+    {
+        return new Finder();
+    }
+
+    /**
+     * Returns a Process object for executing system commands
+     *
+     * @param string $command The system command to run
+     *
+     * @return Symfony\Component\Process\Process
+     */
+    public function getProcess($command)
+    {
+        return new Process($command);
     }
 }
