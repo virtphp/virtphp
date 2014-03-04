@@ -1,5 +1,8 @@
 # VirtPHP: Virtual PHP Environments
 
+[![Build Status](https://travis-ci.org/virtphp/virtphp.png?branch=master)](https://travis-ci.org/virtphp/virtphp)
+[![Coverage Status](https://coveralls.io/repos/virtphp/virtphp/badge.png)](https://coveralls.io/r/virtphp/virtphp)
+
 VirtPHP is a tool for creating and managing multiple isolated PHP environments on a single machine. It's like Python's [virtualenv](http://virtualenv.org), but for PHP.
 
 VirtPHP creates isolated environments so that you may run any number of PHP development projects, all using different versions of PEAR packages and different PECL extensions. You may even specify a different version of PHP, if your system has various installations of PHP.
