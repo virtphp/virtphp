@@ -1,7 +1,4 @@
-# VirtPHP: Virtual PHP Environments
-
-[![Build Status](https://travis-ci.org/virtphp/virtphp.png?branch=master)](https://travis-ci.org/virtphp/virtphp)
-[![Coverage Status](https://coveralls.io/repos/virtphp/virtphp/badge.png)](https://coveralls.io/r/virtphp/virtphp)
+<img src="http://virtphp.org/images/logo_lg.png" />
 
 VirtPHP is a tool for creating and managing multiple isolated PHP environments on a single machine. It's like Python's [virtualenv](http://virtualenv.org), but for PHP.
 
@@ -10,6 +7,9 @@ VirtPHP creates isolated environments so that you may run any number of PHP deve
 To install multiple versions of PHP, we suggest taking a look at the [phpenv](https://github.com/CHH/phpenv) and [php-build](https://github.com/CHH/php-build) projects and using VirtPHP with them, to manage multiple virtual PHP environments.
 
 **Note: VirtPHP is currently only targeted to command line `php` (php-cli) for *nix based systems.**
+
+[![Build Status](https://travis-ci.org/virtphp/virtphp.png?branch=master)](https://travis-ci.org/virtphp/virtphp)
+[![Coverage Status](https://coveralls.io/repos/virtphp/virtphp/badge.png)](https://coveralls.io/r/virtphp/virtphp)
 
 
 ## Installation
