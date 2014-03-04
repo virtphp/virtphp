@@ -1,147 +1,264 @@
-VirtPHP - Virtual PHP Environments
-==================================
+# VirtPHP: Virtual PHP Environments
 
-VirtPHP is a tool for creating and managing multiple isolated PHP environments on a single machine. Think [virtualenv](http://virtualenv.org) for PHP.
+VirtPHP is a tool for creating and managing multiple isolated PHP environments on a single machine. It's like Python's [virtualenv](http://virtualenv.org), but for PHP.
 
-VirtPHP creates isolated environments so that you may run any number of PHP development projects, all using different versions of PEAR packages and different PECL extensions. You may even specify a different version of PHP, if your system has various installations of PHP (i.e. you've built multiple versions for testing).
+VirtPHP creates isolated environments so that you may run any number of PHP development projects, all using different versions of PEAR packages and different PECL extensions. You may even specify a different version of PHP, if your system has various installations of PHP.
 
-__Note: VirtPHP is currently only targeted to command line `php` (php-cli) for *nix based systems.__
+To install multiple versions of PHP, we suggest taking a look at the [phpenv](https://github.com/CHH/phpenv) and [php-build](https://github.com/CHH/php-build) projects and using VirtPHP with them, to manage multiple virtual PHP environments.
 
-Installation
-------------
-
-TODO
+**Note: VirtPHP is currently only targeted to command line `php` (php-cli) for *nix based systems.**
 
 
-Usage
------
+## Installation
 
-__Basic Usage__
+Download the `virtphp.phar` file from the [latest release](https://github.com/virtphp/virtphp/releases) and place it in `/usr/local/bin` or wherever it's accessible from your `PATH`.
 
-```
-~$ virtphp install {env_name}
-```
+Optionally, you may clone this repository and [build the phar file yourself](#building-the-phar-file).
 
-This will create a new virtual PHP environment in the {env_name} directory within the current working directory. For example, if you were to run:
 
-```
-~$ cd /home/darth
-~$ virtphp install foobar
+## Usage
+
+VirtPHP is a command-line tool. To get started, you'll probably want to check out what it can do. To do this, just execute it without any arguments, like this:
+
+``` bash
+php virtphp.phar
 ```
 
-Then you would get a new directory: `/home/darth/foobar` which contains all of the files necessary for the virtual environment.
+If you have the phar file set executable (i.e. `chmod 755`), then you can execute it like this:
 
-_NOTE: This does not activate the environment, but merely create the structure (see below)._
-
-
-__Activate an Environment__
-
-Once an environment has been created (see above), run the following command from within the environment directory to activate it
-
-```
-~$ source /path/to/your/environment/bin/activate
+``` bash
+./virtphp.phar
 ```
 
-After running this command your shell will indicate you are in the new environment and `which php` will demonstrate your altered state:
+Or, if it's in your `PATH`, like this:
 
-```
-(env_name) ~$ which php
-/path/to/your/environment/bin/php
-```
-
-
-__Deactivate an Environment__
-
-When you want to revert back to your original PHP environment you can simply run:
-
-```
-(env_name) ~$ deactivate
+``` bash
+virtphp.phar
 ```
 
-_Notes: You can run `deactivate` from anywhere, any time within the same shell session. That said, if your shell session is close, the virtual environment will automatically be deactivated._
+We recommend putting it in your `PATH` and aliasing it to `virtphp`, so that you can run it like this:
 
-
-__Destroying a Virtual Environment__
-
-If you no longer want a virtual environment you can easily destroy it using:
-
-```
-~$ virtphp destroy /path/to/virtual/env
+``` bash
+virtphp
 ```
 
-_Note: This action is not reversible!_
+For convenience, the following examples will assume you have simply downloaded `virtphp.phar` and have not placed it in your `PATH` or set it executable.
 
+### Getting Started
 
-__Specifying a Different PHP binary__
+To create a new VirtPHP environment, use the `create` command:
 
-When you want to set up a new virtual environment using a specific PHP binary, pass in the path to the `bin` folder where the php binary is located with the `--php-bin-dir` option:
-
-```
-~$ virtphp install {env_name} --php-bin-dir="/path/to/bin"
-```
-
-_Note: The directory you specify MUST contain a valid php binary!_
-
-
-__Specify an Install Path__
-
-To specify a direct install path (versus one realtive to your working directory), simply use the `--install-path` option:
-
-```
-~$ virtphp install {env_name} --install-path="/home/darth/deathstar"
+``` bash
+php virtphp.phar create myenv
 ```
 
-Then you would get a new directory: `/home/darth/deathstar/{env_name}` which contains all of the files necessary for the virtual environment.
+By default, this will create a new PHP environment in `myenv/`, using your system PHP as the base.
 
+After creating the environment, you may activate it so that you now use the new environment in your shell:
 
-__Clone an Existing Environment__
-
-If necessary, you can clone an existing virtual environment in order to alter either one independently. Simply run the following command:
-
-```
-~$ virtphp clone /path/to/existing/env {new_env_name}
+``` bash
+source myenv/bin/activate
 ```
 
-You can specify an `--install-path` option if necessary (see above) otherwise the new environment will be installed in the current working directory.
+After activating your environment, you'll notice that your shell changes to include the name of your VirtPHP environment, like this:
 
-
-__Need Help?__
-
-```
-~$ virtphp help [command]
+``` bash
+(myenv) user@host:~$
 ```
 
+And, when you run `which php`, your shell session reports it is now using PHP from your VirtPHP environment:
+
+``` bash
+(myenv) user@host:~$ which php
+/home/user/myenv/bin/php
+```
+
+Now, let's install a PECL extension and a PEAR package.
+
+``` bash
+(myenv) user@host:~$ pecl install mongo
+(myenv) user@host:~$ pear config-set auto_discover 1
+(myenv) user@host:~$ pear install pear.phpunit.de/PHPUnit
+```
+
+_(I'm not showing any of the console output here, in case you were wondering.)_
+
+What's cool here is that you didn't have to use `sudo` to install these commands, and if you run `pear list -a`, you'll see both PHPUnit and pecl/mongo listed as being installed. Now, any project running in the current, activated VirtPHP environment can make use of these packages.
+
+To return your environment back to normal settings and discontinue using your VirtPHP environment, simply use the `deactivate` command. It doesn't matter where you are when you run it—it's available to your entire VirtPHP environment.
+
+``` bash
+deactivate
+```
+
+Now, depending on your base environment, when you run `pear list -a`, you won't see the PHPUnit or pecl/mongo packages that you just installed.
+
+To start up your VirtPHP environment again, just source the `activate` script for the VirtPHP environment you want to use.
+
+Altogether, that's pretty neat, huh?
+
+### Under the Covers
+
+When you create a new VirtPHP environment, it creates a new directory and sets up a virtual environment for PHP within it. For example, the `myenv/` environment directory looks something like this:
+
+```
+myenv/
+|-- bin/
+|   |-- activate
+|   |-- composer -> /home/user/myenv/bin/composer.phar*
+|   |-- composer.phar*
+|   |-- pear*
+|   |-- peardev*
+|   |-- pecl*
+|   |-- php*
+|   |-- php-config*
+|   |-- phpize -> /usr/bin/phpize*
+|   `-- phpunit*
+|-- etc/
+|   |-- pear.conf
+|   `-- php.ini
+|-- lib/
+|   `-- php/
+|       `-- mongo.so
+`-- share/
+    |-- pear/
+    `-- php/
+```
+
+When you activate the environment, the `bin/` directory becomes a part of your `PATH`. When you install a PECL extension, the extension is placed in `lib/php/` (as you can see in this example, with `mongo.so`), and when you install a PEAR package, it is placed in `share/php/` (and console commands are placed in `bin/`, as you can see in this example with `phpunit`).
+
+To be helpful, we have already installed [Composer](https://getcomposer.org) for you. When you activate a VirtPHP environment, then you have access to the `composer` command.
+
+### Advanced Concepts
+
+Let's say you need to use the same host machine to develop multiple projects, all requiring different versions of PHP and different versions of PECL extensions or PEAR packages. VirtPHP was made for this!
+
+#### Specifying a PHP Build for VirtPHP
+
+If you have multiple builds of PHP on your system, you can tell VirtPHP which one to use, when creating a new environment.
+
+``` bash
+php virtphp.phar create --php-bin-dir="/home/user/.phpenv/versions/5.4.25/bin" project1-env
+php virtphp.phar create --php-bin-dir="/home/user/.phpenv/versions/5.4.25/bin" project2-env
+```
+
+In this case, we have `project1-env` and `project2-env`, both of which use PHP 5.4.25. One of the projects, however uses the older pecl/mongo version 1.2 series, while the other project uses the pecl/mongo 1.4 series. VirtPHP makes the use of both extensions possible on the same system. Here's how:
+
+``` bash
+source project1-env/bin/activate # Activate project1
+pecl install mongo-1.2.12
+deactivate
+source project2-env/bin/activate # Activate project2
+pecl install mongo-1.4.5
+deactivate
+```
+
+Now, we are able to use version 1.2.12 of pecl/mongo, when working on project1-env, and we can use version 1.4.5 of pecl/mongo, when working on project2-env. We just need to activate the environment we are working on first.
+
+In the same way, working with different versions of PHP for other projects is simple. For example, in `project3-env`, we are using PHP 5.5.
+
+``` bash
+php virtphp.phar create --php-bin-dir="/home/user/.phpenv/versions/5.5.9/bin" project3-env
+```
+
+#### Using phpenv and php-build
+
+In the previous examples, we told VirtPHP to use a specific build of PHP when creating new environments. To use VirtPHP in this way, you'll need to install different builds of PHP. You can download the source, configure it, and build it on your own, or you may use [phpenv](https://github.com/CHH/phpenv) and [php-build](https://github.com/CHH/php-build) to do this for you.
+
+First, install phpenv and php-build on your system, like this (follow any instructions these commands print to the screen):
+
+``` bash
+git clone https://github.com/CHH/phpenv.git
+./phpenv/bin/phpenv-install.sh
+git clone https://github.com/CHH/php-build.git
+sudo ./php-build/install.sh
+sudo php-build --definitions
+```
+
+That last command should have printed out a list of PHP versions you can build with php-build. Now, we can build a few versions of PHP. This may take a while, so grab a few cups of coffee.
+
+``` bash
+php-build -i development 5.3.28 $HOME/.phpenv/versions/5.3.28
+php-build -i development 5.4.25 $HOME/.phpenv/versions/5.4.25
+php-build -i development 5.5.9 $HOME/.phpenv/versions/5.5.9
+php-build -i development 5.6.0alpha2 $HOME/.phpenv/versions/5.6.0alpha2
+phpenv rehash # This makes phpenv aware of the versions we've built
+phpenv versions # Prints out the builds phpenv knows about
+```
+
+_Please note: You may need to install the following packages. These are the package names for Debian-based systems. Your system may know them by different names._
+
+```
+autoconf
+bison
+build-essential
+curl
+flex
+libcurl3-openssl-dev
+libfreetype6-dev
+libjpeg62-dev
+libmcrypt-dev
+libpng-dev
+libtidy-dev
+libxml2-dev
+libxslt-dev
+re2c
+zlib1g-dev
+```
+
+Using `phpenv`, we can change the version of PHP we're currently using, like this:
+
+``` bash
+phpenv global 5.3.28
+```
+
+So, why would we need VirtPHP, if we can do this? VirtPHP goes beyond phpenv.
+
+With VirtPHP, you may install different PECL extensions, different PEAR packages, and manage separate `php.ini` configs for the same version and build of PHP. This way, projects you are developing that share the same PHP version but different configuration may be developed on the same system using different virtual PHP environments. VirtPHP can work together with phpenv to achieve this.
 
 
-Contributing
-------------
+## Contributing
 
-All code contributions - including those of people having commit access -
-must go through a pull request and approved by a core developer before being
-merged. This is to ensure proper review of all the code.
+If you would like to help, take a look at the [list of issues](http://github.com/virtphp/virtphp/issues). [Fork the project](https://github.com/virtphp/virtphp/fork), create a feature branch, and send us a pull request.
 
-Fork the project, create a feature branch, and send us a pull request.
+To ensure a consistent code base, you should make sure the code follows the [coding standards](http://symfony.com/doc/master/contributing/code/standards.html), which we borrowed from Symfony.
 
-To ensure a consistent code base, you should make sure the code follows
-the [Coding Standards](http://symfony.com/doc/2.0/contributing/code/standards.html)
-which we borrowed from Symfony.
+### Running the Tests
 
-If you would like to help take a look at the [list of issues](http://github.com/jwoodcock/virtphp/issues).
+You may use the provided Vagrantfile to start up a VM and run tests in a clean environment. You will need [VirtualBox](https://www.virtualbox.org/) and [Vagrant](http://www.vagrantup.com/) installed on your system.
+
+``` bash
+cd virtphp/
+vagrant up
+vagrant ssh
+cd /vagrant
+curl -sS https://getcomposer.org/installer | php
+php composer.phar install
+./vendor/bin/phpunit
+```
+
+### Building the Phar File
+
+VirtPHP is distributed as an executable [phar](http://php.net/phar) file. The `bin/compile` script handles building this file. To build the phar file, change to the location of your VirtPHP project clone and execute the `compile` script like this:
+
+``` bash
+./bin/compile
+```
+
+This should build a file named `virtphp.phar` in your current directory. You may move this file to wherever you like and use it for creating VirtPHP environments.
 
 
-Requirements
-------------
+## Requirements
 
-PHP 5.3.3 or above
+PHP 5.3.3 or above.
 
-Authors
--------
 
-* Jordan Kasper - http://github.com/jakerella
-* Jacques Woodcock - http://github.com/jwoodcock
-* Ben Ramsey - http://github.com/ramsey
+## License
 
-License
--------
+Copyright (c) 2013-2014 [Jordan Kasper](http://jordankasper.com), [Ben Ramsey](http://benramsey.com), [Jacques Woodcock](http://jacqueswoodcock.tumblr.com)
 
-See the LICENSE file in the root for more information.
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
