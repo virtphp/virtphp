@@ -34,8 +34,8 @@
         "satooshi/php-coveralls": "~0.6"
     },
     "autoload": {
-        "psr-0": {
-            "Virtphp\\": "src/"
+        "psr-4": {
+            "Virtphp\\": "src/Virtphp/"
         }
     },
     "bin": [

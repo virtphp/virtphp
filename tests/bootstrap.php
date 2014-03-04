@@ -15,6 +15,4 @@ error_reporting(E_ALL);
 ini_set('xdebug.scream', 0);
 
 $loader = require __DIR__."/../src/bootstrap.php";
-$loader->add("Virtphp\Test", __DIR__);
-
-require __DIR__."/Virtphp/TestCase.php";
+$loader->addPsr4('Virtphp\\', __DIR__ . '/Virtphp/');
