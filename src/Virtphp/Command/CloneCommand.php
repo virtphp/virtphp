@@ -76,7 +76,7 @@ class CloneCommand extends Command
     /** 
      * Function to check path for valid binary location
      *
-     * @param string $path
+     * @param string $rootPath
      * @param  OutputInterface $output The output to use for the messages
      * @return  boolean
      */

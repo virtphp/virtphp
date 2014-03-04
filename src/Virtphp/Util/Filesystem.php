@@ -21,6 +21,7 @@ class Filesystem extends SymfonyFilesystem
      * Changes the current working directory to the one provided
      *
      * @param string $path
+     * @return boolean
      */
     public function chdir($path)
     {
@@ -45,7 +46,6 @@ class Filesystem extends SymfonyFilesystem
      * @param string $filename
      * @param boolean $useIncludePath
      * @param resource $context
-     * @param integer $offset
      *
      * @return string
      */

@@ -435,7 +435,7 @@ class Creator extends AbstractWorker
             if (preg_match("/^\s*include_path\s*\=\s*[^\n]+/im", $phpIni)) {
                 $this->output->writeln("  replacing active include_path with virtual env path");
                 $phpIni = preg_replace(
-                    "/^\s*(include_path\s*\=\s*[^\n]+)/im", 
+                    "/^\s*(include_path\s*\=\s*[^\n]+)/im",
                     "\n\n;; Old include_path value\n; $1\n".
                         ";; New VirtPHP include_path value:\n".
                         "include_path = \".:" . $this->getEnvPhpIncDir() . "\"\n",
@@ -456,7 +456,7 @@ class Creator extends AbstractWorker
             if (preg_match("/^\s*extension_dir\s*\=\s*[^\n]+/im", $phpIni)) {
                 $this->output->writeln("  replacing active extension_dir with virtual env path");
                 $phpIni = preg_replace(
-                    "/^\s*(extension_dir\s*\=\s*[^\n]+)/im", 
+                    "/^\s*(extension_dir\s*\=\s*[^\n]+)/im",
                     "\n\n;; Old extension_dir value\n; $1\n".
                         ";; New VirtPHP extension_dir value:\n".
                         "extension_dir = \"" . $this->getEnvPhpExtDir() . "\"\n",
@@ -591,8 +591,8 @@ EOD;
         $phpConfigSource = preg_replace(
             "/^(prefix\=[^\n]+)/im",
             "\n# Old prefix value\n# $1\n" .
-                "# New VirtPHP prefix value:\n" .
-                "prefix=\"{$this->getEnvPath()}\"\n",
+            "# New VirtPHP prefix value:\n" .
+            "prefix=\"{$this->getEnvPath()}\"\n",
             $phpConfigSource
         );
 
@@ -600,8 +600,8 @@ EOD;
         $phpConfigSource = preg_replace(
             "/^(exec_prefix\=[^\n]+)/im",
             "\n# Old exec_prefix value\n# $1\n" .
-                "# New VirtPHP exec_prefix value:\n" .
-                "exec_prefix=\"{$this->getEnvPath()}\"\n",
+            "# New VirtPHP exec_prefix value:\n" .
+            "exec_prefix=\"{$this->getEnvPath()}\"\n",
             $phpConfigSource
         );
 
@@ -610,8 +610,8 @@ EOD;
             $phpConfigSource = preg_replace(
                 "/^(include_dir\=[^\n]+)/im",
                 "\n# Old include_dir value\n# $1\n" .
-                    "# New VirtPHP include_dir value:\n" .
-                    "include_dir=\"{$phpBuildIncludeDir}\"\n",
+                "# New VirtPHP include_dir value:\n" .
+                "include_dir=\"{$phpBuildIncludeDir}\"\n",
                 $phpConfigSource
             );
         }
@@ -660,7 +660,7 @@ EOD;
     }
 
     /**
-     * Clones the actiavte script from this library and modifies for the 
+     * Clones the activate script from this library and modifies for the
      * new virtual environment
      */
     protected function copyActivateScript()
