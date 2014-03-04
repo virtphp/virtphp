@@ -1,8 +1,8 @@
 {
     "name": "virtphp/virtphp",
-    "description": "Virtual environment manager for PHP",
+    "description": "VirtPHP is a tool to create isolated PHP environments.",
     "keywords": ["virtual", "environment", "vm"],
-    "homepage": "http://virtphp.org/",
+    "homepage": "http://virtphp.org",
     "type": "project",
     "license": "MIT",
     "authors": [
