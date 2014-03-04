@@ -192,7 +192,7 @@ class CreateCommandTest extends TestCase
         $this->assertFalse($result);
         $this->assertCount(1, $output->messages);
         $this->assertEquals(
-            'Sorry, but that is not a valid envronment name.',
+            'Sorry, but that is not a valid environment name.',
             $output->messages[0]
         );
     }

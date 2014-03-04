@@ -116,7 +116,7 @@ class Cloner extends AbstractWorker
     protected function updateActivateFile()
     {
         $this->output->writeln("Updating activate file.");
-        // Get paths for files and folers
+        // Get paths for files and folders
         $activateFilePath = $this->realPath . DIRECTORY_SEPARATOR . "bin" . DIRECTORY_SEPARATOR . "activate";
         if (!$this->getFilesystem()->exists($activateFilePath)) {
             $activateFilePath .= ".sh";
@@ -128,7 +128,7 @@ class Cloner extends AbstractWorker
         // Replace paths from old env to new cloned env
         $newContents = str_replace($this->originalPath, $this->realPath, $originalContents);
 
-        // remove file to avoide collision
+        // remove file to avoid collision
         if ($this->getFilesystem()->exists($activateFilePath)) {
             $this->getFilesystem()->remove($activateFilePath);
         }
@@ -144,10 +144,10 @@ class Cloner extends AbstractWorker
     {
         $this->output->writeln("Updating PHP ini file.");
 
-        // Get paths for files and folers
+        // Get paths for files and folders
         $sharePath = DIRECTORY_SEPARATOR . "share" . DIRECTORY_SEPARATOR . "php";
         $libPath = DIRECTORY_SEPARATOR . "lib" . DIRECTORY_SEPARATOR . "php";
-        $iniPHPLocation = $this->realPath . DIRECTORY_SEPARATOR . "etc" . DIRECTORY_SEPARATOR . "php.ini"; 
+        $iniPHPLocation = $this->realPath . DIRECTORY_SEPARATOR . "etc" . DIRECTORY_SEPARATOR . "php.ini";
 
         $phpIni = $this->getFilesystem()->getContents($iniPHPLocation);
 
@@ -223,7 +223,7 @@ class Cloner extends AbstractWorker
      */
     protected function processConfigSettings(array $pearConfig = array())
     {
-        foreach($pearConfig as $key => &$value) {
+        foreach ($pearConfig as $key => &$value) {
             if (is_array($value)) {
                 $value = $this->processConfigSettings($value);
             }
