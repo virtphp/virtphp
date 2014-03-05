@@ -1,6 +1,6 @@
 {
     "name": "virtphp/virtphp",
-    "description": "VirtPHP is a tool to create isolated PHP environments.",
+    "description": "virtPHP is a tool to create isolated PHP environments.",
     "keywords": ["virtual", "environment", "vm"],
     "homepage": "http://virtphp.org",
     "type": "project",
