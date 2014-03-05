@@ -13,11 +13,11 @@ fi
 if [ "$VIRTPHP_ENV_PATH" ] ; then
     read -p "You are currently in a virtPHP session. Do you want to switch? y/n " yn
     case $yn in
-        NO) echo 'in no'; return 0;;
-        No) echo 'in no'; return 0;;
-        n) echo 'in no'; return 0;;
-        no) echo 'in no'; return 0;;
-        N) echo 'in no'; return 0;;
+        NO) return 0;;
+        No) return 0;;
+        n) return 0;;
+        no) return 0;;
+        N) return 0;;
     esac
 fi
 
