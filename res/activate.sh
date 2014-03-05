@@ -2,6 +2,24 @@
 # File activates VirtPHP for BASH
 ##
 
+# Check to see if a Virtual Environment and ask them to exit
+if [ "$VIRTUAL_ENV" ] ; then
+    echo "You are currently running a virtualenv session: $VIRTUAL_ENV"
+    echo "Please exit this session before starting a virtPHP session."
+    return 0
+fi
+
+# Check to see if switching virtPHP Environments
+if [ "$VIRTPHP_ENV_PATH" ] ; then
+    read -p "You are currently in a virtPHP session. Do you want to switch? y/n " yn
+    case $yn in
+        NO) echo 'in no'; return 0;;
+        No) echo 'in no'; return 0;;
+        n) echo 'in no'; return 0;;
+        no) echo 'in no'; return 0;;
+        N) echo 'in no'; return 0;;
+    esac
+fi
 
 # Function to make sure used variables are removed
 # before environment is setup
