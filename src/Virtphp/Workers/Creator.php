@@ -753,12 +753,12 @@ EOD;
 
         // Create new record to add
         $newRecord = array(
-            'name' => $this->getEnvBasePath(),
-            'path' => $this->getEnvName(),
+            'name' => $this->getEnvName(),
+            'path' => $this->getEnvBasePath(),
         );
 
         // Add to final object and then write to file
-        $envList[] = $newRecord;
+        $envList[$this->getEnvName()] = $newRecord;
 
         $this->output->writeln(
             'Write updated list to environments file.'
