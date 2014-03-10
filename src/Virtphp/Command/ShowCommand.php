@@ -75,7 +75,7 @@ class ShowCommand extends Command
                 'Shower',
                 array($output)
             );
-            if ($sync->resync($envName, $updatedPath)) {
+            if ($sync->updatePath($envName, $updatedPath)) {
                 return true;
             }
         }
