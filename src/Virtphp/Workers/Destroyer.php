@@ -71,6 +71,7 @@ class Destroyer extends AbstractWorker
         }
 
         $this->removeStructure();
+        $this->removeFromList();
 
         return true;
     }
