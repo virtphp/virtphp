@@ -84,4 +84,40 @@ class Destroyer extends AbstractWorker
         $this->output->writeln("<info>Removing directory structure</info>");
         $this->getFilesystem()->remove($this->rootPath);
     }
+
+    /**
+     * Removes the env from the environments.json file.
+     */
+    protected function removeFromList()
+    {
+        $this->output->writeln("<info>Removing environment from list</info>");
+        // if not, we create it then add this environment and path
+        $envPath = $_SERVER['HOME'] . DIRECTORY_SEPARATOR .  '.virtphp';
+        $envFile = 'environments.json';
+
+        if (
+            $this->getFilesystem()->exists(
+                $envPath . DIRECTORY_SEPARATOR . $envFile
+            )
+        ) {
+            // get contents, convert to array, add this env and path
+            $envContents = $this->getFilesystem()->getContents(
+                $envPath . DIRECTORY_SEPARATOR . $envFile
+            );
+
+            // get the env name from path
+            $path = explode(DIRECTORY_SEPARATOR, $this->getRootPath());
+            if (is_array($path)) {
+                $path = $path[count($path) - 1 ];
+            }
+            // Convert the contents to array
+            $envList = json_decode($envContents, true);
+            unset($envList[$path]);
+
+            $this->getFilesystem()->dumpFile(
+                $envPath . DIRECTORY_SEPARATOR . $envFile,
+                json_encode($envList)
+            );
+        }
+    }
 }
