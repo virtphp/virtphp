@@ -73,37 +73,11 @@ class ShowCommand extends Command
             // call the resync method
             $sync = $this->getWorker(
                 'Shower',
-                array($envName, $updatedPath, $output)
+                array($output)
             );
-            if ($sync->resync()) {
-                $output->writeln(
-                    '<bg=green;options=bold>' . $envName . ' resynced'
-                    . ' successfully to ' . $path . '</bg=green;options=bold>'
-                );
-
+            if ($sync->resync($envName, $updatedPath)) {
                 return true;
             }
-        }
-
-        // MOVE SOME OF THIS LOGIC TO WORKER
-        // Build the path to file
-        $envPath = $_SERVER['HOME'] . DIRECTORY_SEPARATOR .  '.virtphp';
-        $envFile = 'environments.json';
-
-        // If a resync was not requested, let's check to make sure we have
-        // a valid json file to read and read it
-        if (
-            !$this->getFilesystem()->exists(
-                $envPath . DIRECTORY_SEPARATOR . $envFile
-            )
-        ) {
-            $environments = json_decode(file_get_contents($pathToFile), true);
-        } else {
-            $output->writeln(
-                "<error>Either no environments have been created or"
-                . " the json file has been moved</error>"
-            );
-            return false;
         }
 
         // Logic for listing list of directories 
