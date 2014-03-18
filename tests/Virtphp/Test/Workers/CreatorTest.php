@@ -506,6 +506,7 @@ class CreatorTest extends TestCase
      * @covers Virtphp\Workers\Creator::installPhpConfigPhpize
      * @covers Virtphp\Workers\Creator::installComposer
      * @covers Virtphp\Workers\Creator::copyActivateScript
+     * @covers Virtphp\Workers\Creator::addEnvFile
      */
     public function testExecute()
     {
@@ -578,6 +579,22 @@ class CreatorTest extends TestCase
         $this->assertEquals(
             'Installing activate/deactive script',
             $this->output->messages[9]
+        );
+        $this->assertEquals(
+            'Creating .virtphp directory in user home folder.',
+            $this->output->messages[10]
+        );
+        $this->assertEquals(
+            'Create the environments.json file.',
+            $this->output->messages[11]
+        );
+        $this->assertEquals(
+            'Getting the contents of current environments file.',
+            $this->output->messages[12]
+        );
+        $this->assertEquals(
+            'Write updated list to environments file.',
+            $this->output->messages[13]
         );
     }
 
