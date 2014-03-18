@@ -74,6 +74,7 @@ class ClonerTest extends TestCase
      * @covers Virtphp\Workers\Cloner::createPhpBinWrapper
      * @covers Virtphp\Workers\Cloner::sourcePear
      * @covers Virtphp\Workers\Cloner::processConfigSettings
+     * @covers Virtphp\Workers\Cloner::addEnvToFile
      */
     public function testExecute()
     {
