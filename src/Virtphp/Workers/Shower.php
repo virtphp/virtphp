@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * This file is part of VirtPHP.
  *
  * (c) Jordan Kasper <github @jakerella> 
@@ -20,7 +20,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-
 class Shower extends AbstractWorker
 {
 
@@ -30,14 +29,19 @@ class Shower extends AbstractWorker
     protected $envPath;
 
     /**
-     * @var string 
+     * @var string
      */
     protected $file = 'environments.json';
 
     /**
-     * @var string 
+     * @var string
      */
     protected $filePath;
+
+    /**
+     * @var string
+     */
+    protected $tableHelper;
 
     /**
      * @var OutputInterface
@@ -56,6 +60,7 @@ class Shower extends AbstractWorker
         $this->envPath = $_SERVER['HOME'] . DIRECTORY_SEPARATOR . '.virtphp';
         $this->filePath = $this->envPath . DIRECTORY_SEPARATOR. $this->file;
         $this->output = $output;
+        $this->table = new TableHelper();
     }
 
     /**
@@ -78,15 +83,14 @@ class Shower extends AbstractWorker
             foreach ($envList as $key => $value) {
                 $tableValues[] = array(
                     'name' => $key,
-                    'path' => $value,
+                    'path' => $value['path'],
                 );
             }
 
             // build table
-            $table = new TableHelper();
-            $table->setHeaders(array('Name', 'Path'))->setRows($tableValues);
+            $this->getTableHelper()->setHeaders(array('Name', 'Path'))->setRows($tableValues);
             // render table
-            $table->render($this->output);
+            $this->getTableHelper()->render($this->output);
 
         } else {
             $this->output->writeln(
@@ -105,15 +109,14 @@ class Shower extends AbstractWorker
      *
      * @return boolean Weather or not the action was successful
      */
-    public function  updatePath($envName, $updatedPath)
+    public function updatePath($envName, $updatedPath)
     {
         // get list of environments and convert to array
         $envList = json_decode($this->getFileSystem()->getContents($this->filePath), true);
 
         if (!isset($envList[$envName])) {
             $this->output->writeln(
-                "<error>either no environments have been created on this system or"
-                . " the json file has been moved</error>"
+                '<error>' . $envName . ' was not found as a valid virtPHP environment.</error>'
             );
             return false;
         }
