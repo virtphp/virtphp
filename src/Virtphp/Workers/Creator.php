@@ -766,7 +766,5 @@ EOD;
             $envPath . DIRECTORY_SEPARATOR . $envFile,
             json_encode($envList)
         );
-
-        return true;
     }
 }
