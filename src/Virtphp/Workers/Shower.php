@@ -60,7 +60,7 @@ class Shower extends AbstractWorker
         $this->envPath = $_SERVER['HOME'] . DIRECTORY_SEPARATOR . '.virtphp';
         $this->filePath = $this->envPath . DIRECTORY_SEPARATOR. $this->file;
         $this->output = $output;
-        $this->table = new TableHelper();
+        $this->tableHelper = new TableHelper();
     }
 
     /**
@@ -111,6 +111,16 @@ class Shower extends AbstractWorker
      */
     public function updatePath($envName, $updatedPath)
     {
+        // get real path
+        $realPath = $this->getFilesystem()->realpath($updatedPath);
+
+        if (!$realPath) {
+            $this->output->writeln(
+                '<error>Path provided is not an actual path.</error>'
+            );
+            return false;
+        }
+
         // get list of environments and convert to array
         $envList = json_decode($this->getFileSystem()->getContents($this->filePath), true);
 
@@ -121,7 +131,7 @@ class Shower extends AbstractWorker
             return false;
         }
 
-        $envList[$envName] = $updatedPath;
+        $envList[$envName]['path'] = $realPath;
 
         $this->getFilesystem()->dumpFile($this->filePath, json_encode($envList));
 
