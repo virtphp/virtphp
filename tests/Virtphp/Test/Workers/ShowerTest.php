@@ -174,6 +174,36 @@ class ShowerTest extends TestCase
             $this->output->messages[0]
         );
     }
+
+    /**
+     * @covers Virtphp\Workers\Shower::updatePath
+     */
+    public function testUpdatePathBadPath()
+    {
+
+        $this->filesystemMock->expects($this->any())
+            ->method('getContents')
+            ->will($this->returnValue(
+                '{"mytest":{"name":"mytest","path":"\/Users\/virtPHP\/work\/virtphp"}}'
+            ));
+        $this->filesystemMock->expects($this->any())
+            ->method('exists')
+            ->will($this->returnValue(true));
+        $this->filesystemMock->expects($this->any())
+            ->method('realpath')
+            ->will($this->returnValue(''));
+
+        $target = 'noRecord';
+        $newPath = '';
+
+        $this->shower->setTableHelper(new TableMock());
+        $this->assertFalse($this->shower->updatePath($target, $newPath));
+        $this->assertCount(1, $this->output->messages);
+        $this->assertEquals(
+            'Path provided is not an actual path.',
+            $this->output->messages[0]
+        );
+    }
 }
 
 class TableMock
