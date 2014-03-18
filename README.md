@@ -106,7 +106,7 @@ So you've setup one or two or even eleven different environments. Keeping track 
 php virtphp.phar show
 ```
 
-This will give you a nice list of all the environments you've created and the path to each. 
+This will give you a nice list of all the environments you've created and the path to each.
 
 ``` bash
 +--------+--------------------------------------+
