@@ -25,7 +25,7 @@ class FilesystemMock
         return true;
     }
 
-    public function dumpFile($file, $contents, $mode)
+    public function dumpFile($file, $contents, $mode = '')
     {
         $this->dumpFile[] = array($file, $contents, $mode);
         return true;
@@ -62,6 +62,11 @@ class FilesystemMock
     }
 
     public function symlink()
+    {
+        return true;
+    }
+
+    public function touch()
     {
         return true;
     }
