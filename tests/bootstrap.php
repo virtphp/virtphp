@@ -12,6 +12,7 @@
  */
 
 error_reporting(E_ALL);
+date_default_timezone_set("America/Chicago");
 ini_set('xdebug.scream', 0);
 
 $loader = require __DIR__."/../src/bootstrap.php";
