@@ -83,6 +83,7 @@ class Cloner extends AbstractWorker
             $this->sourcePear();
             $this->output->writeln("Setting proper permissions on cloned bin directory");
             $this->getFilesystem()->chmod($this->realPath . DIRECTORY_SEPARATOR . "bin", 0755, 0000, true);
+            $this->addEnvToFile();
 
             return true;
 
@@ -233,5 +234,43 @@ class Cloner extends AbstractWorker
         }
 
         return $pearConfig;
+    }
+
+    /**
+     * Method to check to see if env json file is there and if not create it and
+     * add new env with path
+     */
+    protected function addEnvToFile()
+    {
+        $envPath = $_SERVER['HOME'] . DIRECTORY_SEPARATOR .  '.virtphp';
+        $envFile = 'environments.json';
+
+        $this->output->writeln(
+            'Getting the contents of current environments file.'
+        );
+        // get contents, convert to array, add this env and path
+        $envContents = $this->getFilesystem()->getContents(
+            $envPath . DIRECTORY_SEPARATOR . $envFile
+        );
+
+        // Convert the contents to array
+        $envList = json_decode($envContents, true);
+
+        // Create new record to add
+        $newRecord = array(
+            'name' => $this->envName,
+            'path' => $this->realPath,
+        );
+
+        // Add to final object and then write to file
+        $envList[$this->envName] = $newRecord;
+
+        $this->output->writeln(
+            'Write updated list to environments file.'
+        );
+        $this->getFilesystem()->dumpFile(
+            $envPath . DIRECTORY_SEPARATOR . $envFile,
+            json_encode($envList)
+        );
     }
 }
