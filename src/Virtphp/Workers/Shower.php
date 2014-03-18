@@ -130,4 +130,23 @@ class Shower extends AbstractWorker
         );
         return true;
     }
+
+    /**
+     * Method for returning the table object.
+     *
+     * @return object Table helper object
+     */
+    public function getTableHelper()
+    {
+        return $this->tableHelper;
+    }
+
+    /**
+     * Method for setting the table object.
+     *
+     */
+    public function setTableHelper($table)
+    {
+        $this->tableHelper = $table;
+    }
 }
