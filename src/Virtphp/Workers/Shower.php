@@ -49,7 +49,7 @@ class Shower extends AbstractWorker
     protected $output;
 
     /**
-     * Constructs the clone worker
+     * Constructs the shower worker
      *
      * @param string $originalPath
      * @param string $envName
