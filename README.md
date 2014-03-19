@@ -220,6 +220,12 @@ So, why would we need virtPHP, if we can do this? virtPHP goes beyond phpenv.
 With virtPHP, you may install different PECL extensions, different PEAR packages, and manage separate `php.ini` configs for the same version and build of PHP. This way, projects you are developing that share the same PHP version but different configuration may be developed on the same system using different virtual PHP environments. virtPHP can work together with phpenv to achieve this.
 
 
+## Known Issues
+
+* .pearrc issue  
+  > If you get an error stating the script couldn't access the `.pearrc` file (or can't find it), you can either try changing the permissions on your `[USER_DIR]/.pearrc` file or remove it entirely. This issue seems to occur sporadically.
+
+
 ## Contributing
 
 If you would like to help, take a look at the [list of issues](http://github.com/virtphp/virtphp/issues). [Fork the project](https://github.com/virtphp/virtphp/fork), create a feature branch, and send us a pull request.
