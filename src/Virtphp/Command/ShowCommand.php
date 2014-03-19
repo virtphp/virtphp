@@ -41,7 +41,7 @@ class ShowCommand extends Command
                 "path",
                 null,
                 InputOption::VALUE_REQUIRED,
-                "Location of existing VirtPHP to clone from.",
+                "New correct path for the provided environment.",
                 null
             );
     }
