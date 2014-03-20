@@ -86,16 +86,21 @@ class Shower extends AbstractWorker
             // convert to table formatted rows
             foreach ($envList as $key => $value) {
                 // get path to source
-                $sourcePath = $value['path']
+                $sourceBase = $value['path']
                     . DIRECTORY_SEPARATOR
-                    . $key
+                    . $key;
+                $sourcePath = $sourceBase
                     . DIRECTORY_SEPARATOR
                     . 'bin'
                     . DIRECTORY_SEPARATOR
                     . 'activate';
                 $warning = '';
                 // verify if path is real
-                if (!$this->getFilesystem()->realpath($sourcePath)) {
+                if (
+                    !$this->getFilesystem()->realpath(
+                        $sourceBase . DIRECTORY_SEPARATOR . '.virtphp'
+                    )
+                ) {
                     $warning = '(!)';
                     $envWarnings[] = $key;
                 }
