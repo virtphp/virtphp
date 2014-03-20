@@ -99,6 +99,39 @@ class ShowerTest extends TestCase
     /**
      * @covers Virtphp\Workers\Shower::execute
      */
+    public function testExecuteFailedRealPath()
+    {
+        $filesystemMock = $this->getMock(
+            'Virtphp\Test\Mock\FilesystemMock',
+            array('exists', 'realpath', 'getContents')
+        );
+        $filesystemMock->expects($this->any())
+            ->method('exists')
+            ->will($this->returnValue(true));
+        $filesystemMock->expects($this->any())
+            ->method('realpath')
+            ->will($this->returnValue(false));
+        $filesystemMock->expects($this->any())
+            ->method('getContents')
+            ->will($this->returnValue(
+                '{"mytest":{"name":"mytest","path":"\/Users\/Kite\/work\/virtphp"},"myenv":{"name":"myenv","path":"\/users\/Kite\/work\/theKit"}}'
+            ));
+
+        $shower = $this->getMockBuilder('Virtphp\Workers\Shower')
+            ->setConstructorArgs(array($this->output))
+            ->setMethods(array('getFilesystem'))
+            ->getMock();
+        $shower->expects($this->any())
+            ->method('getFilesystem')
+            ->will($this->returnValue($filesystemMock));
+
+        $this->assertTrue($shower->execute());
+        $this->assertNotCount(0, $this->output->messages);
+    }
+
+    /**
+     * @covers Virtphp\Workers\Shower::execute
+     */
     public function testExecuteExceptionReturnsFalse()
     {
         $filesystemMock = $this->getMock(
