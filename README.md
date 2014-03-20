@@ -222,7 +222,7 @@ With virtPHP, you may install different PECL extensions, different PEAR packages
 
 ## Known Issues
 
-* .pearrc not founc issue  
+* .pearrc not found issue  
   If you get an error stating the script couldn't access the `.pearrc` file (or can't find it), you can either try changing the permissions on your `[USER_DIR]/.pearrc` file or remove it entirely. This issue seems to occur sporadically.
 
 
