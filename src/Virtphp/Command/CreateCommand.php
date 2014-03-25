@@ -88,9 +88,7 @@ class CreateCommand extends Command
         }
 
         // Check for old .pearrc file conflict
-        $process = $this->getProcess("find ~/ -name \".pearrc\"");
-        $process->run();
-        if ($process->getOutput()) {
+        if ($this->getFilesystem()->exists(getenv("HOME")."/.pearrc")) {
             $output->writeln(
                 "<warning>There is an old .pearrc file on your "
                 . "system that may prevent this VirtPHP env from being created."

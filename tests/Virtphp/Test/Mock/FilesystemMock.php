@@ -4,6 +4,12 @@ namespace Virtphp\Test\Mock;
 class FilesystemMock
 {
     public $dumpFile = array();
+    public $exists;
+
+    public function __construct($exists = true)
+    {
+        $this->exists = $exists;
+    }
 
     public function mkdir()
     {
@@ -33,7 +39,7 @@ class FilesystemMock
 
     public function exists()
     {
-        return true;
+        return $this->exists;
     }
 
     public function getContents()
