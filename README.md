@@ -100,6 +100,40 @@ To start up your virtPHP environment again, just source the `activate` script fo
 
 Altogether, that's pretty neat, huh?
 
+So you've setup one or two or even eleven different environments. Keeping track of all of them in your head can lead to cluster headaches, right? So to list out all the environments you have installed, use the show command.
+
+``` bash
+php virtphp.phar show
+```
+
+This will give you a nice list of all the environments you've created and the path to each.
+
+``` bash
++--------+--------------------------------------+
+| Name   | Path                                 |
++--------+--------------------------------------+
+| mytest | /Users/virtPHP/work/project2/virtphp |
+| myenv  | /Users/virtPHP/work/project1/virtphp |
++--------+--------------------------------------+
+```
+
+Because virtPHP creates physical folders and files for all of it's work, make sure you use the built in commands for destroying or cloning environments, otherwise things can get messy. However, if an environment does get out of sync you can perform a resync of a particular environment.
+
+``` bash
+php virtphp.phar show --env=myenv --path=/Users/virtPHP/work/RealProject/virtphp
+```
+
+If you do another show, you will see the updated path in the list of your enviornments.
+
+``` bash
++--------+-----------------------------------------+
+| Name   | Path                                    |
++--------+-----------------------------------------+
+| mytest | /Users/virtPHP/work/project2/virtphp    |
+| myenv  | /Users/virtPHP/work/RealProject/virtphp |
++--------+-----------------------------------------+
+```
+
 ### Under the Covers
 
 When you create a new virtPHP environment, it creates a new directory and sets up a virtual environment for PHP within it. For example, the `myenv/` environment directory looks something like this:
