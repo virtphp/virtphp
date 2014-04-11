@@ -110,6 +110,10 @@ class Destroyer extends AbstractWorker
             if (is_array($path)) {
                 $path = $path[count($path) - 1 ];
             }
+
+            // make sure we don't have the trailing /
+            $path = str_replace('/', '', $path);
+
             // Convert the contents to array
             $envList = json_decode($envContents, true);
             unset($envList[$path]);
