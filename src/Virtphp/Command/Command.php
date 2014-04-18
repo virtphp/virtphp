@@ -47,7 +47,7 @@ class Command extends ConsoleCommand
      * @param string $worker Name of the worker
      * @param array $args Arguments to pass to the worker
      *
-     * @throws InvalidArgumentException if $worker does not exist
+     * @throws \InvalidArgumentException if $worker does not exist
      * @return mixed
      */
     public function getWorker($worker, $args)

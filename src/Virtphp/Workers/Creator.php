@@ -94,8 +94,10 @@ class Creator extends AbstractWorker
      * @param string $envName The name of the virtual environment
      * @param string $envBasePath The directory location where the virtual environment should be created
      * @param string $phpBinDir (optional) The directory where the php executable is located
+     *
+     * @throws \RuntimeException if $process->run() does not return 0
      */
-    public function __construct(
+	public function __construct(
         InputInterface $input,
         OutputInterface $output,
         $envName,
@@ -386,8 +388,8 @@ class Creator extends AbstractWorker
     }
 
     /**
-     * Creates the tracking file (.virtphp) which indicates that that 
-     * directory is a VirtPHP virtual environment (useful for 
+     * Creates the tracking file (.virtphp) which indicates that that
+     * directory is a VirtPHP virtual environment (useful for
      * Destroying and Cloning)
      */
     protected function createVersionFile()
@@ -402,7 +404,7 @@ class Creator extends AbstractWorker
     }
 
     /**
-     * Creates the new php.ini for the virtual env, replacing any 
+     * Creates the new php.ini for the virtual env, replacing any
      * directory paths with custom values
      */
     protected function createPhpIni()
@@ -433,7 +435,7 @@ class Creator extends AbstractWorker
 
         } else {
             // user supplied php.ini, so we need to do a bit more work...
-            
+
             // replace any active include_path settings with ours
             if (preg_match("/^\s*include_path\s*\=\s*[^\n]+/im", $phpIni)) {
                 $this->output->writeln("  replacing active include_path with virtual env path");
@@ -448,7 +450,7 @@ class Creator extends AbstractWorker
             } else {
                 // there was no active include_path, so add to the end
                 $this->output->writeln("  adding new include_path setting with virtual env path");
-                
+
                 $phpIni .= "\n\n;; New VirtPHP include_path value:\n".
                            "include_path = \".:" . $this->getEnvPhpIncDir() . "\"\n";
 
@@ -469,7 +471,7 @@ class Creator extends AbstractWorker
             } else {
                 // there was no active extension_dir, so add to the end
                 $this->output->writeln("  adding new extension_dir setting with virtual env path");
-                
+
                 $phpIni .= "\n\n;; New VirtPHP extension_dir value:\n".
                            "extension_dir = \"" . $this->getEnvPhpExtDir() . "\"\n";
             }
@@ -484,7 +486,7 @@ class Creator extends AbstractWorker
     }
 
     /**
-     * Creates a wrapper shell script around the actual PHP binary in order 
+     * Creates a wrapper shell script around the actual PHP binary in order
      * to use our custom php.ini (and any other options we may need)
      */
     protected function createPhpBinWrapper()
@@ -682,7 +684,7 @@ EOD;
     }
 
     /**
-     * Takes an array of PEAR config options and replaces path values with 
+     * Takes an array of PEAR config options and replaces path values with
      * alternates that point to the new virtual environment
      *
      * @param  array $pearConfig An array of options to update
