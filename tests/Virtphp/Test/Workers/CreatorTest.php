@@ -55,7 +55,7 @@ class CreatorTest extends TestCase
             ->will($this->returnValue(new FilesystemMock()));
         $this->dumbCreator->expects($this->any())
             ->method('getProcess')
-            ->will($this->returnCallback(function($command) {
+            ->will($this->returnCallback(function ($command) {
                 return new ProcessMock($command);
             }));
     }
@@ -65,7 +65,15 @@ class CreatorTest extends TestCase
      */
     public function testConstruct()
     {
-        $this->assertEmpty($this->dumbCreator->__construct($this->input, $this->output, 'myenv', '/foo/bar', '/path/to/php'));
+        $this->assertEmpty(
+            $this->dumbCreator->__construct(
+                $this->input,
+                $this->output,
+                'myenv',
+                '/foo/bar',
+                '/path/to/php'
+            )
+        );
         $this->assertInstanceOf('Virtphp\\Workers\\Creator', $this->dumbCreator);
         $this->assertEquals('myenv', $this->dumbCreator->getEnvName());
         $this->assertEquals('/foo/bar', $this->dumbCreator->getEnvBasePath());
@@ -91,7 +99,7 @@ class CreatorTest extends TestCase
             ->will($this->returnValue(new FilesystemMock()));
         $creator->expects($this->any())
             ->method('getProcess')
-            ->will($this->returnCallback(function($command) {
+            ->will($this->returnCallback(function ($command) {
                 return new ProcessMock($command, '/foo/system/path/to/php');
             }));
 
@@ -109,8 +117,11 @@ class CreatorTest extends TestCase
 
     /**
      * @covers Virtphp\Workers\Creator::__construct
-     * @expectedException RuntimeException
-     * @expectedExceptionMessage Can't find php on the system. If php is not in the PATH, please specify its location with --php-bin-dir.
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage Can't find php on the system.
+     *                           If php is not in the PATH,
+     *                           please specify its location with
+     *                           --php-bin-dir.
      */
     public function testConstructIsUnableToFindPhp()
     {
@@ -123,7 +134,7 @@ class CreatorTest extends TestCase
             ->will($this->returnValue(new FilesystemMock()));
         $creator->expects($this->any())
             ->method('getProcess')
-            ->will($this->returnCallback(function($command) {
+            ->will($this->returnCallback(function ($command) {
                 return new ProcessMock($command, false, 1);
             }));
 
@@ -142,8 +153,9 @@ class CreatorTest extends TestCase
 
     /**
      * @covers Virtphp\Workers\Creator::setEnvName
-     * @expectedException RuntimeException
-     * @expectedExceptionMessage Environment name must contain only letters, numbers, dashes, and underscores.
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage Environment name must contain only
+     *                           letters, numbers, dashes, and underscores.
      */
     public function testSetEnvNameWithInvalidName()
     {
@@ -246,7 +258,7 @@ class CreatorTest extends TestCase
 
     /**
      * @covers Virtphp\Workers\Creator::setPhpBinDir
-     * @expectedException InvalidArgumentException
+     * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage The specified php bin directory does not exist.
      */
     public function testSetPhpBinDirWhenDirNotExists()
@@ -269,7 +281,7 @@ class CreatorTest extends TestCase
 
     /**
      * @covers Virtphp\Workers\Creator::setPhpBinDir
-     * @expectedException InvalidArgumentException
+     * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage There is no php binary in the specified directory.
      */
     public function testSetPhpBinDirWhenBinaryNotExists()
@@ -292,8 +304,9 @@ class CreatorTest extends TestCase
 
     /**
      * @covers Virtphp\Workers\Creator::setPhpBinDir
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage The "php" file in the specified directory is not a valid php binary executable.
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage The "php" file in the specified directory
+     *                           is not a valid php binary executable.
      */
     public function testSetPhpBinDirWhenBinaryNotValid()
     {
@@ -306,7 +319,7 @@ class CreatorTest extends TestCase
             ->will($this->returnValue(new FilesystemMock()));
         $creator->expects($this->any())
             ->method('getProcess')
-            ->will($this->returnCallback(function($command) {
+            ->will($this->returnCallback(function ($command) {
                 return new ProcessMock($command, false, 1);
             }));
 
@@ -387,7 +400,7 @@ class CreatorTest extends TestCase
             ->will($this->returnValue($filesystemMock));
         $creator->expects($this->any())
             ->method('getProcess')
-            ->will($this->returnCallback(function($command) {
+            ->will($this->returnCallback(function ($command) {
                 return new ProcessMock($command);
             }));
 
@@ -408,7 +421,7 @@ class CreatorTest extends TestCase
     /**
      * @covers Virtphp\Workers\Creator::getCustomPearConf
      * @covers Virtphp\Workers\Creator::setCustomPearConf
-     * @expectedException InvalidArgumentException
+     * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Unable to unserialize custom PEAR config file
      */
     public function testSetCustomPearConfWithInvalidPearConf()
@@ -427,7 +440,7 @@ class CreatorTest extends TestCase
             ->will($this->returnValue($filesystemMock));
         $creator->expects($this->any())
             ->method('getProcess')
-            ->will($this->returnCallback(function($command) {
+            ->will($this->returnCallback(function ($command) {
                 return new ProcessMock($command);
             }));
 
@@ -439,7 +452,7 @@ class CreatorTest extends TestCase
     /**
      * @covers Virtphp\Workers\Creator::getCustomPearConf
      * @covers Virtphp\Workers\Creator::setCustomPearConf
-     * @expectedException InvalidArgumentException
+     * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Unable to get contents of custom PEAR config file
      */
     public function testSetCustomPearConfUnableToGetContents()
@@ -458,7 +471,7 @@ class CreatorTest extends TestCase
             ->will($this->returnValue($filesystemMock));
         $creator->expects($this->any())
             ->method('getProcess')
-            ->will($this->returnCallback(function($command) {
+            ->will($this->returnCallback(function ($command) {
                 return new ProcessMock($command);
             }));
 
@@ -524,7 +537,7 @@ class CreatorTest extends TestCase
             ->will($this->returnValue($filesystemMock));
         $creator->expects($this->any())
             ->method('getProcess')
-            ->will($this->returnCallback(function($command) {
+            ->will($this->returnCallback(function ($command) {
                 return new ProcessMock($command, '/path/to/foo');
             }));
 
@@ -613,7 +626,7 @@ class CreatorTest extends TestCase
             ->will($this->returnValue(new FilesystemMock()));
         $creator->expects($this->any())
             ->method('getProcess')
-            ->will($this->returnCallback(function($command) {
+            ->will($this->returnCallback(function ($command) {
                 return new ProcessMock($command, '/path/to/foo');
             }));
 
@@ -655,7 +668,7 @@ class CreatorTest extends TestCase
             ->will($this->returnValue($filesystemMock));
         $creator->expects($this->any())
             ->method('getProcess')
-            ->will($this->returnCallback(function($command) {
+            ->will($this->returnCallback(function ($command) {
                 return new ProcessMock($command, '/path/to/foo');
             }));
 
@@ -700,7 +713,10 @@ extension_dir = "/path/to/virtphp/project/myenv/lib/php"
 
 EOD;
 
-        $filesystemMock = $this->getMock('Virtphp\Test\Mock\FilesystemMock', array('exists', 'getContents'));
+        $filesystemMock = $this->getMock(
+            'Virtphp\Test\Mock\FilesystemMock',
+            array('exists', 'getContents')
+        );
         $filesystemMock->expects($this->any())
             ->method('exists')
             ->will($this->onConsecutiveCalls(true, true, false, true, true));
@@ -717,7 +733,7 @@ EOD;
             ->will($this->returnValue($filesystemMock));
         $creator->expects($this->any())
             ->method('getProcess')
-            ->will($this->returnCallback(function($command) {
+            ->will($this->returnCallback(function ($command) {
                 return new ProcessMock($command, '/path/to/foo');
             }));
 
@@ -781,7 +797,10 @@ extension_dir = "/path/to/virtphp/project/myenv/lib/php"
 
 EOD;
 
-        $filesystemMock = $this->getMock('Virtphp\Test\Mock\FilesystemMock', array('exists', 'getContents'));
+        $filesystemMock = $this->getMock(
+            'Virtphp\Test\Mock\FilesystemMock',
+            array('exists', 'getContents')
+        );
         $filesystemMock->expects($this->any())
             ->method('exists')
             ->will($this->onConsecutiveCalls(true, true, false, true, true));
@@ -798,7 +817,7 @@ EOD;
             ->will($this->returnValue($filesystemMock));
         $creator->expects($this->any())
             ->method('getProcess')
-            ->will($this->returnCallback(function($command) {
+            ->will($this->returnCallback(function ($command) {
                 return new ProcessMock($command, '/path/to/foo');
             }));
 
@@ -909,7 +928,7 @@ EOD;
             ->will($this->returnValue($filesystemMock));
         $creator->expects($this->any())
             ->method('getProcess')
-            ->will($this->returnCallback(function($command) {
+            ->will($this->returnCallback(function ($command) {
                 return new ProcessMock($command, '/path/to/foo');
             }));
 
@@ -925,7 +944,9 @@ EOD;
         $this->assertTrue($creator->execute());
 
         $this->assertEquals(
-            'Could not find php-config in /path/to/bin. You will be unable to use pecl in this virtual environment. Install the PHP development package first, and then re-run VirtPHP.',
+            'Could not find php-config in /path/to/bin.'
+            . ' You will be unable to use pecl in this virtual environment.'
+            . ' Install the PHP development package first, and then re-run VirtPHP.',
             $this->output->messages[8]
         );
     }
@@ -950,7 +971,7 @@ EOD;
             ->will($this->returnValue($filesystemMock));
         $creator->expects($this->any())
             ->method('getProcess')
-            ->will($this->returnCallback(function($command) {
+            ->will($this->returnCallback(function ($command) {
                 return new ProcessMock($command, '/path/to/foo');
             }));
 
@@ -966,7 +987,9 @@ EOD;
         $this->assertTrue($creator->execute());
 
         $this->assertEquals(
-            'Could not find phpize in /path/to/bin. You will be unable to use pecl in this virtual environment. Install the PHP development package first, and then re-run VirtPHP.',
+            'Could not find phpize in /path/to/bin.'
+            . ' You will be unable to use pecl in this virtual environment.'
+            . ' Install the PHP development package first, and then re-run VirtPHP.',
             $this->output->messages[8]
         );
     }

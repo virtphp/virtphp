@@ -48,7 +48,9 @@ class Application extends BaseApplication
             ini_set("xdebug.scream", false);
         }
 
-        if (function_exists("date_default_timezone_set") && function_exists("date_default_timezone_get")) {
+        if (function_exists("date_default_timezone_set")
+            && function_exists("date_default_timezone_get")
+        ) {
             date_default_timezone_set(@date_default_timezone_get());
         }
 
@@ -64,7 +66,11 @@ class Application extends BaseApplication
         if (null === $output) {
             $styles = Factory::createAdditionalStyles();
             $formatter = new OutputFormatter(null, $styles);
-            $output = new ConsoleOutput(ConsoleOutput::VERBOSITY_NORMAL, null, $formatter);
+            $output = new ConsoleOutput(
+                ConsoleOutput::VERBOSITY_NORMAL,
+                null,
+                $formatter
+            );
         }
 
         return $this->parentRun($input, $output);
@@ -76,12 +82,25 @@ class Application extends BaseApplication
     public function doRun(InputInterface $input, OutputInterface $output)
     {
         if (version_compare(PHP_VERSION, "5.3.3", "<") || self::$testPhpVersion) {
-            $output->writeln("<warning>VirtPHP only officially supports PHP 5.3.3 and above, you will most likely encounter problems with your PHP ".PHP_VERSION.", upgrading is strongly recommended.</warning>");
+            $output->writeln(
+                "<warning>VirtPHP only officially supports PHP 5.3.3 and above,"
+                . " you will most likely encounter problems with your PHP "
+                . PHP_VERSION . ", upgrading is strongly recommended.</warning>"
+            );
         }
 
-        if (defined("VIRTPHP_DEV_WARNING_TIME") && $this->getCommandName($input) !== "self-update") {
+        if (defined("VIRTPHP_DEV_WARNING_TIME")
+            && $this->getCommandName($input) !== "self-update"
+        ) {
             if (time() > VIRTPHP_DEV_WARNING_TIME) {
-                $output->writeln(sprintf("<warning>Warning: This development build of VirtPHP is over 30 days old. It is recommended to update it by running \"%s self-update\" to get the latest version.</warning>", $_SERVER["PHP_SELF"]));
+                $output->writeln(
+                    sprintf(
+                        "<warning>Warning: This development build of VirtPHP is over 30 days old."
+                        .  " It is recommended to update it by running \"%s self-update\""
+                        . " to get the latest version.</warning>",
+                        $_SERVER["PHP_SELF"]
+                    )
+                );
             }
         }
 

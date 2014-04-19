@@ -3,9 +3,9 @@
 /**
  * This file is part of VirtPHP.
  *
- * (c) Jordan Kasper <github @jakerella> 
+ * (c) Jordan Kasper <github @jakerella>
  *     Ben Ramsey <github @ramsey>
- *     Jacques Woodcock <github @jwoodcock> 
+ *     Jacques Woodcock <github @jwoodcock>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -23,7 +23,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class Shower extends AbstractWorker
 {
 
-    /** 
+    /**
      * @var string
      */
     protected $envPath;
@@ -51,8 +51,6 @@ class Shower extends AbstractWorker
     /**
      * Constructs the shower worker
      *
-     * @param string $originalPath
-     * @param string $envName
      * @param OutputInterface $output
      */
     public function __construct(OutputInterface $output)
@@ -96,11 +94,7 @@ class Shower extends AbstractWorker
                     . 'activate';
                 $warning = '';
                 // verify if path is real
-                if (
-                    !$this->getFilesystem()->realpath(
-                        $sourceBase . DIRECTORY_SEPARATOR . '.virtphp'
-                    )
-                ) {
+                if (!$this->getFilesystem()->realpath($sourceBase . DIRECTORY_SEPARATOR . '.virtphp')) {
                     $warning = '(!)';
                     $envWarnings[] = $key;
                 }
@@ -145,6 +139,8 @@ class Shower extends AbstractWorker
      * Method that takes a provided environment name and path and resyncs the
      * record to the udpated path.
      *
+     * @param $envName
+     * @param $updatedPath
      * @return boolean Weather or not the action was successful
      */
     public function updatePath($envName, $updatedPath)
@@ -160,8 +156,8 @@ class Shower extends AbstractWorker
         }
 
         // get list of environments and convert to array
-        $envList = json_decode($this->getFileSystem()->getContents(
-            $this->filePath),
+        $envList = json_decode(
+            $this->getFileSystem()->getContents($this->filePath),
             true
         );
 

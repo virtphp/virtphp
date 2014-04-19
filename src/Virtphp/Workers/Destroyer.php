@@ -2,9 +2,9 @@
 /*
  * This file is part of VirtPHP.
  *
- * (c) Jordan Kasper <github @jakerella> 
+ * (c) Jordan Kasper <github @jakerella>
  *     Ben Ramsey <github @ramsey>
- *     Jacques Woodcock <github @jwoodcock> 
+ *     Jacques Woodcock <github @jwoodcock>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -33,7 +33,11 @@ class Destroyer extends AbstractWorker
      */
     private $rootPath;
 
-
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @param null $rootPath Path to root
+     */
     public function __construct(InputInterface $input, OutputInterface $output, $rootPath = null)
     {
         $this->input = $input;
@@ -41,8 +45,21 @@ class Destroyer extends AbstractWorker
         $this->setRootPath($rootPath);
     }
 
+    /**
+     * getRootPath
+     *
+     * @return string Root path
+     */
+    public function getRootPath()
+    {
+        return $this->rootPath;
+    }
 
-    public function getRootPath() { return $this->rootPath; }
+    /**
+     * setRootPath
+     *
+     * @param string $path Path to root
+     */
     public function setRootPath($path = ".")
     {
         $this->rootPath = strval($path);
@@ -95,11 +112,7 @@ class Destroyer extends AbstractWorker
         $envPath = $_SERVER['HOME'] . DIRECTORY_SEPARATOR .  '.virtphp';
         $envFile = 'environments.json';
 
-        if (
-            $this->getFilesystem()->exists(
-                $envPath . DIRECTORY_SEPARATOR . $envFile
-            )
-        ) {
+        if ($this->getFilesystem()->exists($envPath . DIRECTORY_SEPARATOR . $envFile)) {
             // get contents, convert to array, add this env and path
             $envContents = $this->getFilesystem()->getContents(
                 $envPath . DIRECTORY_SEPARATOR . $envFile

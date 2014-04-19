@@ -3,9 +3,9 @@
 /*
  * This file is part of VirtPHP.
  *
- * (c) Jordan Kasper <github @jakerella> 
+ * (c) Jordan Kasper <github @jakerella>
  *     Ben Ramsey <github @ramsey>
- *     Jacques Woodcock <github @jwoodcock> 
+ *     Jacques Woodcock <github @jwoodcock>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -55,14 +55,17 @@ class CreateCommand extends Command
                 "php-ini",
                 null,
                 InputOption::VALUE_REQUIRED,
-                "Path to a specific php.ini to use - WARNING: the include_path and extension_dir WILL BE OVERRIDDEN!",
+                "Path to a specific php.ini to use - "
+                . "WARNING: the include_path and extension_dir WILL BE OVERRIDDEN!",
                 null
             )
             ->addOption(
                 "pear-conf",
                 null,
                 InputOption::VALUE_REQUIRED,
-                "Path to a specific pear.conf file to use - WARNING: many of the directory paths in this file WILL BE OVERRIDDEN in order for VirtPHP to work!",
+                "Path to a specific pear.conf file to use - "
+                . "WARNING: many of the directory paths in this "
+                . "file WILL BE OVERRIDDEN in order for VirtPHP to work!",
                 null
             );
     }
@@ -77,7 +80,7 @@ class CreateCommand extends Command
         // Check to make sure environment name is valid
         if (!Virtphp::isValidName($envName)) {
             $output->writeln("<error>Sorry, but that is not a valid environment name.</error>");
-            
+
             return false;
         }
 
@@ -102,8 +105,16 @@ class CreateCommand extends Command
         $creator->setCustomPhpIni($input->getOption("php-ini"));
         $creator->setCustomPearConf($input->getOption("pear-conf"));
         if ($creator->execute()) {
-            $output->writeln("<bg=green;options=bold>Your virtual php environment ($envName) has been created!</bg=green;options=bold>");
-            $output->writeln("<info>You can activate your new environment using: ~\$ source $envName/bin/activate</info>\n");
+            $output->writeln(
+                "<bg=green;options=bold>"
+                . "Your virtual php environment ($envName) has been created!"
+                . "</bg=green;options=bold>"
+            );
+            $output->writeln(
+                "<info>"
+                . "You can activate your new environment using: ~\$ source $envName/bin/activate"
+                . "</info>\n"
+            );
 
             return true;
         }

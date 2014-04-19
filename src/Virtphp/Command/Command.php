@@ -22,7 +22,7 @@ class Command extends ConsoleCommand
     /**
      * Returns a Filesystem object for executing filesystem operations
      *
-     * @return Virtphp\Util\Filesystem
+     * @return \Virtphp\Util\Filesystem
      */
     public function getFilesystem()
     {
@@ -34,7 +34,7 @@ class Command extends ConsoleCommand
      *
      * @param string $command The system command to run
      *
-     * @return Symfony\Component\Process\Process
+     * @return \Symfony\Component\Process\Process
      */
     public function getProcess($command)
     {

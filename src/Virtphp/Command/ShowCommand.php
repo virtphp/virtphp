@@ -3,9 +3,9 @@
 /*
  * This file is part of VirtPHP.
  *
- * (c) Jordan Kasper <github @jakerella> 
+ * (c) Jordan Kasper <github @jakerella>
  *     Ben Ramsey <github @ramsey>
- *     Jacques Woodcock <github @jwoodcock> 
+ *     Jacques Woodcock <github @jwoodcock>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -46,7 +46,7 @@ class ShowCommand extends Command
             );
     }
 
-    /** 
+    /**
      * {@inheritDoc}
      */
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -56,15 +56,14 @@ class ShowCommand extends Command
         $updatedPath = $input->getOption("path");
 
         // See if a bad sync request was made
-        if (
-            (isset($envName) && !isset($updatedPath))
+        if ((isset($envName) && !isset($updatedPath))
             || (!isset($envName) && isset($updatedPath))
         ) {
             $output->writeln(
                 "<error>You must provide both an environment"
                 . "name and path to resync.</error>"
             );
-            
+
             return false;
         }
 
@@ -80,7 +79,7 @@ class ShowCommand extends Command
             }
         }
 
-        // Logic for listing list of directories 
+        // Logic for listing list of directories
         $shower = $this->getWorker('Shower', array($output));
         if ($shower->execute()) {
             return true;

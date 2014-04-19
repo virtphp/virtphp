@@ -97,7 +97,7 @@ class Creator extends AbstractWorker
      *
      * @throws \RuntimeException if $process->run() does not return 0
      */
-	public function __construct(
+    public function __construct(
         InputInterface $input,
         OutputInterface $output,
         $envName,
@@ -115,12 +115,18 @@ class Creator extends AbstractWorker
             if ($process->run() == 0) {
                 $phpBinDir = $this->getFilesystem()->dirname(trim($process->getOutput()));
             } else {
-                throw new \RuntimeException("Can't find php on the system. If php is not in the PATH, please specify its location with --php-bin-dir.");
+                throw new \RuntimeException(
+                    "Can't find php on the system. "
+                    . "If php is not in the PATH, please specify its location with "
+                    . "--php-bin-dir."
+                );
             }
         }
 
         $this->setPhpBinDir($phpBinDir);
-        $this->setPearConfigSettings($this->updatePearConfigSettings(self::$DEFAULT_PEAR_CONFIG));
+        $this->setPearConfigSettings(
+            $this->updatePearConfigSettings(self::$DEFAULT_PEAR_CONFIG)
+        );
     }
 
     /**
@@ -205,19 +211,22 @@ class Creator extends AbstractWorker
 
 
     /**
-     * @param string Name of the new virtual env
+     * @param string $name Name of the new virtual env
      */
     public function setEnvName($name)
     {
         if (!Virtphp::isValidName($name)) {
-            throw new \RuntimeException("Environment name must contain only letters, numbers, dashes, and underscores. {$name} is invalid.");
+            throw new \RuntimeException(
+                "Environment name must contain only letters, numbers, dashes, and underscores."
+                . " {$name} is invalid."
+            );
         }
 
         $this->envName = $name;
     }
 
     /**
-     * @param string Path to install this virtual env into
+     * @param string $envBasePath Path to install this virtual env into
      */
     public function setEnvBasePath($envBasePath)
     {
@@ -225,7 +234,7 @@ class Creator extends AbstractWorker
     }
 
     /**
-     * @param string Path to php bin directory
+     * @param string $phpBinDir Path to php bin directory
      */
     public function setPhpBinDir($phpBinDir)
     {
@@ -238,14 +247,16 @@ class Creator extends AbstractWorker
         }
         $process = $this->getProcess($dir.DIRECTORY_SEPARATOR."php -v");
         if ($process->run() != 0) {
-            throw new InvalidArgumentException("The \"php\" file in the specified directory is not a valid php binary executable.");
+            throw new InvalidArgumentException(
+                "The \"php\" file in the specified directory is not a valid php binary executable."
+            );
         }
 
         $this->phpBinDir = $dir;
     }
 
     /**
-     * @param array Specific options to use (hash)
+     * @param array $settings Specific options to use (hash)
      */
     public function setPearConfigSettings(array $settings = array())
     {
@@ -253,7 +264,7 @@ class Creator extends AbstractWorker
     }
 
     /**
-     * @param string Path to custom php.ini file to use
+     * @param string $phpIniFilePath Path to custom php.ini file to use
      */
     public function setCustomPhpIni($phpIniFilePath = null)
     {
@@ -267,7 +278,7 @@ class Creator extends AbstractWorker
     }
 
     /**
-     * @param string Path to custom pear.conf file to use
+     * @param string $pearConfFilePath Path to custom pear.conf file to use
      */
     public function setCustomPearConf($pearConfFilePath = null)
     {
@@ -312,9 +323,7 @@ class Creator extends AbstractWorker
     public function execute()
     {
         try {
-
             $this->checkEnvironment();
-
         } catch (\Exception $e) {
             $this->output->writeln("<error>ERROR: ".$e->getMessage()."</error>");
 
@@ -323,7 +332,6 @@ class Creator extends AbstractWorker
 
         // at this point, if anything fails we need to revert the install
         try {
-
             $this->createStructure();
             $this->createVersionFile();
             $this->createPhpIni();
@@ -332,7 +340,6 @@ class Creator extends AbstractWorker
             $this->installPhpConfigPhpize();
             $this->installComposer();
             $this->copyActivateScript();
-
         } catch (\Exception $e) {
             $this->output->writeln("<error>ERROR: ".$e->getMessage()."</error>");
             $this->getDestroyer()->execute();
@@ -544,7 +551,9 @@ EOD;
             throw new \RuntimeException("Encountered a problem while trying to install PEAR.");
         }
 
-        $this->getFilesystem()->remove($this->getEnvPath() . DIRECTORY_SEPARATOR . "share" . DIRECTORY_SEPARATOR . "install-pear-nozlib.phar");
+        $this->getFilesystem()->remove(
+            $this->getEnvPath() . DIRECTORY_SEPARATOR . "share" . DIRECTORY_SEPARATOR . "install-pear-nozlib.phar"
+        );
 
         $this->output->writeln("Saving pear.conf file.");
         $this->getFilesystem()->dumpFile(
@@ -576,12 +585,24 @@ EOD;
         $phpBuildIncludeDir = null;
 
         if (!$this->getFilesystem()->exists($phpConfigPath)) {
-            $this->output->writeln("<comment>Could not find php-config in {$this->getPhpBinDir()}. You will be unable to use pecl in this virtual environment. Install the PHP development package first, and then re-run VirtPHP.</comment>");
+            $this->output->writeln(
+                "<comment>"
+                . "Could not find php-config in {$this->getPhpBinDir()}."
+                . " You will be unable to use pecl in this virtual environment."
+                . " Install the PHP development package first, and then re-run VirtPHP."
+                . "</comment>"
+            );
             return;
         }
 
         if (!$this->getFilesystem()->exists($phpizePath)) {
-            $this->output->writeln("<comment>Could not find phpize in {$this->getPhpBinDir()}. You will be unable to use pecl in this virtual environment. Install the PHP development package first, and then re-run VirtPHP.</comment>");
+            $this->output->writeln(
+                "<comment>"
+                . "Could not find phpize in {$this->getPhpBinDir()}."
+                . " You will be unable to use pecl in this virtual environment."
+                . " Install the PHP development package first, and then re-run VirtPHP."
+                . "</comment>"
+            );
             return;
         }
 
@@ -625,8 +646,8 @@ EOD;
         $phpConfigSource = preg_replace(
             "/^(extension_dir\=[^\n]+)/im",
             "\n# Old extension_dir value\n# $1\n" .
-                "# New VirtPHP extension_dir value:\n" .
-                "extension_dir=\"{$this->getEnvPhpExtDir()}\"\n",
+            "# New VirtPHP extension_dir value:\n" .
+            "extension_dir=\"{$this->getEnvPhpExtDir()}\"\n",
             $phpConfigSource
         );
 
@@ -724,11 +745,7 @@ EOD;
         $envPath = $_SERVER['HOME'] . DIRECTORY_SEPARATOR .  '.virtphp';
         $envFile = 'environments.json';
 
-        if (
-            !$this->getFilesystem()->exists(
-                $envPath . DIRECTORY_SEPARATOR . $envFile
-            )
-        ) {
+        if (!$this->getFilesystem()->exists($envPath . DIRECTORY_SEPARATOR . $envFile)) {
             $this->output->writeln(
                 'Creating .virtphp directory in user home folder.'
             );

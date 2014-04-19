@@ -76,7 +76,8 @@ class ErrorHandlerTest extends TestCase
     public function testErrorHandlerXdebugScream()
     {
         ini_set('xdebug.scream', 1);
-        $this->setExpectedException('\ErrorException',
+        $this->setExpectedException(
+            '\ErrorException',
             "array_merge(): Argument #2 is not an array"
             . "\n\nWarning: You have xdebug.scream enabled, the warning above may be"
             . "\na legitimately suppressed error that you were not supposed to see."

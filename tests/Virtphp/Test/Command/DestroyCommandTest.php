@@ -13,6 +13,7 @@
 
 namespace Virtphp\Test\Command;
 
+use Symfony\Component\Console\Input\ArgvInput;
 use Virtphp\Command\DestroyCommand;
 use Virtphp\Test\Mock\HelperSetMock;
 use Virtphp\Test\Mock\DestroyerMock;
@@ -43,12 +44,12 @@ class DestroyCommandTest extends TestCase
         $command = $this->getMock('Virtphp\Command\DestroyCommand', array('getHelperSet', 'getWorker'));
         $command->expects($this->any())
             ->method('getHelperSet')
-            ->will($this->returnCallback(function() {
+            ->will($this->returnCallback(function () {
                 return new HelperSetMock();
             }));
         $command->expects($this->any())
             ->method('getWorker')
-            ->will($this->returnCallback(function($name, $args) use (&$destroyerMock) {
+            ->will($this->returnCallback(function ($name, $args) use (&$destroyerMock) {
                 $destroyerMock = new DestroyerMock($name, $args);
                 return $destroyerMock;
             }));
@@ -56,7 +57,7 @@ class DestroyCommandTest extends TestCase
         $execute = new \ReflectionMethod('Virtphp\Command\DestroyCommand', 'execute');
         $execute->setAccessible(true);
 
-        $input = new \Symfony\Component\Console\Input\ArgvInput(
+        $input = new ArgvInput(
             array(
                 'file.php',
                 '/path/to/virtphp/project',
@@ -98,12 +99,12 @@ class DestroyCommandTest extends TestCase
         $command = $this->getMock('Virtphp\Command\DestroyCommand', array('getHelperSet', 'getWorker'));
         $command->expects($this->any())
             ->method('getHelperSet')
-            ->will($this->returnCallback(function() {
+            ->will($this->returnCallback(function () {
                 return new HelperSetMock();
             }));
         $command->expects($this->any())
             ->method('getWorker')
-            ->will($this->returnCallback(function($name, $args) use (&$destroyerMock) {
+            ->will($this->returnCallback(function ($name, $args) use (&$destroyerMock) {
                 $destroyerMock = new DestroyerMock($name, $args);
                 return $destroyerMock;
             }));
@@ -111,7 +112,7 @@ class DestroyCommandTest extends TestCase
         $execute = new \ReflectionMethod('Virtphp\Command\DestroyCommand', 'execute');
         $execute->setAccessible(true);
 
-        $input = new \Symfony\Component\Console\Input\ArgvInput(
+        $input = new ArgvInput(
             array(
                 'file.php',
                 $dir,
@@ -144,12 +145,12 @@ class DestroyCommandTest extends TestCase
         $command = $this->getMock('Virtphp\Command\DestroyCommand', array('getHelperSet', 'getWorker'));
         $command->expects($this->any())
             ->method('getHelperSet')
-            ->will($this->returnCallback(function() {
+            ->will($this->returnCallback(function () {
                 return new HelperSetMock(array('confirmReturn' => false));
             }));
         $command->expects($this->any())
             ->method('getWorker')
-            ->will($this->returnCallback(function($name, $args) use (&$destroyerMock) {
+            ->will($this->returnCallback(function ($name, $args) use (&$destroyerMock) {
                 $destroyerMock = new DestroyerMock($name, $args);
                 return $destroyerMock;
             }));
@@ -157,7 +158,7 @@ class DestroyCommandTest extends TestCase
         $execute = new \ReflectionMethod('Virtphp\Command\DestroyCommand', 'execute');
         $execute->setAccessible(true);
 
-        $input = new \Symfony\Component\Console\Input\ArgvInput(
+        $input = new ArgvInput(
             array(
                 'file.php',
                 '/path/to/virtphp/project',
@@ -187,12 +188,12 @@ class DestroyCommandTest extends TestCase
         $command = $this->getMock('Virtphp\Command\DestroyCommand', array('getHelperSet', 'getWorker'));
         $command->expects($this->any())
             ->method('getHelperSet')
-            ->will($this->returnCallback(function() {
+            ->will($this->returnCallback(function () {
                 return new HelperSetMock();
             }));
         $command->expects($this->any())
             ->method('getWorker')
-            ->will($this->returnCallback(function($name, $args) use (&$destroyerMock) {
+            ->will($this->returnCallback(function ($name, $args) use (&$destroyerMock) {
                 $destroyerMock = new DestroyerMock($name, $args, false);
                 return $destroyerMock;
             }));
@@ -200,7 +201,7 @@ class DestroyCommandTest extends TestCase
         $execute = new \ReflectionMethod('Virtphp\Command\DestroyCommand', 'execute');
         $execute->setAccessible(true);
 
-        $input = new \Symfony\Component\Console\Input\ArgvInput(
+        $input = new ArgvInput(
             array(
                 'file.php',
                 '/path/to/virtphp/project',

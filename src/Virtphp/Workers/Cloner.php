@@ -3,9 +3,9 @@
 /*
  * This file is part of VirtPHP.
  *
- * (c) Jordan Kasper <github @jakerella> 
+ * (c) Jordan Kasper <github @jakerella>
  *     Ben Ramsey <github @ramsey>
- *     Jacques Woodcock <github @jwoodcock> 
+ *     Jacques Woodcock <github @jwoodcock>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -13,32 +13,30 @@
 
 namespace Virtphp\Workers;
 
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-
 class Cloner extends AbstractWorker
 {
 
-    /** 
+    /**
      * @var string
      */
     protected $originalPath = array();
 
-    /** 
+    /**
      * @var string
      */
     protected $fullPath;
 
-    /** 
+    /**
      * @var string
      */
     protected $envName;
 
-    /** 
+    /**
      * @var string
      */
     protected $realPath;
@@ -72,7 +70,14 @@ class Cloner extends AbstractWorker
     {
         $this->getFilesystem()->mkdir($this->envName);
         $this->realPath = realpath($this->envName);
-        $this->output->writeln("<comment>Cloning virtPHP env from " . $this->originalPath . " to " . $this->realPath . "</comment>");
+        $this->output->writeln(
+            "<comment>"
+            . "Cloning virtPHP env from "
+            . $this->originalPath
+            . " to "
+            . $this->realPath
+            . "</comment>"
+        );
 
         try {
 
@@ -82,7 +87,12 @@ class Cloner extends AbstractWorker
             $this->createPhpBinWrapper();
             $this->sourcePear();
             $this->output->writeln("Setting proper permissions on cloned bin directory");
-            $this->getFilesystem()->chmod($this->realPath . DIRECTORY_SEPARATOR . "bin", 0755, 0000, true);
+            $this->getFilesystem()->chmod(
+                $this->realPath . DIRECTORY_SEPARATOR . "bin",
+                0755,
+                0000,
+                true
+            );
             $this->addEnvToFile();
 
             return true;
@@ -101,7 +111,7 @@ class Cloner extends AbstractWorker
     /**
      * Function gets the real path value of new virtPHP environment
      * copies over all the files and folders to the new virtPHP environment
-     * and creates the fullPath property. 
+     * and creates the fullPath property.
      */
     protected function cloneEnv()
     {
@@ -189,7 +199,7 @@ class Cloner extends AbstractWorker
             $this->realPath . DIRECTORY_SEPARATOR . "etc" . DIRECTORY_SEPARATOR . "php.ini",
             $currentWrapper
         );
- 
+
         $this->getFilesystem()->dumpFile(
             $this->realPath . DIRECTORY_SEPARATOR . "bin" . DIRECTORY_SEPARATOR . "php",
             $newWrapper,
@@ -204,7 +214,9 @@ class Cloner extends AbstractWorker
     {
         $this->output->writeln("Updating virtual PEAR install and config");
 
-        $pearConfigContents = $this->getFilesystem()->getContents($this->realPath . DIRECTORY_SEPARATOR . "etc" . DIRECTORY_SEPARATOR . "pear.conf");
+        $pearConfigContents = $this->getFilesystem()->getContents(
+            $this->realPath . DIRECTORY_SEPARATOR . "etc" . DIRECTORY_SEPARATOR . "pear.conf"
+        );
         $pearConfigArray = unserialize($pearConfigContents);
 
         $newPearConfig = serialize($this->processConfigSettings($pearConfigArray));
@@ -218,7 +230,7 @@ class Cloner extends AbstractWorker
 
     /**
      * Replaces original path with new path in pear config file
-     * 
+     *
      * @param  array $pearConfig The old array of config options
      * @return array The new array of config options
      */

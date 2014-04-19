@@ -40,13 +40,19 @@ class Compiler
 
         $process = $this->getProcess('git log --pretty="%H" -n1 HEAD', __DIR__);
         if ($process->run() != 0) {
-            throw new \RuntimeException('Can\'t run git log. You must ensure to run compile from virtphp git repository clone and that git binary is available.');
+            throw new \RuntimeException(
+                'Can\'t run git log."
+                . " You must ensure to run compile from virtphp git repository clone and that git binary is available.'
+            );
         }
         $this->version = trim($process->getOutput());
 
         $process = $this->getProcess('git log -n1 --pretty=%ci HEAD', __DIR__);
         if ($process->run() != 0) {
-            throw new \RuntimeException('Can\'t run git log. You must ensure to run compile from virtphp git repository clone and that git binary is available.');
+            throw new \RuntimeException(
+                'Can\'t run git log."
+                . " You must ensure to run compile from virtphp git repository clone and that git binary is available.'
+            );
         }
         $date = new \DateTime(trim($process->getOutput()));
         $date->setTimezone(new \DateTimeZone('UTC'));
@@ -195,7 +201,7 @@ EOF;
     /**
      * Returns a Finder object for finding files/dirs
      *
-     * @return Symfony\Component\Finder\Finder
+     * @return \Symfony\Component\Finder\Finder
      */
     public function getFinder()
     {
@@ -207,7 +213,7 @@ EOF;
      *
      * @param string $command The system command to run
      *
-     * @return Symfony\Component\Process\Process
+     * @return \Symfony\Component\Process\Process
      */
     public function getProcess($command)
     {
