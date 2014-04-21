@@ -116,9 +116,9 @@ class Shower extends AbstractWorker
                 for ($x = 0; $x < count($envWarnings); $x++) {
                     $this->output->writeln('');
                     $this->output->writeln(
-                        "<comment>WARNING: The `" . $envWarnings[$x] . "`"
-                        . " virtPHP environment can no longer be found. Perhaps"
-                        . " it has moved or has been deleted.</comment>"
+                        "<comment>WARNING: The `" . $envWarnings[$x] . "`" .
+                        " virtPHP environment can no longer be found. Perhaps" .
+                        " it has moved or has been deleted.</comment>"
                     );
                     $this->output->writeln('');
                 }
@@ -126,8 +126,8 @@ class Shower extends AbstractWorker
 
         } else {
             $this->output->writeln(
-                "<error>either no environments have been created on this system"
-                . " or the json file has been moved</error>"
+                "<error>either no environments have been created on this system" .
+                " or the json file has been moved</error>"
             );
             return false;
         }
@@ -163,8 +163,8 @@ class Shower extends AbstractWorker
 
         if (!isset($envList[$envName])) {
             $this->output->writeln(
-                '<error>' . $envName . ' was not found as a valid virtPHP'
-                . ' environment.</error>'
+                '<error>' . $envName . ' was not found as a valid virtPHP' .
+                ' environment.</error>'
             );
             return false;
         }
@@ -177,11 +177,11 @@ class Shower extends AbstractWorker
         );
 
         $this->output->writeln(
-            '<bg=green;options=bold>'
-            . $envName
-            . ' now has the path of '
-            . $updatedPath
-            . '</bg=green;options=bold>'
+            '<bg=green;options=bold>' .
+            $envName .
+            ' now has the path of ' .
+            $updatedPath .
+            '</bg=green;options=bold>'
         );
         return true;
     }

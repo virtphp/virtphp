@@ -83,9 +83,9 @@ class Application extends BaseApplication
     {
         if (version_compare(PHP_VERSION, "5.3.3", "<") || self::$testPhpVersion) {
             $output->writeln(
-                "<warning>VirtPHP only officially supports PHP 5.3.3 and above,"
-                . " you will most likely encounter problems with your PHP "
-                . PHP_VERSION . ", upgrading is strongly recommended.</warning>"
+                "<warning>VirtPHP only officially supports PHP 5.3.3 and above," .
+                " you will most likely encounter problems with your PHP " .
+                PHP_VERSION . ", upgrading is strongly recommended.</warning>"
             );
         }
 
@@ -95,9 +95,9 @@ class Application extends BaseApplication
             if (time() > VIRTPHP_DEV_WARNING_TIME) {
                 $output->writeln(
                     sprintf(
-                        "<warning>Warning: This development build of VirtPHP is over 30 days old."
-                        .  " It is recommended to update it by running \"%s self-update\""
-                        . " to get the latest version.</warning>",
+                        "<warning>Warning: This development build of VirtPHP is over 30 days old." .
+                        " It is recommended to update it by running \"%s self-update\"" .
+                        " to get the latest version.</warning>",
                         $_SERVER["PHP_SELF"]
                     )
                 );

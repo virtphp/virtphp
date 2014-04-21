@@ -217,8 +217,8 @@ class Creator extends AbstractWorker
     {
         if (!Virtphp::isValidName($name)) {
             throw new \RuntimeException(
-                "Environment name must contain only letters, numbers, dashes, and underscores."
-                . " {$name} is invalid."
+                "Environment name must contain only letters, numbers, dashes, and underscores." .
+                " {$name} is invalid."
             );
         }
 
@@ -366,9 +366,13 @@ class Creator extends AbstractWorker
 
         // if the directory exists, use it, otherwise see if it"s relative
         if ($this->getFilesystem()->exists($this->getEnvPath())) {
-            throw new InvalidArgumentException("The directory for this environment already exists ({$this->getEnvPath()}).");
-        } else if (!$this->getFilesystem()->isWritable($this->getEnvBasePath())) {
-            throw new InvalidArgumentException("The destination directory is not writable, and thus we cannot create the environment.");
+            throw new InvalidArgumentException(
+                "The directory for this environment already exists ({$this->getEnvPath()})."
+            );
+        } elseif (!$this->getFilesystem()->isWritable($this->getEnvBasePath())) {
+            throw new InvalidArgumentException(
+                "The destination directory is not writable, and thus we cannot create the environment."
+            );
         }
     }
 
@@ -384,14 +388,36 @@ class Creator extends AbstractWorker
         $this->getFilesystem()->mkdir($this->getEnvPath() . DIRECTORY_SEPARATOR . "lib");
         $this->getFilesystem()->mkdir($this->getEnvPath() . DIRECTORY_SEPARATOR . "lib" . DIRECTORY_SEPARATOR . "php");
         $this->getFilesystem()->mkdir($this->getEnvPath() . DIRECTORY_SEPARATOR . "share");
-        $this->getFilesystem()->mkdir($this->getEnvPath() . DIRECTORY_SEPARATOR . "share" . DIRECTORY_SEPARATOR . "php");
-        $this->getFilesystem()->mkdir($this->getEnvPath() . DIRECTORY_SEPARATOR . "share" . DIRECTORY_SEPARATOR . "pear");
-        $this->getFilesystem()->mkdir($this->getEnvPath() . DIRECTORY_SEPARATOR . "share" . DIRECTORY_SEPARATOR . "pear" . DIRECTORY_SEPARATOR . "cache");
-        $this->getFilesystem()->mkdir($this->getEnvPath() . DIRECTORY_SEPARATOR . "share" . DIRECTORY_SEPARATOR . "pear" . DIRECTORY_SEPARATOR . "cfg");
-        $this->getFilesystem()->mkdir($this->getEnvPath() . DIRECTORY_SEPARATOR . "share" . DIRECTORY_SEPARATOR . "pear" . DIRECTORY_SEPARATOR . "download");
-        $this->getFilesystem()->mkdir($this->getEnvPath() . DIRECTORY_SEPARATOR . "share" . DIRECTORY_SEPARATOR . "pear" . DIRECTORY_SEPARATOR . "temp");
-        $this->getFilesystem()->mkdir($this->getEnvPath() . DIRECTORY_SEPARATOR . "share" . DIRECTORY_SEPARATOR . "pear" . DIRECTORY_SEPARATOR . "tests");
-        $this->getFilesystem()->mkdir($this->getEnvPath() . DIRECTORY_SEPARATOR . "share" . DIRECTORY_SEPARATOR . "pear" . DIRECTORY_SEPARATOR . "www");
+        $this->getFilesystem()->mkdir(
+            $this->getEnvPath() . DIRECTORY_SEPARATOR . "share" . DIRECTORY_SEPARATOR . "php"
+        );
+        $this->getFilesystem()->mkdir(
+            $this->getEnvPath() . DIRECTORY_SEPARATOR . "share" . DIRECTORY_SEPARATOR . "pear"
+        );
+        $this->getFilesystem()->mkdir(
+            $this->getEnvPath() . DIRECTORY_SEPARATOR . "share" . DIRECTORY_SEPARATOR . "pear" .
+            DIRECTORY_SEPARATOR . "cache"
+        );
+        $this->getFilesystem()->mkdir(
+            $this->getEnvPath() . DIRECTORY_SEPARATOR . "share" . DIRECTORY_SEPARATOR . "pear" .
+            DIRECTORY_SEPARATOR . "cfg"
+        );
+        $this->getFilesystem()->mkdir(
+            $this->getEnvPath() . DIRECTORY_SEPARATOR . "share" . DIRECTORY_SEPARATOR . "pear" .
+            DIRECTORY_SEPARATOR . "download"
+        );
+        $this->getFilesystem()->mkdir(
+            $this->getEnvPath() . DIRECTORY_SEPARATOR . "share" . DIRECTORY_SEPARATOR . "pear" .
+            DIRECTORY_SEPARATOR . "temp"
+        );
+        $this->getFilesystem()->mkdir(
+            $this->getEnvPath() . DIRECTORY_SEPARATOR . "share" . DIRECTORY_SEPARATOR . "pear" .
+            DIRECTORY_SEPARATOR . "tests"
+        );
+        $this->getFilesystem()->mkdir(
+            $this->getEnvPath() . DIRECTORY_SEPARATOR . "share" . DIRECTORY_SEPARATOR . "pear" .
+            DIRECTORY_SEPARATOR . "www"
+        );
     }
 
     /**
@@ -448,9 +474,9 @@ class Creator extends AbstractWorker
                 $this->output->writeln("  replacing active include_path with virtual env path");
                 $phpIni = preg_replace(
                     "/^\s*(include_path\s*\=\s*[^\n]+)/im",
-                    "\n\n;; Old include_path value\n; $1\n".
-                        ";; New VirtPHP include_path value:\n".
-                        "include_path = \".:" . $this->getEnvPhpIncDir() . "\"\n",
+                    "\n\n;; Old include_path value\n; $1\n" .
+                    ";; New VirtPHP include_path value:\n" .
+                    "include_path = \".:" . $this->getEnvPhpIncDir() . "\"\n",
                     $phpIni
                 );
 
@@ -458,7 +484,7 @@ class Creator extends AbstractWorker
                 // there was no active include_path, so add to the end
                 $this->output->writeln("  adding new include_path setting with virtual env path");
 
-                $phpIni .= "\n\n;; New VirtPHP include_path value:\n".
+                $phpIni .= "\n\n;; New VirtPHP include_path value:\n" .
                            "include_path = \".:" . $this->getEnvPhpIncDir() . "\"\n";
 
             }
@@ -469,9 +495,9 @@ class Creator extends AbstractWorker
                 $this->output->writeln("  replacing active extension_dir with virtual env path");
                 $phpIni = preg_replace(
                     "/^\s*(extension_dir\s*\=\s*[^\n]+)/im",
-                    "\n\n;; Old extension_dir value\n; $1\n".
-                        ";; New VirtPHP extension_dir value:\n".
-                        "extension_dir = \"" . $this->getEnvPhpExtDir() . "\"\n",
+                    "\n\n;; Old extension_dir value\n; $1\n" .
+                    ";; New VirtPHP extension_dir value:\n" .
+                    "extension_dir = \"" . $this->getEnvPhpExtDir() . "\"\n",
                     $phpIni
                 );
 
@@ -479,7 +505,7 @@ class Creator extends AbstractWorker
                 // there was no active extension_dir, so add to the end
                 $this->output->writeln("  adding new extension_dir setting with virtual env path");
 
-                $phpIni .= "\n\n;; New VirtPHP extension_dir value:\n".
+                $phpIni .= "\n\n;; New VirtPHP extension_dir value:\n" .
                            "extension_dir = \"" . $this->getEnvPhpExtDir() . "\"\n";
             }
 
@@ -540,11 +566,12 @@ EOD;
 
         $this->output->writeln("Installing PEAR");
         $process = $this->getProcess(
-            $this->getPhpBinDir()
-            . DIRECTORY_SEPARATOR . "php -n -dshort_open_tag=0 -dopen_basedir= "
-            . "-derror_reporting=1803 -dmemory_limit=-1 -ddetect_unicode=0 "
-            . "share" . DIRECTORY_SEPARATOR . "install-pear-nozlib.phar "
-            . "-d \"".$this->getEnvPath() . DIRECTORY_SEPARATOR . "share" . DIRECTORY_SEPARATOR . "php\" -b \"bin\" -c \"etc\""
+            $this->getPhpBinDir() .
+            DIRECTORY_SEPARATOR . "php -n -dshort_open_tag=0 -dopen_basedir= " .
+            "-derror_reporting=1803 -dmemory_limit=-1 -ddetect_unicode=0 " .
+            "share" . DIRECTORY_SEPARATOR . "install-pear-nozlib.phar " .
+            "-d \"".$this->getEnvPath() . DIRECTORY_SEPARATOR . "share" .
+            DIRECTORY_SEPARATOR . "php\" -b \"bin\" -c \"etc\""
         );
 
         if ($process->run() != 0) {
@@ -586,22 +613,22 @@ EOD;
 
         if (!$this->getFilesystem()->exists($phpConfigPath)) {
             $this->output->writeln(
-                "<comment>"
-                . "Could not find php-config in {$this->getPhpBinDir()}."
-                . " You will be unable to use pecl in this virtual environment."
-                . " Install the PHP development package first, and then re-run VirtPHP."
-                . "</comment>"
+                "<comment>" .
+                "Could not find php-config in {$this->getPhpBinDir()}." .
+                " You will be unable to use pecl in this virtual environment." .
+                " Install the PHP development package first, and then re-run VirtPHP." .
+                "</comment>"
             );
             return;
         }
 
         if (!$this->getFilesystem()->exists($phpizePath)) {
             $this->output->writeln(
-                "<comment>"
-                . "Could not find phpize in {$this->getPhpBinDir()}."
-                . " You will be unable to use pecl in this virtual environment."
-                . " Install the PHP development package first, and then re-run VirtPHP."
-                . "</comment>"
+                "<comment>" .
+                "Could not find phpize in {$this->getPhpBinDir()}." .
+                " You will be unable to use pecl in this virtual environment." .
+                " Install the PHP development package first, and then re-run VirtPHP." .
+                "</comment>"
             );
             return;
         }

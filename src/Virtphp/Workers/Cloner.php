@@ -71,12 +71,12 @@ class Cloner extends AbstractWorker
         $this->getFilesystem()->mkdir($this->envName);
         $this->realPath = realpath($this->envName);
         $this->output->writeln(
-            "<comment>"
-            . "Cloning virtPHP env from "
-            . $this->originalPath
-            . " to "
-            . $this->realPath
-            . "</comment>"
+            "<comment>" .
+            "Cloning virtPHP env from " .
+            $this->originalPath .
+            " to " .
+            $this->realPath .
+            "</comment>"
         );
 
         try {

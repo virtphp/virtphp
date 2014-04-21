@@ -106,14 +106,14 @@ class CreateCommand extends Command
         $creator->setCustomPearConf($input->getOption("pear-conf"));
         if ($creator->execute()) {
             $output->writeln(
-                "<bg=green;options=bold>"
-                . "Your virtual php environment ($envName) has been created!"
-                . "</bg=green;options=bold>"
+                "<bg=green;options=bold>" .
+                "Your virtual php environment ($envName) has been created!" .
+                "</bg=green;options=bold>"
             );
             $output->writeln(
-                "<info>"
-                . "You can activate your new environment using: ~\$ source $envName/bin/activate"
-                . "</info>\n"
+                "<info>" .
+                "You can activate your new environment using: ~\$ source $envName/bin/activate" .
+                "</info>\n"
             );
 
             return true;
