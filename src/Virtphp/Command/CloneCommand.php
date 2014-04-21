@@ -28,17 +28,17 @@ class CloneCommand extends Command
     protected function configure()
     {
         $this
-            ->setName("clone")
-            ->setDescription("Create new virtphp from existing path.")
+            ->setName('clone')
+            ->setDescription('Create new virtphp from existing path.')
             ->addArgument(
-                "new-env-name",
+                'new-env-name',
                 InputArgument::REQUIRED,
-                "What is the name of your new environment"
+                'What is the name of your new environment'
             )
             ->addArgument(
-                "existing-env-path",
+                'existing-env-path',
                 InputArgument::REQUIRED,
-                "Location of existing VirtPHP to clone from."
+                'Location of existing VirtPHP to clone from.'
             );
     }
 
@@ -47,11 +47,11 @@ class CloneCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $envName = $input->getArgument("new-env-name");
-        $rootPath = realpath($input->getArgument("existing-env-path"));
+        $envName = $input->getArgument('new-env-name');
+        $rootPath = realpath($input->getArgument('existing-env-path'));
 
         if (!Virtphp::isValidName($envName)) {
-            $output->writeln("<error>Sorry, but that is not a valid environment name.</error>");
+            $output->writeln('<error>Sorry, but that is not a valid environment name.</error>');
 
             return false;
         }
@@ -65,11 +65,11 @@ class CloneCommand extends Command
         $cloner = $this->getWorker('Cloner', array($rootPath, $envName, $output));
         if ($cloner->execute()) {
             $output->writeln(
-                "<bg=green;options=bold>" .
-                "Your new cloned virtual php environment has been created." .
-                "</bg=green;options=bold>"
+                '<bg=green;options=bold>' .
+                'Your new cloned virtual php environment has been created.' .
+                '</bg=green;options=bold>'
             );
-            $output->writeln("<info>Cloned from: $rootPath</info>");
+            $output->writeln('<info>Cloned from: $rootPath</info>');
 
             return true;
         }
@@ -90,15 +90,15 @@ class CloneCommand extends Command
 
         if (!$filesystem->exists($rootPath)) {
             $output->writeln(
-                "<error>Sorry, but there is no VirtPHP environment at that location.</error>"
+                '<error>Sorry, but there is no VirtPHP environment at that location.</error>'
             );
 
             return false;
         }
 
-        if (!$filesystem->exists($rootPath . DIRECTORY_SEPARATOR . ".virtphp")) {
+        if (!$filesystem->exists($rootPath . DIRECTORY_SEPARATOR . '.virtphp')) {
             $output->writeln(
-                "<error>This directory does not contain a valid VirtPHP environment!</error>"
+                '<error>This directory does not contain a valid VirtPHP environment!</error>'
             );
 
             return false;

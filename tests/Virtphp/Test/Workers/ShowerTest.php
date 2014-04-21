@@ -115,10 +115,10 @@ class ShowerTest extends TestCase
         $filesystemMock->expects($this->any())
             ->method('getContents')
             ->will($this->returnValue(
-                '{"mytest":'
-                . '{"name":"mytest",'
-                . '"path":"\/Users\/Kite\/work\/virtphp"},'
-                . '"myenv":{"name":"myenv","path":"\/users\/Kite\/work\/theKit"}}'
+                '{"mytest":' .
+                '{"name":"mytest",' .
+                '"path":"\/Users\/Kite\/work\/virtphp"},' .
+                '"myenv":{"name":"myenv","path":"\/users\/Kite\/work\/theKit"}}'
             ));
 
         $shower = $this->getMockBuilder('Virtphp\Workers\Shower')

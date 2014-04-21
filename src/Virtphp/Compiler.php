@@ -32,7 +32,7 @@ class Compiler
      * @throws \RuntimeException
      * @param  string            $pharFile The full path to the file to create
      */
-    public function compile($pharFile = "virtphp.phar")
+    public function compile($pharFile = 'virtphp.phar')
     {
         if (file_exists($pharFile)) {
             unlink($pharFile);
@@ -41,8 +41,8 @@ class Compiler
         $process = $this->getProcess('git log --pretty="%H" -n1 HEAD', __DIR__);
         if ($process->run() != 0) {
             throw new \RuntimeException(
-                "Can't run git log." .
-                " You must ensure to run compile from virtphp git repository clone and that git binary is available."
+                'Can\'t run git log.' .
+                ' You must ensure to run compile from virtphp git repository clone and that git binary is available.'
             );
         }
         $this->version = trim($process->getOutput());
@@ -50,8 +50,8 @@ class Compiler
         $process = $this->getProcess('git log -n1 --pretty=%ci HEAD', __DIR__);
         if ($process->run() != 0) {
             throw new \RuntimeException(
-                "Can't run git log." .
-                " You must ensure to run compile from virtphp git repository clone and that git binary is available."
+                'Can\'t run git log.' .
+                ' You must ensure to run compile from virtphp git repository clone and that git binary is available.'
             );
         }
         $date = new \DateTime(trim($process->getOutput()));
@@ -63,7 +63,7 @@ class Compiler
             $this->version = trim($process->getOutput());
         }
 
-        $phar = new \Phar($pharFile, 0, "virtphp.phar");
+        $phar = new \Phar($pharFile, 0, 'virtphp.phar');
         $phar->setSignatureAlgorithm(\Phar::SHA1);
 
         $phar->startBuffering();
@@ -71,9 +71,9 @@ class Compiler
         $finder = $this->getFinder();
         $finder->files()
             ->ignoreVCS(true)
-            ->name("*.php")
-            ->notName("Compiler.php")
-            ->in(__DIR__."/..")
+            ->name('*.php')
+            ->notName('Compiler.php')
+            ->in(__DIR__.'/..')
         ;
 
         foreach ($finder as $file) {
@@ -83,17 +83,17 @@ class Compiler
         $finder = $this->getFinder();
         $finder->files()
             ->ignoreVCS(true)
-            ->name("*.php")
-            ->exclude("Tests")
-            ->in(__DIR__."/../../vendor/")
+            ->name('*.php')
+            ->exclude('Tests')
+            ->in(__DIR__.'/../../vendor/')
         ;
 
         foreach ($finder as $file) {
             $this->addFile($phar, $file);
         }
 
-        $this->addFile($phar, new \SplFileInfo(__DIR__."/../../res/php.ini"));
-        $this->addFile($phar, new \SplFileInfo(__DIR__."/../../res/activate.sh"));
+        $this->addFile($phar, new \SplFileInfo(__DIR__.'/../../res/php.ini'));
+        $this->addFile($phar, new \SplFileInfo(__DIR__.'/../../res/activate.sh'));
 
         $this->addVirtphpBin($phar);
 
@@ -102,19 +102,19 @@ class Compiler
 
         $phar->stopBuffering();
 
-        $this->addFile($phar, new \SplFileInfo(__DIR__."/../../LICENSE"), false);
+        $this->addFile($phar, new \SplFileInfo(__DIR__.'/../../LICENSE'), false);
 
         unset($phar);
     }
 
     private function addFile($phar, $file, $strip = true)
     {
-        $path = str_replace(dirname(dirname(__DIR__)).DIRECTORY_SEPARATOR, "", $file->getRealPath());
+        $path = str_replace(dirname(dirname(__DIR__)).DIRECTORY_SEPARATOR, '', $file->getRealPath());
 
         $content = file_get_contents($file);
         if ($strip) {
             $content = $this->stripWhitespace($content);
-        } elseif ("LICENSE" === basename($file)) {
+        } elseif ('LICENSE' === basename($file)) {
             $content = "\n".$content."\n";
         }
 
@@ -126,9 +126,9 @@ class Compiler
 
     private function addVirtphpBin($phar)
     {
-        $content = file_get_contents(__DIR__."/../../bin/virtphp");
+        $content = file_get_contents(__DIR__.'/../../bin/virtphp');
         $content = preg_replace('{^#!/usr/bin/env php\s*}', "", $content);
-        $phar->addFromString("bin/virtphp", $content);
+        $phar->addFromString('bin/virtphp', $content);
     }
 
     /**
@@ -139,7 +139,7 @@ class Compiler
      */
     private function stripWhitespace($source)
     {
-        if (!function_exists("token_get_all") || $this->testNoTokenGetAll) {
+        if (!function_exists('token_get_all') || $this->testNoTokenGetAll) {
             return $source;
         }
 

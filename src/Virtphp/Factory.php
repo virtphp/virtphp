@@ -20,8 +20,8 @@ class Factory
     public static function createAdditionalStyles()
     {
         return array(
-            "highlight" => new OutputFormatterStyle("red"),
-            "warning" => new OutputFormatterStyle("black", "yellow"),
+            'highlight' => new OutputFormatterStyle('red'),
+            'warning' => new OutputFormatterStyle('black', 'yellow'),
         );
     }
 }

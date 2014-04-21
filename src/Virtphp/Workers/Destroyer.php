@@ -76,13 +76,13 @@ class Destroyer extends AbstractWorker
     {
 
         if (!$this->getFilesystem()->exists($this->rootPath)) {
-            $this->output->writeln("<error>This directory does not exist!</error>");
+            $this->output->writeln('<error>This directory does not exist!</error>');
 
             return false;
         }
 
-        if (!$this->getFilesystem()->exists($this->rootPath.DIRECTORY_SEPARATOR.".virtphp")) {
-            $this->output->writeln("<error>This directory does not contain a valid VirtPHP environment!</error>");
+        if (!$this->getFilesystem()->exists($this->rootPath.DIRECTORY_SEPARATOR.'.virtphp')) {
+            $this->output->writeln('<error>This directory does not contain a valid VirtPHP environment!</error>');
 
             return false;
         }
@@ -98,7 +98,7 @@ class Destroyer extends AbstractWorker
      */
     protected function removeStructure()
     {
-        $this->output->writeln("<info>Removing directory structure</info>");
+        $this->output->writeln('<info>Removing directory structure</info>');
         $this->getFilesystem()->remove($this->rootPath);
     }
 
@@ -107,7 +107,7 @@ class Destroyer extends AbstractWorker
      */
     protected function removeFromList()
     {
-        $this->output->writeln("<info>Removing environment from list</info>");
+        $this->output->writeln('<info>Removing environment from list</info>');
         // if not, we create it then add this environment and path
         $envPath = $_SERVER['HOME'] . DIRECTORY_SEPARATOR .  '.virtphp';
         $envFile = 'environments.json';

@@ -28,20 +28,20 @@ class ShowCommand extends Command
     protected function configure()
     {
         $this
-            ->setName("show")
-            ->setDescription("Show a list of all the current environments.")
+            ->setName('show')
+            ->setDescription('Show a list of all the current environments.')
             ->addOption(
-                "env",
+                'env',
                 null,
                 InputOption::VALUE_REQUIRED,
-                "Which environment do you need to fix.",
+                'Which environment do you need to fix.',
                 null
             )
             ->addOption(
-                "path",
+                'path',
                 null,
                 InputOption::VALUE_REQUIRED,
-                "New correct path for the provided environment.",
+                'New correct path for the provided environment.',
                 null
             );
     }
@@ -52,16 +52,16 @@ class ShowCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
 
-        $envName = $input->getOption("env");
-        $updatedPath = $input->getOption("path");
+        $envName = $input->getOption('env');
+        $updatedPath = $input->getOption('path');
 
         // See if a bad sync request was made
         if ((isset($envName) && !isset($updatedPath))
             || (!isset($envName) && isset($updatedPath))
         ) {
             $output->writeln(
-                "<error>You must provide both an environment" .
-                "name and path to resync.</error>"
+                '<error>You must provide both an environment' .
+                'name and path to resync.</error>'
             );
 
             return false;

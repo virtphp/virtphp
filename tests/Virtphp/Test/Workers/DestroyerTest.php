@@ -83,7 +83,7 @@ class DestroyerTest extends TestCase
     {
         $this->assertTrue($this->destroyer->execute());
         $this->assertEquals(
-            "Removing directory structure",
+            'Removing directory structure',
             $this->output->messages[0]
         );
     }
