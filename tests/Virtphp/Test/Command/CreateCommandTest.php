@@ -144,10 +144,10 @@ class CreateCommandTest extends TestCase
         $this->assertEquals('/path/to/pear.conf', $creatorMock->pearConf);
         $this->assertCount(3, $output->messages);
         $this->assertEquals(
-            '<warning>' .
-            'There is an old .pearrc file on your system that may prevent this VirtPHP env from being created. ' .
-            'If an error occurs, you may temporarily move the .pearrc file while creating your virtual env.' .
-            '</warning>',
+            '<warning>'
+            . 'There is an old .pearrc file on your system that may prevent this VirtPHP env from being created. '
+            . 'If an error occurs, you may temporarily move the .pearrc file while creating your virtual env.'
+            . '</warning>',
             $output->messages[0]
         );
         $this->assertStringMatchesFormat(

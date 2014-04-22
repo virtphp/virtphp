@@ -41,8 +41,8 @@ class Compiler
         $process = $this->getProcess('git log --pretty="%H" -n1 HEAD', __DIR__);
         if ($process->run() != 0) {
             throw new \RuntimeException(
-                'Can\'t run git log.' .
-                ' You must ensure to run compile from virtphp git repository clone and that git binary is available.'
+                'Can\'t run git log.'
+                . ' You must ensure to run compile from virtphp git repository clone and that git binary is available.'
             );
         }
         $this->version = trim($process->getOutput());
@@ -50,8 +50,8 @@ class Compiler
         $process = $this->getProcess('git log -n1 --pretty=%ci HEAD', __DIR__);
         if ($process->run() != 0) {
             throw new \RuntimeException(
-                'Can\'t run git log.' .
-                ' You must ensure to run compile from virtphp git repository clone and that git binary is available.'
+                'Can\'t run git log.'
+                . ' You must ensure to run compile from virtphp git repository clone and that git binary is available.'
             );
         }
         $date = new \DateTime(trim($process->getOutput()));

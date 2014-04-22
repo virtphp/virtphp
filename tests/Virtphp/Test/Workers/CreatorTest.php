@@ -944,9 +944,9 @@ EOD;
         $this->assertTrue($creator->execute());
 
         $this->assertEquals(
-            'Could not find php-config in /path/to/bin.' .
-            ' You will be unable to use pecl in this virtual environment.' .
-            ' Install the PHP development package first, and then re-run VirtPHP.',
+            'Could not find php-config in /path/to/bin.'
+            . ' You will be unable to use pecl in this virtual environment.'
+            . ' Install the PHP development package first, and then re-run VirtPHP.',
             $this->output->messages[8]
         );
     }
@@ -987,9 +987,9 @@ EOD;
         $this->assertTrue($creator->execute());
 
         $this->assertEquals(
-            'Could not find phpize in /path/to/bin.' .
-            ' You will be unable to use pecl in this virtual environment.' .
-            ' Install the PHP development package first, and then re-run VirtPHP.',
+            'Could not find phpize in /path/to/bin.'
+            . ' You will be unable to use pecl in this virtual environment.'
+            . ' Install the PHP development package first, and then re-run VirtPHP.',
             $this->output->messages[8]
         );
     }

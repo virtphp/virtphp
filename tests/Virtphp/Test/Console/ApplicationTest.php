@@ -1,4 +1,5 @@
 <?php
+namespace Virtphp\Test\Console;
 
 /*
  * This file is part of VirtPHP.
@@ -10,8 +11,6 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Virtphp\Test\Console;
 
 use Symfony\Component\Console\Input\ArgvInput;
 use Virtphp\Console\Application;
@@ -95,10 +94,10 @@ class ApplicationTest extends TestCase
 
         $this->assertCount(1, $this->output->messages);
         $this->assertStringMatchesFormat(
-            '<warning>' .
-            'VirtPHP only officially supports PHP 5.3.3 and above, ' .
-            'you will most likely encounter problems with your PHP %s, upgrading is strongly recommended.' .
-            '</warning>',
+            '<warning>'
+            . 'VirtPHP only officially supports PHP 5.3.3 and above, '
+            . 'you will most likely encounter problems with your PHP %s, upgrading is strongly recommended.'
+            . '</warning>',
             $this->output->messages[0]
         );
     }
@@ -113,10 +112,10 @@ class ApplicationTest extends TestCase
 
         $this->assertCount(1, $this->output->messages);
         $this->assertStringMatchesFormat(
-            '<warning>' .
-            'Warning: This development build of VirtPHP is over 30 days old. ' .
-            'It is recommended to update it by running "%s self-update" to get the latest version.' .
-            '</warning>',
+            '<warning>'
+            . 'Warning: This development build of VirtPHP is over 30 days old. '
+            . 'It is recommended to update it by running "%s self-update" to get the latest version.'
+            . '</warning>',
             $this->output->messages[0]
         );
     }

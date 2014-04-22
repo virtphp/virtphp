@@ -1,4 +1,6 @@
-<?php  namespace Virtphp\Test\Mock;
+<?php
+namespace Virtphp\Test\Mock;
+
 /*
  * Class : TestTable
  */

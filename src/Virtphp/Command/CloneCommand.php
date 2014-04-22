@@ -65,9 +65,9 @@ class CloneCommand extends Command
         $cloner = $this->getWorker('Cloner', array($rootPath, $envName, $output));
         if ($cloner->execute()) {
             $output->writeln(
-                '<bg=green;options=bold>' .
-                'Your new cloned virtual php environment has been created.' .
-                '</bg=green;options=bold>'
+                '<bg=green;options=bold>'
+                . 'Your new cloned virtual php environment has been created.'
+                . '</bg=green;options=bold>'
             );
             $output->writeln('<info>Cloned from: $rootPath</info>');
 

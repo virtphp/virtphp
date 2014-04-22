@@ -63,9 +63,9 @@ class CreateCommand extends Command
                 'pear-conf',
                 null,
                 InputOption::VALUE_REQUIRED,
-                'Path to a specific pear.conf file to use - ' .
-                'WARNING: many of the directory paths in this ' .
-                'file WILL BE OVERRIDDEN in order for VirtPHP to work!',
+                'Path to a specific pear.conf file to use - '
+                . 'WARNING: many of the directory paths in this '
+                . 'file WILL BE OVERRIDDEN in order for VirtPHP to work!',
                 null
             );
     }
@@ -93,10 +93,10 @@ class CreateCommand extends Command
         // Check for old .pearrc file conflict
         if ($this->getFilesystem()->exists(getenv('HOME').'/.pearrc')) {
             $output->writeln(
-                '<warning>There is an old .pearrc file on your ' .
-                'system that may prevent this VirtPHP env from being created.' .
-                ' If an error occurs, you may temporarily move the .pearrc file ' .
-                'while creating your virtual env.</warning>'
+                '<warning>There is an old .pearrc file on your '
+                . 'system that may prevent this VirtPHP env from being created.'
+                . ' If an error occurs, you may temporarily move the .pearrc file '
+                . 'while creating your virtual env.</warning>'
             );
         }
 
@@ -106,14 +106,14 @@ class CreateCommand extends Command
         $creator->setCustomPearConf($input->getOption('pear-conf'));
         if ($creator->execute()) {
             $output->writeln(
-                '<bg=green;options=bold>' .
-                "Your virtual php environment ($envName) has been created!" .
-                '</bg=green;options=bold>'
+                '<bg=green;options=bold>'
+                . "Your virtual php environment ($envName) has been created!"
+                . '</bg=green;options=bold>'
             );
             $output->writeln(
-                '<info>' .
-                "You can activate your new environment using: ~\$ source $envName/bin/activate" .
-                "</info>\n"
+                '<info>'
+                . "You can activate your new environment using: ~\$ source $envName/bin/activate"
+                . "</info>\n"
             );
 
             return true;
