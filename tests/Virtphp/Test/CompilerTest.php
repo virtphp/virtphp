@@ -101,15 +101,18 @@ class CompilerTest extends TestCase
      * @covers Virtphp\Compiler::addVirtphpBin
      * @covers Virtphp\Compiler::stripWhitespace
      * @covers Virtphp\Compiler::getStub
-     * @expectedException RuntimeException
-     * @expectedExceptionMessage Can't run git log. You must ensure to run compile from virtphp git repository clone and that git binary is available.
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage Can't run git log.
+     *                           You must ensure to run compile
+     *                           from virtphp git repository clone
+     *                           and that git binary is available.
      */
     public function testCompileGitLogException()
     {
         $compiler = $this->getMock('Virtphp\Compiler', array('getProcess'));
         $compiler->expects($this->any())
             ->method('getProcess')
-            ->will($this->returnCallback(function($command) {
+            ->will($this->returnCallback(function ($command) {
                 return new ProcessMock($command, false, -1);
             }));
 
@@ -122,8 +125,11 @@ class CompilerTest extends TestCase
      * @covers Virtphp\Compiler::addVirtphpBin
      * @covers Virtphp\Compiler::stripWhitespace
      * @covers Virtphp\Compiler::getStub
-     * @expectedException RuntimeException
-     * @expectedExceptionMessage Can't run git log. You must ensure to run compile from virtphp git repository clone and that git binary is available.
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage Can't run git log.
+     *                           You must ensure to run compile
+     *                           from virtphp git repository clone
+     *                           and that git binary is available.
      */
     public function testCompileGitLogExceptionPartDeux()
     {
@@ -180,7 +186,9 @@ class CompilerTest extends TestCase
         // The expected string reads "VirtPHP version 2.4.0-9-g3645455 2013-09-17 22:34:06"
         // but since it has console coloring, it comes out as a binary string,
         // so we have it base64-encoded for testing
-        $expected = base64_decode('G1szMm1WaXJ0UEhQG1swbSB2ZXJzaW9uIBtbMzNtMi40LjAtOS1nMzY0NTQ1NRtbMG0gMjAxMy0wOS0xNyAyMjozNDowNg==');
+        $expected = base64_decode(
+            'G1szMm1WaXJ0UEhQG1swbSB2ZXJzaW9uIBtbMzNtMi40LjAtOS1nMzY0NTQ1NRtbMG0gMjAxMy0wOS0xNyAyMjozNDowNg=='
+        );
         $actual = $cmdOutput[0];
 
         $this->assertEquals($expected, $actual);

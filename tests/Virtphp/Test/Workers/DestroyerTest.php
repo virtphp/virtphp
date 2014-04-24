@@ -13,6 +13,7 @@
 
 namespace Virtphp\Test\Workers;
 
+use Symfony\Component\Console\Input\ArgvInput;
 use Virtphp\Command\DestroyCommand;
 use Virtphp\TestCase;
 use Virtphp\TestOutput;
@@ -28,7 +29,7 @@ class DestroyerTest extends TestCase
     protected function setUp()
     {
         $command = new DestroyCommand();
-        $this->input = new \Symfony\Component\Console\Input\ArgvInput(
+        $this->input = new ArgvInput(
             array(
                 'file.php',
                 '/path/to/virtphp/project',
@@ -82,7 +83,7 @@ class DestroyerTest extends TestCase
     {
         $this->assertTrue($this->destroyer->execute());
         $this->assertEquals(
-            "Removing directory structure",
+            'Removing directory structure',
             $this->output->messages[0]
         );
     }
