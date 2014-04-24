@@ -18,7 +18,7 @@ use Virtphp\Util\Filesystem;
 abstract class AbstractWorker
 {
     /**
-     * @var Virtphp\Util\Filesystem
+     * @var \Virtphp\Util\Filesystem
      */
     protected $filesystem = null;
 
@@ -32,7 +32,7 @@ abstract class AbstractWorker
     /**
      * Returns a filesystem object for use with operations in this class
      *
-     * @return Virtphp\Util\Filesystem
+     * @return \Virtphp\Util\Filesystem
      */
     public function getFilesystem()
     {
@@ -48,7 +48,7 @@ abstract class AbstractWorker
      *
      * @param string $command The system command to run
      *
-     * @return Symfony\Component\Process\Process
+     * @return \Symfony\Component\Process\Process
      */
     public function getProcess($command)
     {

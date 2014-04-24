@@ -18,6 +18,7 @@ use Virtphp\TestOutput;
 use Virtphp\Test\Mock\FilesystemMock;
 use Virtphp\Util\Filesystem;
 use Virtphp\Workers\Shower;
+use Virtphp\Test\Mock\TableMock;
 
 class ShowerTest extends TestCase
 {
@@ -69,7 +70,7 @@ class ShowerTest extends TestCase
 
         $this->assertInstanceOf('Virtphp\Workers\Shower', $shower);
         $this->assertInstanceOf(
-            'Virtphp\Test\Workers\TableMock',
+            'Virtphp\Test\Mock\TableMock',
             $shower->getTableHelper()
         );
     }
@@ -114,7 +115,10 @@ class ShowerTest extends TestCase
         $filesystemMock->expects($this->any())
             ->method('getContents')
             ->will($this->returnValue(
-                '{"mytest":{"name":"mytest","path":"\/Users\/Kite\/work\/virtphp"},"myenv":{"name":"myenv","path":"\/users\/Kite\/work\/theKit"}}'
+                '{"mytest":'
+                . '{"name":"mytest",'
+                . '"path":"\/Users\/Kite\/work\/virtphp"},'
+                . '"myenv":{"name":"myenv","path":"\/users\/Kite\/work\/theKit"}}'
             ));
 
         $shower = $this->getMockBuilder('Virtphp\Workers\Shower')
@@ -176,7 +180,7 @@ class ShowerTest extends TestCase
         $this->assertTrue($this->shower->updatePath($target, $newPath));
         $this->assertCount(1, $this->output->messages);
         $this->assertEquals(
-             $target .' now has the path of ' . $newPath, 
+            $target .' now has the path of ' . $newPath,
             $this->output->messages[0]
         );
     }
@@ -203,7 +207,7 @@ class ShowerTest extends TestCase
         $this->assertFalse($this->shower->updatePath($target, $newPath));
         $this->assertCount(1, $this->output->messages);
         $this->assertEquals(
-             $target .' was not found as a valid virtPHP environment.', 
+            $target .' was not found as a valid virtPHP environment.',
             $this->output->messages[0]
         );
     }
@@ -235,30 +239,6 @@ class ShowerTest extends TestCase
         $this->assertEquals(
             'Path provided is not an actual path.',
             $this->output->messages[0]
-        );
-    }
-}
-
-class TableMock
-{
-    public $headers;
-    public $rows;
-
-    public function setHeaders($headers)
-    {
-        $this->headers = $headers;
-        return $this;
-    }
-
-    public function setRows($rows)
-    {
-        $this->rows = $rows;
-    }
-
-    public function render($output)
-    {
-        $output->writeln(
-            "table"
         );
     }
 }

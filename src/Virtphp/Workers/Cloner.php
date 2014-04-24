@@ -3,9 +3,9 @@
 /*
  * This file is part of VirtPHP.
  *
- * (c) Jordan Kasper <github @jakerella> 
+ * (c) Jordan Kasper <github @jakerella>
  *     Ben Ramsey <github @ramsey>
- *     Jacques Woodcock <github @jwoodcock> 
+ *     Jacques Woodcock <github @jwoodcock>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -13,32 +13,30 @@
 
 namespace Virtphp\Workers;
 
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-
 class Cloner extends AbstractWorker
 {
 
-    /** 
+    /**
      * @var string
      */
     protected $originalPath = array();
 
-    /** 
+    /**
      * @var string
      */
     protected $fullPath;
 
-    /** 
+    /**
      * @var string
      */
     protected $envName;
 
-    /** 
+    /**
      * @var string
      */
     protected $realPath;
@@ -72,7 +70,14 @@ class Cloner extends AbstractWorker
     {
         $this->getFilesystem()->mkdir($this->envName);
         $this->realPath = realpath($this->envName);
-        $this->output->writeln("<comment>Cloning virtPHP env from " . $this->originalPath . " to " . $this->realPath . "</comment>");
+        $this->output->writeln(
+            '<comment>'
+            . 'Cloning virtPHP env from '
+            . $this->originalPath
+            . ' to '
+            . $this->realPath
+            . '</comment>'
+        );
 
         try {
 
@@ -81,8 +86,13 @@ class Cloner extends AbstractWorker
             $this->updatePhpIni();
             $this->createPhpBinWrapper();
             $this->sourcePear();
-            $this->output->writeln("Setting proper permissions on cloned bin directory");
-            $this->getFilesystem()->chmod($this->realPath . DIRECTORY_SEPARATOR . "bin", 0755, 0000, true);
+            $this->output->writeln('Setting proper permissions on cloned bin directory');
+            $this->getFilesystem()->chmod(
+                $this->realPath . DIRECTORY_SEPARATOR . 'bin',
+                0755,
+                0000,
+                true
+            );
             $this->addEnvToFile();
 
             return true;
@@ -90,7 +100,7 @@ class Cloner extends AbstractWorker
         } catch (\Exception $e) {
 
             $this->getFilesystem()->remove($this->realPath);
-            $this->output->writeln("<error>Error: cloning directory failed.</error>");
+            $this->output->writeln('<error>Error: cloning directory failed.</error>');
 
             return false;
 
@@ -101,11 +111,11 @@ class Cloner extends AbstractWorker
     /**
      * Function gets the real path value of new virtPHP environment
      * copies over all the files and folders to the new virtPHP environment
-     * and creates the fullPath property. 
+     * and creates the fullPath property.
      */
     protected function cloneEnv()
     {
-        $this->output->writeln("Copying contents of " . $this->originalPath . " to " . $this->realPath);
+        $this->output->writeln('Copying contents of ' . $this->originalPath . ' to ' . $this->realPath);
         $this->getFilesystem()->mirror($this->originalPath, $this->realPath);
     }
 
@@ -116,11 +126,11 @@ class Cloner extends AbstractWorker
      */
     protected function updateActivateFile()
     {
-        $this->output->writeln("Updating activate file.");
+        $this->output->writeln('Updating activate file.');
         // Get paths for files and folders
-        $activateFilePath = $this->realPath . DIRECTORY_SEPARATOR . "bin" . DIRECTORY_SEPARATOR . "activate";
+        $activateFilePath = $this->realPath . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'activate';
         if (!$this->getFilesystem()->exists($activateFilePath)) {
-            $activateFilePath .= ".sh";
+            $activateFilePath .= '.sh';
         }
 
         // GET activate of new directory to replace path variable
@@ -143,12 +153,12 @@ class Cloner extends AbstractWorker
      */
     protected function updatePhpIni()
     {
-        $this->output->writeln("Updating PHP ini file.");
+        $this->output->writeln('Updating PHP ini file.');
 
         // Get paths for files and folders
-        $sharePath = DIRECTORY_SEPARATOR . "share" . DIRECTORY_SEPARATOR . "php";
-        $libPath = DIRECTORY_SEPARATOR . "lib" . DIRECTORY_SEPARATOR . "php";
-        $iniPHPLocation = $this->realPath . DIRECTORY_SEPARATOR . "etc" . DIRECTORY_SEPARATOR . "php.ini";
+        $sharePath = DIRECTORY_SEPARATOR . 'share' . DIRECTORY_SEPARATOR . 'php';
+        $libPath = DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'php';
+        $iniPHPLocation = $this->realPath . DIRECTORY_SEPARATOR . 'etc' . DIRECTORY_SEPARATOR . 'php.ini';
 
         $phpIni = $this->getFilesystem()->getContents($iniPHPLocation);
 
@@ -178,20 +188,20 @@ class Cloner extends AbstractWorker
      */
     protected function createPhpBinWrapper()
     {
-        $this->output->writeln("Updating PHP bin wrapper.");
-        $phpBinWrapPath = $this->realPath . DIRECTORY_SEPARATOR . "bin" . DIRECTORY_SEPARATOR . "php";
-        $newIniPath = $this->realPath . DIRECTORY_SEPARATOR . "etc" . DIRECTORY_SEPARATOR . "php.ini";
+        $this->output->writeln('Updating PHP bin wrapper.');
+        $phpBinWrapPath = $this->realPath . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'php';
+        $newIniPath = $this->realPath . DIRECTORY_SEPARATOR . 'etc' . DIRECTORY_SEPARATOR . 'php.ini';
 
         $currentWrapper = $this->getFilesystem()->getContents($phpBinWrapPath);
 
         $newWrapper = str_replace(
-            $this->originalPath . DIRECTORY_SEPARATOR . "etc" . DIRECTORY_SEPARATOR . "php.ini",
-            $this->realPath . DIRECTORY_SEPARATOR . "etc" . DIRECTORY_SEPARATOR . "php.ini",
+            $this->originalPath . DIRECTORY_SEPARATOR . 'etc' . DIRECTORY_SEPARATOR . 'php.ini',
+            $this->realPath . DIRECTORY_SEPARATOR . 'etc' . DIRECTORY_SEPARATOR . 'php.ini',
             $currentWrapper
         );
- 
+
         $this->getFilesystem()->dumpFile(
-            $this->realPath . DIRECTORY_SEPARATOR . "bin" . DIRECTORY_SEPARATOR . "php",
+            $this->realPath . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'php',
             $newWrapper,
             0644
         );
@@ -202,15 +212,17 @@ class Cloner extends AbstractWorker
      */
     protected function sourcePear()
     {
-        $this->output->writeln("Updating virtual PEAR install and config");
+        $this->output->writeln('Updating virtual PEAR install and config');
 
-        $pearConfigContents = $this->getFilesystem()->getContents($this->realPath . DIRECTORY_SEPARATOR . "etc" . DIRECTORY_SEPARATOR . "pear.conf");
+        $pearConfigContents = $this->getFilesystem()->getContents(
+            $this->realPath . DIRECTORY_SEPARATOR . 'etc' . DIRECTORY_SEPARATOR . 'pear.conf'
+        );
         $pearConfigArray = unserialize($pearConfigContents);
 
         $newPearConfig = serialize($this->processConfigSettings($pearConfigArray));
 
         $this->getFilesystem()->dumpFile(
-            $this->realPath . DIRECTORY_SEPARATOR . "etc" . DIRECTORY_SEPARATOR . "pear.conf",
+            $this->realPath . DIRECTORY_SEPARATOR . 'etc' . DIRECTORY_SEPARATOR . 'pear.conf',
             $newPearConfig,
             0644
         );
@@ -218,7 +230,7 @@ class Cloner extends AbstractWorker
 
     /**
      * Replaces original path with new path in pear config file
-     * 
+     *
      * @param  array $pearConfig The old array of config options
      * @return array The new array of config options
      */

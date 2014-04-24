@@ -15,8 +15,8 @@ namespace Virtphp;
 
 class Virtphp
 {
-    const VERSION = "@package_version@";
-    const RELEASE_DATE = "@release_date@";
+    const VERSION = '@package_version@';
+    const RELEASE_DATE = '@release_date@';
 
     /**
      * Make sure provided environment name is valid.

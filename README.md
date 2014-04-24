@@ -4,7 +4,7 @@ virtPHP is a tool for creating and managing multiple isolated PHP environments o
 
 virtPHP creates isolated environments so that you may run any number of PHP development projects, all using different versions of PEAR packages and different PECL extensions. You may even specify a different version of PHP, if your system has various installations of PHP.
 
-To install multiple versions of PHP, we suggest taking a look at the [phpenv](https://github.com/CHH/phpenv) and [php-build](https://github.com/CHH/php-build) projects and using virtPHP with them, to manage multiple virtual PHP environments.
+To install multiple versions of PHP, we suggest taking a look at the [phpenv](https://github.com/CHH/phpenv) and [php-build](https://github.com/CHH/php-build) projects or [phpbrew](https://github.com/c9s/phpbrew) and using virtPHP with them, to manage multiple virtual PHP environments.
 
 **Note: virtPHP is currently only targeted to command line `php` (php-cli) for *nix based systems.**
 
@@ -252,6 +252,12 @@ phpenv global 5.3.28
 So, why would we need virtPHP, if we can do this? virtPHP goes beyond phpenv.
 
 With virtPHP, you may install different PECL extensions, different PEAR packages, and manage separate `php.ini` configs for the same version and build of PHP. This way, projects you are developing that share the same PHP version but different configuration may be developed on the same system using different virtual PHP environments. virtPHP can work together with phpenv to achieve this.
+
+
+## Known Issues
+
+* .pearrc not found issue  
+  If you get an error stating the script couldn't access the `.pearrc` file (or can't find it), you can either try changing the permissions on your `[USER_DIR]/.pearrc` file or remove it entirely. This issue seems to occur sporadically.
 
 
 ## Contributing

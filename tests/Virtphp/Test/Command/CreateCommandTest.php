@@ -15,7 +15,7 @@ namespace Virtphp\Test\Command;
 
 use Virtphp\Command\CreateCommand;
 use Virtphp\Test\Mock\CreatorMock;
-use Virtphp\Test\Mock\ProcessMock;
+use Virtphp\Test\Mock\FilesystemMock;
 use Virtphp\TestCase;
 use Virtphp\TestOutput;
 
@@ -42,19 +42,19 @@ class CreateCommandTest extends TestCase
      */
     public function testExecute()
     {
-        $processMock = null;
+        $filesystemMock = null;
         $creatorMock = null;
 
-        $command = $this->getMock('Virtphp\Command\CreateCommand', array('getProcess', 'getWorker'));
+        $command = $this->getMock('Virtphp\Command\CreateCommand', array('getFilesystem', 'getWorker'));
         $command->expects($this->any())
-            ->method('getProcess')
-            ->will($this->returnCallback(function($command) use (&$processMock) {
-                $processMock = new ProcessMock($command);
-                return $processMock;
+            ->method('getFilesystem')
+            ->will($this->returnCallback(function () use (&$filesystemMock) {
+                $filesystemMock = new FilesystemMock(false);
+                return $filesystemMock;
             }));
         $command->expects($this->any())
             ->method('getWorker')
-            ->will($this->returnCallback(function($name, $args) use (&$creatorMock) {
+            ->will($this->returnCallback(function ($name, $args) use (&$creatorMock) {
                 $creatorMock = new CreatorMock($name, $args);
                 return $creatorMock;
             }));
@@ -100,19 +100,19 @@ class CreateCommandTest extends TestCase
      */
     public function testExecuteWithOldPearrcFile()
     {
-        $processMock = null;
+        $filesystemMock = null;
         $creatorMock = null;
 
-        $command = $this->getMock('Virtphp\Command\CreateCommand', array('getProcess', 'getWorker'));
+        $command = $this->getMock('Virtphp\Command\CreateCommand', array('getFilesystem', 'getWorker'));
         $command->expects($this->any())
-            ->method('getProcess')
-            ->will($this->returnCallback(function($command) use (&$processMock) {
-                $processMock = new ProcessMock($command, true);
-                return $processMock;
+            ->method('getFilesystem')
+            ->will($this->returnCallback(function () use (&$filesystemMock) {
+                $filesystemMock = new FilesystemMock();
+                return $filesystemMock;
             }));
         $command->expects($this->any())
             ->method('getWorker')
-            ->will($this->returnCallback(function($name, $args) use (&$creatorMock) {
+            ->will($this->returnCallback(function ($name, $args) use (&$creatorMock) {
                 $creatorMock = new CreatorMock($name, $args);
                 return $creatorMock;
             }));
@@ -144,7 +144,10 @@ class CreateCommandTest extends TestCase
         $this->assertEquals('/path/to/pear.conf', $creatorMock->pearConf);
         $this->assertCount(3, $output->messages);
         $this->assertEquals(
-            '<warning>There is an old .pearrc file on your system that may prevent this VirtPHP env from being created. If an error occurs, you may temporarily move the .pearrc file while creating your virtual env.</warning>',
+            '<warning>'
+            . 'There is an old .pearrc file on your system that may prevent this VirtPHP env from being created. '
+            . 'If an error occurs, you may temporarily move the .pearrc file while creating your virtual env.'
+            . '</warning>',
             $output->messages[0]
         );
         $this->assertStringMatchesFormat(
@@ -162,15 +165,15 @@ class CreateCommandTest extends TestCase
      */
     public function testExecuteWithInvalidEnvName()
     {
-        $command = $this->getMock('Virtphp\Command\CreateCommand', array('getProcess', 'getWorker'));
+        $command = $this->getMock('Virtphp\Command\CreateCommand', array('getFilesystem', 'getWorker'));
         $command->expects($this->any())
-            ->method('getProcess')
-            ->will($this->returnCallback(function($command) {
-                return new ProcessMock($command);
+            ->method('getFilesystem')
+            ->will($this->returnCallback(function () {
+                return new FilesystemMock();
             }));
         $command->expects($this->any())
             ->method('getWorker')
-            ->will($this->returnCallback(function($name, $args) {
+            ->will($this->returnCallback(function ($name, $args) {
                 return new CreatorMock($name, $args);
             }));
 
@@ -203,19 +206,19 @@ class CreateCommandTest extends TestCase
     public function testExecuteWithCurrentWorkingDir()
     {
         $currentWorkingDir = getcwd();
-        $processMock = null;
+        $filesystemMock = null;
         $creatorMock = null;
 
-        $command = $this->getMock('Virtphp\Command\CreateCommand', array('getProcess', 'getWorker'));
+        $command = $this->getMock('Virtphp\Command\CreateCommand', array('getFilesystem', 'getWorker'));
         $command->expects($this->any())
-            ->method('getProcess')
-            ->will($this->returnCallback(function($command) use (&$processMock) {
-                $processMock = new ProcessMock($command);
-                return $processMock;
+            ->method('getFilesystem')
+            ->will($this->returnCallback(function () use (&$filesystemMock) {
+                $filesystemMock = new FilesystemMock();
+                return $filesystemMock;
             }));
         $command->expects($this->any())
             ->method('getWorker')
-            ->will($this->returnCallback(function($name, $args) use (&$creatorMock) {
+            ->will($this->returnCallback(function ($name, $args) use (&$creatorMock) {
                 $creatorMock = new CreatorMock($name, $args);
                 return $creatorMock;
             }));
@@ -248,15 +251,15 @@ class CreateCommandTest extends TestCase
      */
     public function testExecuteWithFailedCreatorExecute()
     {
-        $command = $this->getMock('Virtphp\Command\CreateCommand', array('getProcess', 'getWorker'));
+        $command = $this->getMock('Virtphp\Command\CreateCommand', array('getFilesystem', 'getWorker'));
         $command->expects($this->any())
-            ->method('getProcess')
-            ->will($this->returnCallback(function($command) {
-                return new ProcessMock($command);
+            ->method('getFilesystem')
+            ->will($this->returnCallback(function () {
+                return new FilesystemMock();
             }));
         $command->expects($this->any())
             ->method('getWorker')
-            ->will($this->returnCallback(function($name, $args) {
+            ->will($this->returnCallback(function ($name, $args) {
                 return new CreatorMock($name, $args, false);
             }));
 

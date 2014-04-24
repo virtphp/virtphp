@@ -211,7 +211,7 @@ class ClonerTest extends TestCase
             $this->output->messages[0]
         );
         $this->assertEquals(
-            "Error: cloning directory failed.",
+            'Error: cloning directory failed.',
             $this->output->messages[1]
         );
     }

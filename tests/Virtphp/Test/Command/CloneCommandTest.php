@@ -13,6 +13,7 @@
 
 namespace Virtphp\Test\Command;
 
+use Symfony\Component\Console\Input\ArgvInput;
 use Virtphp\Command\CloneCommand;
 use Virtphp\Test\Mock\ClonerMock;
 use Virtphp\Test\Mock\FilesystemMock;
@@ -45,14 +46,14 @@ class CloneCommandTest extends TestCase
             ->will($this->returnValue(true));
         $command->expects($this->any())
             ->method('getWorker')
-            ->will($this->returnCallback(function($name, $args) {
+            ->will($this->returnCallback(function ($name, $args) {
                 return new ClonerMock($name, $args);
             }));
 
         $execute = new \ReflectionMethod('Virtphp\Command\CloneCommand', 'execute');
         $execute->setAccessible(true);
 
-        $input = new \Symfony\Component\Console\Input\ArgvInput(
+        $input = new ArgvInput(
             array('file.php', 'foobar', '/foo/bar/baz'),
             $command->getDefinition()
         );
@@ -84,14 +85,14 @@ class CloneCommandTest extends TestCase
             ->will($this->returnValue(true));
         $command->expects($this->any())
             ->method('getWorker')
-            ->will($this->returnCallback(function($name, $args) {
+            ->will($this->returnCallback(function ($name, $args) {
                 return new ClonerMock($name, $args);
             }));
 
         $execute = new \ReflectionMethod('Virtphp\Command\CloneCommand', 'execute');
         $execute->setAccessible(true);
 
-        $input = new \Symfony\Component\Console\Input\ArgvInput(
+        $input = new ArgvInput(
             array('file.php', '1foobar', '/foo/bar/baz'),
             $command->getDefinition()
         );
@@ -119,14 +120,14 @@ class CloneCommandTest extends TestCase
             ->will($this->returnValue(false));
         $command->expects($this->any())
             ->method('getWorker')
-            ->will($this->returnCallback(function($name, $args) {
+            ->will($this->returnCallback(function ($name, $args) {
                 return new ClonerMock($name, $args);
             }));
 
         $execute = new \ReflectionMethod('Virtphp\Command\CloneCommand', 'execute');
         $execute->setAccessible(true);
 
-        $input = new \Symfony\Component\Console\Input\ArgvInput(
+        $input = new ArgvInput(
             array('file.php', 'foobar', '/foo/bar/baz'),
             $command->getDefinition()
         );
@@ -150,14 +151,14 @@ class CloneCommandTest extends TestCase
             ->will($this->returnValue(true));
         $command->expects($this->any())
             ->method('getWorker')
-            ->will($this->returnCallback(function($name, $args) {
+            ->will($this->returnCallback(function ($name, $args) {
                 return new ClonerMock($name, $args, false);
             }));
 
         $execute = new \ReflectionMethod('Virtphp\Command\CloneCommand', 'execute');
         $execute->setAccessible(true);
 
-        $input = new \Symfony\Component\Console\Input\ArgvInput(
+        $input = new ArgvInput(
             array('file.php', 'foobar', '/foo/bar/baz'),
             $command->getDefinition()
         );

@@ -12,8 +12,8 @@
  */
 
 error_reporting(E_ALL);
-date_default_timezone_set("America/Chicago");
+date_default_timezone_set('America/Chicago');
 ini_set('xdebug.scream', 0);
 
-$loader = require __DIR__."/../src/bootstrap.php";
+$loader = require __DIR__.'/../src/bootstrap.php';
 $loader->addPsr4('Virtphp\\', __DIR__ . '/Virtphp/');

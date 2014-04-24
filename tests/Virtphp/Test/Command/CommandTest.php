@@ -87,7 +87,7 @@ class CommandTest extends TestCase
 
     /**
      * @covers Virtphp\Command\Command::getWorker
-     * @expectedException InvalidArgumentException
+     * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Worker Virtphp\Workers\Foobar does not exist
      */
     public function testGetWorker()
