@@ -94,4 +94,13 @@ class CommandTest extends TestCase
     {
         $this->command->getWorker('Foobar', array(1, 2, 3));
     }
+
+    /**
+     * @covers Virtphp\Command\Command::getEnvironments
+     */
+    public function testGetEnvironments()
+    {
+        $this->command->getEnvironments();
+        $this->assertNotEmpty($this->command->envFile);
+    }
 }
