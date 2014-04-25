@@ -86,6 +86,18 @@ class CreateCommand extends Command
             return false;
         }
 
+        // Make sure name is not already taken
+        $envs = $this->getEnvironments();
+        if (isset($envs[$envName])) {
+            $output->writeln(
+                '<error>'
+                . 'The environment you specified has alredy been created.'
+                . '</error>'
+            );
+
+            return false;
+        }
+
         $binDir = $input->getOption('php-bin-dir');
         $installPath = $input->getOption('install-path');
         if ($installPath === null) {
