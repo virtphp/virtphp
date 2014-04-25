@@ -227,6 +227,57 @@ class DestroyCommandTest extends TestCase
                 $destroyerMock = new DestroyerMock($name, $args, false);
                 return $destroyerMock;
             }));
+        $command->expects($this->any())
+            ->method('getEnvironments')
+            ->will($this->returnValue(
+                array(
+                    '/path/to/virtphp/project' => array(
+                        'name' => '',
+                        'path' => '',
+                    )
+                )
+            ));
+
+        $execute = new \ReflectionMethod('Virtphp\Command\DestroyCommand', 'execute');
+        $execute->setAccessible(true);
+
+        $input = new ArgvInput(
+            array(
+                'file.php',
+                '/path/to/virtphp/project',
+            ),
+            $command->getDefinition()
+        );
+
+        $output = new TestOutput();
+
+        $result = $execute->invoke($command, $input, $output);
+
+        $this->assertFalse($result);
+    }
+
+    /**
+     * @covers Virtphp\Command\DestroyCommand::execute
+     */
+    public function testExecuteWhereHasNotBeenCreated()
+    {
+        $destroyerMock = null;
+
+        $command = $this->getMock('Virtphp\Command\DestroyCommand', array('getHelperSet', 'getWorker', 'getEnvironments'));
+        $command->expects($this->any())
+            ->method('getHelperSet')
+            ->will($this->returnCallback(function () {
+                return new HelperSetMock();
+            }));
+        $command->expects($this->any())
+            ->method('getWorker')
+            ->will($this->returnCallback(function ($name, $args) use (&$destroyerMock) {
+                $destroyerMock = new DestroyerMock($name, $args, false);
+                return $destroyerMock;
+            }));
+        $command->expects($this->any())
+            ->method('getEnvironments')
+            ->will($this->returnValue(array()));
 
         $execute = new \ReflectionMethod('Virtphp\Command\DestroyCommand', 'execute');
         $execute->setAccessible(true);
