@@ -123,7 +123,7 @@ class Destroyer extends AbstractWorker
             // get the env name from path
             $path = $this->getRootPath();
             // make sure the trailing / is removed if autocompleted
-            if (substr($path, -1) === '/') {
+            if (substr($path, -1) === DIRECTORY_SEPARATOR) {
                 $path = substr($path, 0, -1);
             }
             // Convert to an array if full path
