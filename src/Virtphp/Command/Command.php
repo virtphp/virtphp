@@ -22,13 +22,6 @@ class Command extends ConsoleCommand
 {
     public $envFile;
 
-
-    public function __construct()
-    {
-        $this->envFile = new EnvironmentFile();
-        parent::__construct();
-    }
-
     /**
      * Returns a Filesystem object for executing filesystem operations
      *
@@ -81,6 +74,9 @@ class Command extends ConsoleCommand
      */
     public function getEnvironments()
     {
+        if (empty($this->envFile)) {
+            $this->envFile = new EnvironmentFile();
+        }
         return $this->envFile->getEnvironments();
     }
 }
