@@ -768,7 +768,7 @@ EOD;
      */
     protected function addEnvFile()
     {
-        $envPath = $_SERVER['HOME'] . DIRECTORY_SEPARATOR .  '.virtphp';
+        $envPath = getenv('HOME') . DIRECTORY_SEPARATOR .  '.virtphp';
         $envFile = 'environments.json';
 
         if (!$this->getFilesystem()->exists($envPath . DIRECTORY_SEPARATOR . $envFile)) {
