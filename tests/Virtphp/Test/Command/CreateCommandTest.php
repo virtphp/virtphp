@@ -205,7 +205,11 @@ class CreateCommandTest extends TestCase
      */
     public function testExecuteWithCurrentWorkingDir()
     {
-        $currentWorkingDir = getcwd();
+        $currentWorkingDir = getenv('HOME')
+            . DIRECTORY_SEPARATOR
+            . '.virtphp'
+            . DIRECTORY_SEPARATOR
+            . 'envs';
         $filesystemMock = null;
         $creatorMock = null;
 
