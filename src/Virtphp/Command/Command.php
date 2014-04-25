@@ -16,9 +16,19 @@ namespace Virtphp\Command;
 use Symfony\Component\Console\Command\Command as ConsoleCommand;
 use Symfony\Component\Process\Process;
 use Virtphp\Util\Filesystem;
+use Virtphp\Util\EnvironmentFile;
 
 class Command extends ConsoleCommand
 {
+    public $envFile;
+
+
+    public function __construct()
+    {
+        $this->envFile = new EnvironmentFile();
+        parent::__construct();
+    }
+
     /**
      * Returns a Filesystem object for executing filesystem operations
      *
@@ -62,5 +72,15 @@ class Command extends ConsoleCommand
         $reflectionObj = new \ReflectionClass($worker);
 
         return $reflectionObj->newInstanceArgs($args);
+    }
+
+    /**
+     * Returns list of all the environments that have been created
+     *
+     * @return array
+     */
+    public function getEnvironments()
+    {
+        return $this->envFile->getEnvironments();
     }
 }
