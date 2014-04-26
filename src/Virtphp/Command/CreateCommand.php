@@ -76,6 +76,8 @@ class CreateCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $envName = $input->getArgument('env-name');
+        $envPath = getenv('HOME') . DIRECTORY_SEPARATOR .  '.virtphp';
+        $envFolder = $envPath . DIRECTORY_SEPARATOR . 'envs';
 
         // Check to make sure environment name is valid
         if (!Virtphp::isValidName($envName)) {
@@ -84,10 +86,29 @@ class CreateCommand extends Command
             return false;
         }
 
+        // Make sure name is not already taken
+        $envs = $this->getEnvironments();
+        if (isset($envs[$envName])) {
+            $output->writeln(
+                '<error>'
+                . 'The environment you specified has alredy been created.'
+                . '</error>'
+            );
+
+            return false;
+        }
+
         $binDir = $input->getOption('php-bin-dir');
         $installPath = $input->getOption('install-path');
         if ($installPath === null) {
-            $installPath = getcwd();
+            $installPath = $envFolder;
+            // check to see if the .virtphp folder exists
+            if (!$this->getFilesystem()->exists($envPath)) {
+                // create the .virtphp folder
+                $this->getFilesystem()->mkdir($envPath);
+                // create the env folder
+                $this->getFilesystem()->mkdir($envFolder);
+            }
         }
 
         // Check for old .pearrc file conflict
@@ -112,7 +133,7 @@ class CreateCommand extends Command
             );
             $output->writeln(
                 '<info>'
-                . "You can activate your new environment using: ~\$ source $envName/bin/activate"
+                . "You can activate your new environment using: ~\$ source $installPath/bin/activate"
                 . "</info>\n"
             );
 

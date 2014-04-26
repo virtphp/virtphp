@@ -16,7 +16,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use InvalidArgumentException;
 
-
 class Destroyer extends AbstractWorker
 {
 
@@ -38,8 +37,11 @@ class Destroyer extends AbstractWorker
      * @param OutputInterface $output
      * @param null $rootPath Path to root
      */
-    public function __construct(InputInterface $input, OutputInterface $output, $rootPath = null)
-    {
+    public function __construct(
+        InputInterface $input,
+        OutputInterface $output,
+        $rootPath = null
+    ) {
         $this->input = $input;
         $this->output = $output;
         $this->setRootPath($rootPath);

@@ -41,7 +41,7 @@ class DestroyCommandTest extends TestCase
     {
         $destroyerMock = null;
 
-        $command = $this->getMock('Virtphp\Command\DestroyCommand', array('getHelperSet', 'getWorker'));
+        $command = $this->getMock('Virtphp\Command\DestroyCommand', array('getHelperSet', 'getWorker', 'getEnvironments'));
         $command->expects($this->any())
             ->method('getHelperSet')
             ->will($this->returnCallback(function () {
@@ -53,6 +53,16 @@ class DestroyCommandTest extends TestCase
                 $destroyerMock = new DestroyerMock($name, $args);
                 return $destroyerMock;
             }));
+        $command->expects($this->any())
+            ->method('getEnvironments')
+            ->will($this->returnValue(
+                array(
+                    '/path/to/virtphp/project' => array(
+                        'name' => '',
+                        'path' => '',
+                    )
+                )
+            ));
 
         $execute = new \ReflectionMethod('Virtphp\Command\DestroyCommand', 'execute');
         $execute->setAccessible(true);
@@ -70,14 +80,14 @@ class DestroyCommandTest extends TestCase
         $result = $execute->invoke($command, $input, $output);
 
         $this->assertTrue($result);
-        $this->assertEquals('/path/to/virtphp/project', $destroyerMock->args[2]);
+        $this->assertEquals('//path/to/virtphp/project', $destroyerMock->args[2]);
         $this->assertCount(2, $output->messages);
         $this->assertStringMatchesFormat(
             'Your virtual PHP environment has been destroyed.',
             $output->messages[0]
         );
         $this->assertStringMatchesFormat(
-            'We deleted the contents of: /path/to/virtphp/project',
+            'We deleted the contents of: //path/to/virtphp/project',
             $output->messages[1]
         );
     }
@@ -96,7 +106,7 @@ class DestroyCommandTest extends TestCase
         putenv("VIRTPHP_ENV_PATH={$dir}");
         $destroyerMock = null;
 
-        $command = $this->getMock('Virtphp\Command\DestroyCommand', array('getHelperSet', 'getWorker'));
+        $command = $this->getMock('Virtphp\Command\DestroyCommand', array('getHelperSet', 'getWorker', 'getEnvironments'));
         $command->expects($this->any())
             ->method('getHelperSet')
             ->will($this->returnCallback(function () {
@@ -108,6 +118,16 @@ class DestroyCommandTest extends TestCase
                 $destroyerMock = new DestroyerMock($name, $args);
                 return $destroyerMock;
             }));
+        $command->expects($this->any())
+            ->method('getEnvironments')
+            ->will($this->returnValue(
+                array(
+                    $dir => array(
+                        'name' => '',
+                        'path' => '',
+                    )
+                )
+            ));
 
         $execute = new \ReflectionMethod('Virtphp\Command\DestroyCommand', 'execute');
         $execute->setAccessible(true);
@@ -142,7 +162,7 @@ class DestroyCommandTest extends TestCase
     {
         $destroyerMock = null;
 
-        $command = $this->getMock('Virtphp\Command\DestroyCommand', array('getHelperSet', 'getWorker'));
+        $command = $this->getMock('Virtphp\Command\DestroyCommand', array('getHelperSet', 'getWorker', 'getEnvironments'));
         $command->expects($this->any())
             ->method('getHelperSet')
             ->will($this->returnCallback(function () {
@@ -154,6 +174,16 @@ class DestroyCommandTest extends TestCase
                 $destroyerMock = new DestroyerMock($name, $args);
                 return $destroyerMock;
             }));
+        $command->expects($this->any())
+            ->method('getEnvironments')
+            ->will($this->returnValue(
+                array(
+                    '/path/to/virtphp/project' => array(
+                        'name' => '',
+                        'path' => '',
+                    )
+                )
+            ));
 
         $execute = new \ReflectionMethod('Virtphp\Command\DestroyCommand', 'execute');
         $execute->setAccessible(true);
@@ -185,7 +215,7 @@ class DestroyCommandTest extends TestCase
     {
         $destroyerMock = null;
 
-        $command = $this->getMock('Virtphp\Command\DestroyCommand', array('getHelperSet', 'getWorker'));
+        $command = $this->getMock('Virtphp\Command\DestroyCommand', array('getHelperSet', 'getWorker', 'getEnvironments'));
         $command->expects($this->any())
             ->method('getHelperSet')
             ->will($this->returnCallback(function () {
@@ -197,6 +227,57 @@ class DestroyCommandTest extends TestCase
                 $destroyerMock = new DestroyerMock($name, $args, false);
                 return $destroyerMock;
             }));
+        $command->expects($this->any())
+            ->method('getEnvironments')
+            ->will($this->returnValue(
+                array(
+                    '/path/to/virtphp/project' => array(
+                        'name' => '',
+                        'path' => '',
+                    )
+                )
+            ));
+
+        $execute = new \ReflectionMethod('Virtphp\Command\DestroyCommand', 'execute');
+        $execute->setAccessible(true);
+
+        $input = new ArgvInput(
+            array(
+                'file.php',
+                '/path/to/virtphp/project',
+            ),
+            $command->getDefinition()
+        );
+
+        $output = new TestOutput();
+
+        $result = $execute->invoke($command, $input, $output);
+
+        $this->assertFalse($result);
+    }
+
+    /**
+     * @covers Virtphp\Command\DestroyCommand::execute
+     */
+    public function testExecuteWhereHasNotBeenCreated()
+    {
+        $destroyerMock = null;
+
+        $command = $this->getMock('Virtphp\Command\DestroyCommand', array('getHelperSet', 'getWorker', 'getEnvironments'));
+        $command->expects($this->any())
+            ->method('getHelperSet')
+            ->will($this->returnCallback(function () {
+                return new HelperSetMock();
+            }));
+        $command->expects($this->any())
+            ->method('getWorker')
+            ->will($this->returnCallback(function ($name, $args) use (&$destroyerMock) {
+                $destroyerMock = new DestroyerMock($name, $args, false);
+                return $destroyerMock;
+            }));
+        $command->expects($this->any())
+            ->method('getEnvironments')
+            ->will($this->returnValue(array()));
 
         $execute = new \ReflectionMethod('Virtphp\Command\DestroyCommand', 'execute');
         $execute->setAccessible(true);

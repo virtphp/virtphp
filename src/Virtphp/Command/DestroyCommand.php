@@ -44,6 +44,21 @@ class DestroyCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $path = $input->getArgument('env-path');
+        // get the list of created environments
+        $envs = $this->getEnvironments();
+        // check to see if active environment and then get the path
+        if (!isset($envs[$path])) {
+            $output->writeln(
+                '<error>'
+                . 'The environment you specified has not been created.'
+                . '</error>'
+            );
+
+            return false;
+        }
+
+        // set the path to one on record
+        $path = $envs[$path]['path'] . DIRECTORY_SEPARATOR . $path;
 
         $virtPath = getenv('VIRTPHP_ENV_PATH');
         if ($virtPath !== false && $virtPath == realpath($path)) {
@@ -60,7 +75,8 @@ class DestroyCommand extends Command
         if (!$dialog->askConfirmation(
             $output,
             '<question>'
-            . 'Are you sure you want to delete this virtual environment?\n'
+            . 'Are you sure you want to delete this virtual environment?
+'
             . "Directory: $path\nWARNING: ALL FILES WILL BE REMOVED IN THIS DIRECTORY! (y/N): "
             . '</question>',
             false
