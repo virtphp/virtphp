@@ -26,8 +26,8 @@ class EnvironmentFile
     public function __construct()
     {
         // set the path to the environments folder
-        $this->envFile = getenv('HOME') . DIRECTORY_SEPARATOR .  '.virtphp' . DIRECTORY_SEPARATOR .  'environments.json';
-        $this->envPath = getenv('HOME') . DIRECTORY_SEPARATOR .  '.virtphp';
+        $this->envFile = getenv('HOME') . DIRECTORY_SEPARATOR . '.virtphp' . DIRECTORY_SEPARATOR .  'environments.json';
+        $this->envPath = getenv('HOME') . DIRECTORY_SEPARATOR . '.virtphp';
         $this->envFolder = $this->envPath . DIRECTORY_SEPARATOR . 'envs';
     }
 
