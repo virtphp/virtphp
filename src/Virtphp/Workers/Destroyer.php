@@ -119,13 +119,30 @@ class Destroyer extends AbstractWorker
             );
 
             // get the env name from path
-            $path = explode(DIRECTORY_SEPARATOR, $this->getRootPath());
+            $path = $this->getRootPath();
+            // make sure the trailing / is removed if autocompleted
+            $path = rtrim($path, DIRECTORY_SEPARATOR);
+            // Convert to an array if full path
+            $path = explode(DIRECTORY_SEPARATOR, $path);
             if (is_array($path)) {
+                // grab the last entry which is the name we are looking for
                 $path = $path[count($path) - 1 ];
             }
+
             // Convert the contents to array
             $envList = json_decode($envContents, true);
-            unset($envList[$path]);
+            if (isset($envList[$path])) {
+                $this->output->writeln(
+                    '<info>Found path and removed from list. '
+                    . $path . '</info>'
+                );
+                unset($envList[$path]);
+            } else {
+                $this->output->writeln(
+                    '<info>No matching environments in list archive. '
+                    . $path . '</info>'
+                );
+            }
 
             $this->getFilesystem()->dumpFile(
                 $envPath . DIRECTORY_SEPARATOR . $envFile,
