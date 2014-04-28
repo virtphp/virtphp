@@ -44,8 +44,13 @@ class DestroyCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $path = $input->getArgument('env-path');
+
+        // Pass the output object to the parent
+        $this->output = $output;
+
         // get the list of created environments
         $envs = $this->getEnvironments();
+
         // check to see if active environment and then get the path
         if (!isset($envs[$path])) {
             $output->writeln(
