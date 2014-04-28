@@ -79,6 +79,9 @@ class CreateCommand extends Command
         $envPath = getenv('HOME') . DIRECTORY_SEPARATOR .  '.virtphp';
         $envFolder = $envPath . DIRECTORY_SEPARATOR . 'envs';
 
+        // Pass the output object to the parent
+        $this->output = $output;
+
         // Check to make sure environment name is valid
         if (!Virtphp::isValidName($envName)) {
             $output->writeln('<error>Sorry, but that is not a valid environment name.</error>');
@@ -86,9 +89,8 @@ class CreateCommand extends Command
             return false;
         }
 
-        // Make sure name is not already taken
-        $envs = $this->getEnvironments();
-        if (isset($envs[$envName])) {
+        // Make sure the env hasn't been created before
+        if ($this->checkForEnv($envName)) {
             $output->writeln(
                 '<error>'
                 . 'The environment you specified has alredy been created.'
@@ -102,13 +104,6 @@ class CreateCommand extends Command
         $installPath = $input->getOption('install-path');
         if ($installPath === null) {
             $installPath = $envFolder;
-            // check to see if the .virtphp folder exists
-            if (!$this->getFilesystem()->exists($envPath)) {
-                // create the .virtphp folder
-                $this->getFilesystem()->mkdir($envPath);
-                // create the env folder
-                $this->getFilesystem()->mkdir($envFolder);
-            }
         }
 
         // Check for old .pearrc file conflict
@@ -122,7 +117,10 @@ class CreateCommand extends Command
         }
 
         // Setup environment
-        $creator = $this->getWorker('Creator', array($input, $output, $envName, $installPath, $binDir));
+        $creator = $this->getWorker(
+            'Creator',
+            array($input, $output, $envName, $installPath, $binDir)
+        );
         $creator->setCustomPhpIni($input->getOption('php-ini'));
         $creator->setCustomPearConf($input->getOption('pear-conf'));
         if ($creator->execute()) {
@@ -136,6 +134,8 @@ class CreateCommand extends Command
                 . "You can activate your new environment using: ~\$ source $installPath/bin/activate"
                 . "</info>\n"
             );
+
+            $this->addEnv($envName, $installPath);
 
             return true;
         }
