@@ -23,12 +23,25 @@ class EnvironmentFile
 {
     public $envFile;
 
-    public function __construct()
+    public $envContents = array();
+
+    public $output;
+
+    public function __construct(OutputInterface $output)
     {
         // set the path to the environments folder
         $this->envFile = getenv('HOME') . DIRECTORY_SEPARATOR . '.virtphp' . DIRECTORY_SEPARATOR .  'environments.json';
         $this->envPath = getenv('HOME') . DIRECTORY_SEPARATOR . '.virtphp';
         $this->envFolder = $this->envPath . DIRECTORY_SEPARATOR . 'envs';
+        $this->output = $output;
+
+        // Make sure the ~/.virtphp and associated files/folders are created
+        if ($this->createEnvironmentsFile()) {
+            // Get the contents of the environments.json file
+            $contents = $this->getFilesystem()->getContents($this->envFile);
+            // Set as class property
+            $this->envContents = json_decode($contents, true);
+        }
     }
 
     /**
@@ -48,9 +61,93 @@ class EnvironmentFile
      */
     public function getEnvironments()
     {
-        // Get the contents of the environments.json file
-        $envContents = $this->getFilesystem()->getContents($this->envFile);
-        // Convert the contents to array
-        return json_decode($envContents, true);
+        return $this->envContents;
+    }
+
+    /**
+     * Method for returning an array of environments
+     *
+     * @return array Array of created environments
+     */
+    public function checkForEnvironment($env)
+    {
+        // do a check to see if the environment is there
+        if (isset($this->envContents[$env])) {
+            return $this->envContents[$env];
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Method for creating the ~/.virtphp/environments.json file
+     *
+     */
+    public function createEnvironmentsFile()
+    {
+        // Check to see if the .virtphp directory is there if not, make one
+        if (!$this->getFilesystem()->exists($this->envPath)) {
+            $this->output->writeln(
+                'Creating .virtphp directory in user home folder.'
+            );
+            $this->getFilesystem()->mkdir($this->envPath);
+        }
+        // Check to see if the environments.json file is there
+        if (!$this->getFilesystem()->exists($this->envFile)) {
+            echo 'create json';
+            $this->output->writeln(
+                'Creating the environments.json file.'
+            );
+            $this->getFilesystem()->touch($this->envFile);
+        }
+        // Finally check to see if the env folder is there
+        if (!$this->getFilesystem()->exists($this->envFolder)) {
+            $this->output->writeln(
+                'Creating the env folder to hold the environments.'
+            );
+            $this->getFilesystem()->mkdir($this->envFolder);
+        }
+
+        return true;
+    }
+
+    /*
+     * Method for adding record to the environments.json file.
+     *
+     * @param string $envName Name of the env to add.
+     * @param string $envPath Path, if custom, to where the env is located.
+     *
+     * @return boolean
+     */
+    public function addEnv($envName, $envPath = '')
+    {
+        if (empty($envPath)) {
+            $envPath = $this->envFolder;
+        }
+
+        // Create new record to add
+        $newRecord = array('name' => $envName, 'path' => $envPath);
+
+        $this->output->writeln(
+            'Getting the contents of current environments file.'
+        );
+
+        // Add to final object and then write to file
+        $localEnvs = $this->envContents;
+        $localEnvs[$envName] = $newRecord;
+        $this->envContents = $localEnvs;
+
+        $this->output->writeln(
+            'Writing updated list to environments file.'
+        );
+        try {
+            $this->getFilesystem()->dumpFile($this->envFile, json_encode($this->envContents));
+        } catch (\Exception $e) {
+            $this->output->writeln(
+                'Something went wrong adding env to list. ' . $e
+            );
+        }
+
+        return true;
     }
 }
