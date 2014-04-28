@@ -22,6 +22,8 @@ class Command extends ConsoleCommand
 {
     public $envFile;
 
+    public $outpout;
+
     /**
      * Returns a Filesystem object for executing filesystem operations
      *
@@ -74,9 +76,40 @@ class Command extends ConsoleCommand
      */
     public function getEnvironments()
     {
-        if (empty($this->envFile)) {
-            $this->envFile = new EnvironmentFile();
-        }
+        $this->setEnv();
         return $this->envFile->getEnvironments();
+    }
+
+    /**
+     * Do a check for one particular environment
+     *
+     * @return boolean
+     */
+    public function checkForEnv($env)
+    {
+        $this->setEnv();
+        return $this->envFile->checkForEnvironment($env);
+    }
+
+    /**
+     * Add a new record to environments.json
+     *
+     * @return boolean
+     */
+    public function addEnv($envName, $envPath = '')
+    {
+        $this->setEnv();
+        return $this->envFile->addEnv($envName, $envPath);
+    }
+
+    /**
+     * Set Environment object
+     *
+     */
+    public function setEnv()
+    {
+        if (empty($this->envFile)) {
+            $this->envFile = new EnvironmentFile($this->output);
+        }
     }
 }
