@@ -67,7 +67,6 @@ class Destroyer extends AbstractWorker
         $this->rootPath = strval($path);
     }
 
-
     /**
      * Function is the guts of the worker, reading the provided
      * options and destroying the old virtual env.
