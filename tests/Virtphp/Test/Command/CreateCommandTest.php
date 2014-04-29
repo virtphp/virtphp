@@ -45,7 +45,10 @@ class CreateCommandTest extends TestCase
         $filesystemMock = null;
         $creatorMock = null;
 
-        $command = $this->getMock('Virtphp\Command\CreateCommand', array('getFilesystem', 'getWorker'));
+        $command = $this->getMock(
+            'Virtphp\Command\CreateCommand',
+            array('getFilesystem', 'getWorker', 'checkForEnv')
+        );
         $command->expects($this->any())
             ->method('getFilesystem')
             ->will($this->returnCallback(function () use (&$filesystemMock) {
@@ -58,6 +61,9 @@ class CreateCommandTest extends TestCase
                 $creatorMock = new CreatorMock($name, $args);
                 return $creatorMock;
             }));
+        $command->expects($this->any())
+            ->method('checkForEnv')
+            ->will($this->returnValue(false));
 
         $execute = new \ReflectionMethod('Virtphp\Command\CreateCommand', 'execute');
         $execute->setAccessible(true);
@@ -84,7 +90,7 @@ class CreateCommandTest extends TestCase
         $this->assertEquals('/path/to/php', $creatorMock->args[4]);
         $this->assertEquals('/path/to/php.ini', $creatorMock->phpIni);
         $this->assertEquals('/path/to/pear.conf', $creatorMock->pearConf);
-        $this->assertCount(2, $output->messages);
+        $this->assertCount(4, $output->messages);
         $this->assertStringMatchesFormat(
             'Your virtual php environment (%s) has been created!',
             $output->messages[0]
@@ -103,7 +109,9 @@ class CreateCommandTest extends TestCase
         $filesystemMock = null;
         $creatorMock = null;
 
-        $command = $this->getMock('Virtphp\Command\CreateCommand', array('getFilesystem', 'getWorker'));
+        $command = $this->getMock('Virtphp\Command\CreateCommand',
+            array('getFilesystem', 'getWorker', 'checkForEnv')
+        );
         $command->expects($this->any())
             ->method('getFilesystem')
             ->will($this->returnCallback(function () use (&$filesystemMock) {
@@ -116,6 +124,9 @@ class CreateCommandTest extends TestCase
                 $creatorMock = new CreatorMock($name, $args);
                 return $creatorMock;
             }));
+        $command->expects($this->any())
+            ->method('checkForEnv')
+            ->will($this->returnValue(false));
 
         $execute = new \ReflectionMethod('Virtphp\Command\CreateCommand', 'execute');
         $execute->setAccessible(true);
@@ -142,7 +153,7 @@ class CreateCommandTest extends TestCase
         $this->assertEquals('/path/to/php', $creatorMock->args[4]);
         $this->assertEquals('/path/to/php.ini', $creatorMock->phpIni);
         $this->assertEquals('/path/to/pear.conf', $creatorMock->pearConf);
-        $this->assertCount(3, $output->messages);
+        $this->assertCount(5, $output->messages);
         $this->assertEquals(
             '<warning>'
             . 'There is an old .pearrc file on your system that may prevent this VirtPHP env from being created. '
@@ -165,7 +176,9 @@ class CreateCommandTest extends TestCase
      */
     public function testExecuteWithInvalidEnvName()
     {
-        $command = $this->getMock('Virtphp\Command\CreateCommand', array('getFilesystem', 'getWorker'));
+        $command = $this->getMock('Virtphp\Command\CreateCommand',
+            array('getFilesystem', 'getWorker', 'checkForEnv')
+        );
         $command->expects($this->any())
             ->method('getFilesystem')
             ->will($this->returnCallback(function () {
@@ -176,6 +189,9 @@ class CreateCommandTest extends TestCase
             ->will($this->returnCallback(function ($name, $args) {
                 return new CreatorMock($name, $args);
             }));
+        $command->expects($this->any())
+            ->method('checkForEnv')
+            ->will($this->returnValue(false));
 
         $execute = new \ReflectionMethod('Virtphp\Command\CreateCommand', 'execute');
         $execute->setAccessible(true);
@@ -213,7 +229,9 @@ class CreateCommandTest extends TestCase
         $filesystemMock = null;
         $creatorMock = null;
 
-        $command = $this->getMock('Virtphp\Command\CreateCommand', array('getFilesystem', 'getWorker'));
+        $command = $this->getMock('Virtphp\Command\CreateCommand',
+            array('getFilesystem', 'getWorker', 'checkForEnv')
+        );
         $command->expects($this->any())
             ->method('getFilesystem')
             ->will($this->returnCallback(function () use (&$filesystemMock) {
@@ -226,6 +244,9 @@ class CreateCommandTest extends TestCase
                 $creatorMock = new CreatorMock($name, $args);
                 return $creatorMock;
             }));
+        $command->expects($this->any())
+            ->method('checkForEnv')
+            ->will($this->returnValue(false));
 
         $execute = new \ReflectionMethod('Virtphp\Command\CreateCommand', 'execute');
         $execute->setAccessible(true);

@@ -14,6 +14,7 @@
 namespace Virtphp\Test\Util;
 
 use Virtphp\TestCase;
+use Virtphp\TestOutput;
 use Virtphp\Util\EnvironmentFile;
 
 /**
@@ -28,6 +29,8 @@ class EnvironmentFileTest extends TestCase
     public $expectedEnvFolder;
 
     public $envObj;
+
+    public $output;
     
     public function setup()
     {
@@ -43,7 +46,8 @@ class EnvironmentFileTest extends TestCase
             . DIRECTORY_SEPARATOR
             . 'envs';
 
-        $this->envObj = new EnvironmentFile();
+        $this->output = new TestOutput();
+        $this->envObj = new EnvironmentFile($this->output);
     }
 
     /**
@@ -75,18 +79,22 @@ class EnvironmentFileTest extends TestCase
         );
         $filesystemMock->expects($this->any())
             ->method('getContents')
-            ->will($this->returnValue('{"red":"rain"}'));
+            ->will($this->returnValue(
+                '{"blueEnv":{"path": "/example", "name": "blueEnv"}}'
+            ));
 
-        $environment = $this->getMock(
-            'Virtphp\Util\EnvironmentFile',
-            array('getFilesystem')
-        );
+        $environment = $this->getMockBuilder('Virtphp\Util\EnvironmentFile')
+            ->disableOriginalConstructor()
+            ->getMock();
         $environment->expects($this->any())
             ->method('getFilesystem')
             ->will($this->returnValue($filesystemMock));
+        $environment->expects($this->any())
+            ->method('createEnvironmentsFile')
+            ->will($this->returnValue(true));
 
-        $environment->__construct();
+        $environment->__construct($this->output);
 
-        $this->assertTrue(is_array($environment->getEnvironments()));
+        $this->assertTrue(is_array($environment->envContents));
     }
 }

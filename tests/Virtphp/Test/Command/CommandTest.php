@@ -25,6 +25,7 @@ class CommandTest extends TestCase
     protected function setUp()
     {
         $this->command = new Command('Foo');
+        $this->command->output = new TestOutput();
     }
 
     /**
