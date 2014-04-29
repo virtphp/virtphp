@@ -268,10 +268,13 @@ class Cloner extends AbstractWorker
         // Convert the contents to array
         $envList = json_decode($envContents, true);
 
+        // Get the pathinfo of the realPath variable
+        $realPathInfo = pathinfo($this->realPath);
+
         // Create new record to add
         $newRecord = array(
             'name' => $this->envName,
-            'path' => $this->realPath,
+            'path' => $realPathInfo['dirname'],
         );
 
         // Add to final object and then write to file
