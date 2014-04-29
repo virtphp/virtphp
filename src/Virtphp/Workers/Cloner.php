@@ -271,7 +271,7 @@ class Cloner extends AbstractWorker
         // Create new record to add
         $newRecord = array(
             'name' => $this->envName,
-            'path' => $this->realPath,
+            'path' => pathinfo($this->realPath)['dirname'],
         );
 
         // Add to final object and then write to file
