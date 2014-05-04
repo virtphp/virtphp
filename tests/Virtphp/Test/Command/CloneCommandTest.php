@@ -63,23 +63,6 @@ class CloneCommandTest extends TestCase
         $result = $execute->invoke($command, $input, $output);
 
         $this->assertTrue($result);
-        $this->assertCount(4, $output->messages);
-        $this->assertEquals(
-            'Your new cloned virtual php environment has been created.',
-            $output->messages[0]
-        );
-        $this->assertStringMatchesFormat(
-            'Cloned from:%s',
-            $output->messages[1]
-        );
-        $this->assertStringMatchesFormat(
-            'Getting the contents of current environments file.',
-            $output->messages[2]
-        );
-        $this->assertStringMatchesFormat(
-            'Writing updated list to environments file.',
-            $output->messages[3]
-        );
     }
 
     /**
