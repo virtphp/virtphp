@@ -85,6 +85,7 @@ class EnvironmentFileTest extends TestCase
 
         $environment = $this->getMockBuilder('Virtphp\Util\EnvironmentFile')
             ->disableOriginalConstructor()
+            ->setMethods(array('getFilesystem', 'createEnvironmentsFile'))
             ->getMock();
         $environment->expects($this->any())
             ->method('getFilesystem')
@@ -95,6 +96,214 @@ class EnvironmentFileTest extends TestCase
 
         $environment->__construct($this->output);
 
-        $this->assertTrue(is_array($environment->envContents));
+        $this->assertTrue(is_array($environment->getEnvironments()));
+    }
+
+    /**
+     * @covers Virtphp\Util\EnvironmentFile::checkForEnvironment
+     */
+    public function testCheckForEnvironment()
+    {
+        $filesystemMock = $this->getMock(
+            'Virtphp\Test\Mock\FilesystemMock',
+            array('getContents')
+        );
+        $filesystemMock->expects($this->any())
+            ->method('getContents')
+            ->will($this->returnValue(
+                '{"blueEnv":{"path": "/example", "name": "blueEnv"}}'
+            ));
+
+        $environment = $this->getMockBuilder('Virtphp\Util\EnvironmentFile')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getFilesystem', 'createEnvironmentsFile'))
+            ->getMock();
+        $environment->expects($this->any())
+            ->method('getFilesystem')
+            ->will($this->returnValue($filesystemMock));
+        $environment->expects($this->any())
+            ->method('createEnvironmentsFile')
+            ->will($this->returnValue(true));
+
+        $environment->__construct($this->output);
+
+        $this->assertTrue(is_array($environment->checkForEnvironment('blueEnv')));
+    }
+
+    /**
+     * @covers Virtphp\Util\EnvironmentFile::checkForEnvironment
+     */
+    public function testCheckForEnvironmentFail()
+    {
+        $filesystemMock = $this->getMock(
+            'Virtphp\Test\Mock\FilesystemMock',
+            array('getContents')
+        );
+        $filesystemMock->expects($this->any())
+            ->method('getContents')
+            ->will($this->returnValue(
+                '{"blueEnv":{"path": "/example", "name": "blueEnv"}}'
+            ));
+
+        $environment = $this->getMockBuilder('Virtphp\Util\EnvironmentFile')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getFilesystem', 'createEnvironmentsFile'))
+            ->getMock();
+        $environment->expects($this->any())
+            ->method('getFilesystem')
+            ->will($this->returnValue($filesystemMock));
+        $environment->expects($this->any())
+            ->method('createEnvironmentsFile')
+            ->will($this->returnValue(true));
+
+        $environment->__construct($this->output);
+
+        $this->assertFalse(is_array($environment->checkForEnvironment('noEnv')));
+    }
+
+    /**
+     * @covers Virtphp\Util\EnvironmentFile::createEnvironmentsFile
+     */
+    public function testCreateEnvironmentsFile()
+    {
+        $filesystemMock = $this->getMock(
+            'Virtphp\Test\Mock\FilesystemMock',
+            array('exists', 'mkdir', 'touch')
+        );
+        $filesystemMock->expects($this->any())
+            ->method('exists')
+            ->will($this->returnValue(true));
+        $filesystemMock->expects($this->any())
+            ->method('mkdir')
+            ->will($this->returnValue(true));
+        $filesystemMock->expects($this->any())
+            ->method('touch')
+            ->will($this->returnValue(true));
+
+        $environment = $this->getMockBuilder('Virtphp\Util\EnvironmentFile')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getFilesystem', 'createEnvironmentsFile'))
+            ->getMock();
+        $environment->expects($this->any())
+            ->method('getFilesystem')
+            ->will($this->returnValue($filesystemMock));
+        $environment->expects($this->any())
+            ->method('createEnvironmentsFile')
+            ->will($this->returnValue(true));
+
+        $environment->__construct($this->output);
+
+        $this->assertFalse(is_array($environment->createEnvironmentsFile()));
+    }
+
+    /**
+     * @covers Virtphp\Util\EnvironmentFile::createEnvironmentsFile
+     */
+    public function testCreateEnvironmentsFileFailAndMake()
+    {
+        $filesystemMock = $this->getMock(
+            'Virtphp\Test\Mock\FilesystemMock',
+            array('getContents', 'exists', 'mkdir', 'touch')
+        );
+        $filesystemMock->expects($this->any())
+            ->method('getContents')
+            ->will($this->returnValue(
+                '{"blueEnv":{"path": "/example", "name": "blueEnv"}}'
+            ));
+        $filesystemMock->expects($this->any())
+            ->method('exists')
+            ->will($this->returnValue(false));
+        $filesystemMock->expects($this->any())
+            ->method('mkdir')
+            ->will($this->returnValue(true));
+        $filesystemMock->expects($this->any())
+            ->method('touch')
+            ->will($this->returnValue(true));
+
+        $environment = $this->getMockBuilder('Virtphp\Util\EnvironmentFile')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getFilesystem', 'createEnvironmentFile'))
+            ->getMock();
+        $environment->expects($this->any())
+            ->method('getFilesystem')
+            ->will($this->returnValue($filesystemMock));
+        $environment->expects($this->any())
+            ->method('createEnvironmentFile')
+            ->will($this->returnValue(false));
+
+        $environment->__construct($this->output);
+    }
+
+    /**
+     * @covers Virtphp\Util\EnvironmentFile::addEnv
+     */
+    public function testAddEnv()
+    {
+        $filesystemMock = $this->getMock(
+            'Virtphp\Test\Mock\FilesystemMock',
+            array('dumpFile', 'getContents')
+        );
+        $filesystemMock->expects($this->any())
+            ->method('dumpFile')
+            ->will($this->returnValue(true));
+        $filesystemMock->expects($this->any())
+            ->method('getContents')
+            ->will($this->returnValue(
+                '{"blueEnv":{"path": "/example", "name": "blueEnv"}}'
+            ));
+
+        $environment = $this->getMockBuilder('Virtphp\Util\EnvironmentFile')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getFilesystem', 'createEnvironmentsFile'))
+            ->getMock();
+        $environment->expects($this->any())
+            ->method('getFilesystem')
+            ->will($this->returnValue($filesystemMock));
+        $environment->expects($this->any())
+            ->method('createEnvironmentsFile')
+            ->will($this->returnValue(true));
+
+        $environment->__construct($this->output);
+
+        $envName = 'newEnv';
+        $envPath = '/newPath/';
+
+        $this->assertTrue($environment->addEnv($envName, $envPath));
+    }
+
+    /**
+     * @covers Virtphp\Util\EnvironmentFile::addEnv
+     */
+    public function testAddEnvNoPathAndFail()
+    {
+        $filesystemMock = $this->getMock(
+            'Virtphp\Test\Mock\FilesystemMock',
+            array('dumpFile', 'getContents')
+        );
+        $filesystemMock->expects($this->any())
+            ->method('dumpFile')
+            ->will($this->throwException(new \Exception));
+        $filesystemMock->expects($this->any())
+            ->method('getContents')
+            ->will($this->returnValue(
+                '{"blueEnv":{"path": "/example", "name": "blueEnv"}}'
+            ));
+
+        $environment = $this->getMockBuilder('Virtphp\Util\EnvironmentFile')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getFilesystem', 'createEnvironmentsFile'))
+            ->getMock();
+        $environment->expects($this->any())
+            ->method('getFilesystem')
+            ->will($this->returnValue($filesystemMock));
+        $environment->expects($this->any())
+            ->method('createEnvironmentsFile')
+            ->will($this->returnValue(true));
+
+        $environment->__construct($this->output);
+
+        $envName = 'newEnv';
+
+        $this->assertFalse($environment->addEnv($envName));
     }
 }
