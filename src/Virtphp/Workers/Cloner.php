@@ -246,4 +246,5 @@ class Cloner extends AbstractWorker
 
         return $pearConfig;
     }
+
 }
