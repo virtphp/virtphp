@@ -65,7 +65,7 @@ class EnvironmentFile
     }
 
     /**
-     * Method for returning an array of environments
+     * Method to search list for one particular environment
      *
      * @return array Array of created environments
      */
@@ -94,7 +94,6 @@ class EnvironmentFile
         }
         // Check to see if the environments.json file is there
         if (!$this->getFilesystem()->exists($this->envFile)) {
-            echo 'create json';
             $this->output->writeln(
                 'Creating the environments.json file.'
             );
@@ -146,6 +145,8 @@ class EnvironmentFile
             $this->output->writeln(
                 'Something went wrong adding env to list. ' . $e
             );
+
+            return false;
         }
 
         return true;
