@@ -81,7 +81,7 @@ class DestroyCommandTest extends TestCase
 
         $this->assertTrue($result);
         $this->assertEquals('//path/to/virtphp/project', $destroyerMock->args[2]);
-        $this->assertCount(2, $output->messages);
+        $this->assertCount(4, $output->messages);
         $this->assertStringMatchesFormat(
             'Your virtual PHP environment has been destroyed.',
             $output->messages[0]

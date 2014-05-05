@@ -306,4 +306,112 @@ class EnvironmentFileTest extends TestCase
 
         $this->assertFalse($environment->addEnv($envName));
     }
+
+    /**
+     * @covers Virtphp\Util\EnvironmentFile::removeEnvFromList
+     */
+    public function testRemoveEnvFromList()
+    {
+        $filesystemMock = $this->getMock(
+            'Virtphp\Test\Mock\FilesystemMock',
+            array('dumpFile', 'getContents')
+        );
+        $filesystemMock->expects($this->any())
+            ->method('dumpFile')
+            ->will($this->returnValue(true));
+        $filesystemMock->expects($this->any())
+            ->method('getContents')
+            ->will($this->returnValue(
+                '{"blueEnv":{"path": "/example", "name": "blueEnv"}}'
+            ));
+
+        $environment = $this->getMockBuilder('Virtphp\Util\EnvironmentFile')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getFilesystem', 'createEnvironmentsFile'))
+            ->getMock();
+        $environment->expects($this->any())
+            ->method('getFilesystem')
+            ->will($this->returnValue($filesystemMock));
+        $environment->expects($this->any())
+            ->method('createEnvironmentsFile')
+            ->will($this->returnValue(true));
+
+        $environment->__construct($this->output);
+
+        $envName = 'blueEnv';
+
+        $this->assertTrue($environment->removeEnvFromList($envName));
+    }
+
+    /**
+     * @covers Virtphp\Util\EnvironmentFile::removeEnvFromList
+     */
+    public function testRemoveEnvFromListFail()
+    {
+        $filesystemMock = $this->getMock(
+            'Virtphp\Test\Mock\FilesystemMock',
+            array('dumpFile', 'getContents')
+        );
+        $filesystemMock->expects($this->any())
+            ->method('dumpFile')
+            ->will($this->returnValue(true));
+        $filesystemMock->expects($this->any())
+            ->method('getContents')
+            ->will($this->returnValue(
+                '{"blueEnv":{"path": "/example", "name": "blueEnv"}}'
+            ));
+
+        $environment = $this->getMockBuilder('Virtphp\Util\EnvironmentFile')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getFilesystem', 'createEnvironmentsFile'))
+            ->getMock();
+        $environment->expects($this->any())
+            ->method('getFilesystem')
+            ->will($this->returnValue($filesystemMock));
+        $environment->expects($this->any())
+            ->method('createEnvironmentsFile')
+            ->will($this->returnValue(true));
+
+        $environment->__construct($this->output);
+
+        $envName = 'noEnv';
+
+        $this->assertFalse($environment->removeEnvFromList($envName));
+    }
+
+    /**
+     * @covers Virtphp\Util\EnvironmentFile::removeEnvFromList
+     */
+    public function testRemoveEnvFromListException()
+    {
+        $filesystemMock = $this->getMock(
+            'Virtphp\Test\Mock\FilesystemMock',
+            array('dumpFile', 'getContents')
+        );
+        $filesystemMock->expects($this->any())
+            ->method('dumpFile')
+            ->will($this->throwException(new \Exception));
+        $filesystemMock->expects($this->any())
+            ->method('getContents')
+            ->will($this->returnValue(
+                '{"blueEnv":{"path": "/example", "name": "blueEnv"}}'
+            ));
+
+        $environment = $this->getMockBuilder('Virtphp\Util\EnvironmentFile')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getFilesystem', 'createEnvironmentsFile'))
+            ->getMock();
+        $environment->expects($this->any())
+            ->method('getFilesystem')
+            ->will($this->returnValue($filesystemMock));
+        $environment->expects($this->any())
+            ->method('createEnvironmentsFile')
+            ->will($this->returnValue(true));
+
+        $environment->__construct($this->output);
+
+        $envName = 'blueEnv';
+
+        $this->assertFalse($environment->removeEnvFromList($envName));
+    }
 }
