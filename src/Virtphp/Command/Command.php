@@ -103,6 +103,17 @@ class Command extends ConsoleCommand
     }
 
     /**
+     * Add a new record to environments.json
+     *
+     * @return boolean
+     */
+    public function removeEnvFromList($path)
+    {
+        $this->setEnv();
+        return $this->envFile->removeEnvFromList($path);
+    }
+
+    /**
      * Set Environment object
      *
      */
