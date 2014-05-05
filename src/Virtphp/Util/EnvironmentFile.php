@@ -36,12 +36,11 @@ class EnvironmentFile
         $this->output = $output;
 
         // Make sure the ~/.virtphp and associated files/folders are created
-        if ($this->createEnvironmentsFile()) {
-            // Get the contents of the environments.json file
-            $contents = $this->getFilesystem()->getContents($this->envFile);
-            // Set as class property
-            $this->envContents = json_decode($contents, true);
-        }
+        $this->createEnvironmentsFile();
+        // Get the contents of the environments.json file
+        $contents = $this->getFilesystem()->getContents($this->envFile);
+        // Set as class property
+        $this->envContents = json_decode($contents, true);
     }
 
     /**
@@ -139,6 +138,53 @@ class EnvironmentFile
         $this->output->writeln(
             'Writing updated list to environments file.'
         );
+        try {
+            $this->getFilesystem()->dumpFile($this->envFile, json_encode($this->envContents));
+        } catch (\Exception $e) {
+            $this->output->writeln(
+                'Something went wrong adding env to list. ' . $e
+            );
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Method for removing environment from list.
+     *
+     * @param string $env The env to remove
+     */
+    public function removeEnvFromList($path)
+    {
+        // clean the path first
+        // make sure the trailing / is removed if autocompleted
+        $path = rtrim($path, DIRECTORY_SEPARATOR);
+        // Convert to an array if full path
+        $path = explode(DIRECTORY_SEPARATOR, $path);
+        if (is_array($path)) {
+            // grab the last entry which is the name we are looking for
+            $path = $path[count($path) - 1 ];
+        }
+
+        if (isset($this->envContents[$path])) {
+            $this->output->writeln(
+                '<info>Found path and removed from list. '
+                . $path . '</info>'
+            );
+            // Where the delete happens
+            unset($this->envContents[$path]);
+        } else {
+            $this->output->writeln(
+                '<info>No matching environments in list archive. '
+                . $path . '</info>'
+            );
+
+            return false;
+        }
+
+        // Write File
         try {
             $this->getFilesystem()->dumpFile($this->envFile, json_encode($this->envContents));
         } catch (\Exception $e) {
