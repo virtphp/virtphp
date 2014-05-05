@@ -89,7 +89,6 @@ class Destroyer extends AbstractWorker
         }
 
         $this->removeStructure();
-        $this->removeFromList();
 
         return true;
     }
@@ -101,54 +100,5 @@ class Destroyer extends AbstractWorker
     {
         $this->output->writeln('<info>Removing directory structure</info>');
         $this->getFilesystem()->remove($this->rootPath);
-    }
-
-    /**
-     * Removes the env from the environments.json file.
-     */
-    protected function removeFromList()
-    {
-        $this->output->writeln('<info>Removing environment from list</info>');
-        // if not, we create it then add this environment and path
-        $envPath = $_SERVER['HOME'] . DIRECTORY_SEPARATOR .  '.virtphp';
-        $envFile = 'environments.json';
-
-        if ($this->getFilesystem()->exists($envPath . DIRECTORY_SEPARATOR . $envFile)) {
-            // get contents, convert to array, add this env and path
-            $envContents = $this->getFilesystem()->getContents(
-                $envPath . DIRECTORY_SEPARATOR . $envFile
-            );
-
-            // get the env name from path
-            $path = $this->getRootPath();
-            // make sure the trailing / is removed if autocompleted
-            $path = rtrim($path, DIRECTORY_SEPARATOR);
-            // Convert to an array if full path
-            $path = explode(DIRECTORY_SEPARATOR, $path);
-            if (is_array($path)) {
-                // grab the last entry which is the name we are looking for
-                $path = $path[count($path) - 1 ];
-            }
-
-            // Convert the contents to array
-            $envList = json_decode($envContents, true);
-            if (isset($envList[$path])) {
-                $this->output->writeln(
-                    '<info>Found path and removed from list. '
-                    . $path . '</info>'
-                );
-                unset($envList[$path]);
-            } else {
-                $this->output->writeln(
-                    '<info>No matching environments in list archive. '
-                    . $path . '</info>'
-                );
-            }
-
-            $this->getFilesystem()->dumpFile(
-                $envPath . DIRECTORY_SEPARATOR . $envFile,
-                json_encode($envList)
-            );
-        }
     }
 }
