@@ -80,8 +80,7 @@ class DestroyCommand extends Command
         if (!$dialog->askConfirmation(
             $output,
             '<question>'
-            . 'Are you sure you want to delete this virtual environment?
-'
+            . 'Are you sure you want to delete this virtual environment?\n'
             . "Directory: $path\nWARNING: ALL FILES WILL BE REMOVED IN THIS DIRECTORY! (y/N): "
             . '</question>',
             false
@@ -100,6 +99,10 @@ class DestroyCommand extends Command
                 . '</bg=green;options=bold>'
             );
             $output->writeln("<info>We deleted the contents of: $path</info>");
+
+            // Remove from list
+            $output->writeln('<info>Removing environment from list</info>');
+            $this->removeEnvFromList($path);
 
             return true;
         }
