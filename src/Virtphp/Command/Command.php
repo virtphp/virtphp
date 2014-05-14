@@ -20,9 +20,9 @@ use Virtphp\Util\EnvironmentFile;
 
 class Command extends ConsoleCommand
 {
-    public $envFile;
+    private $envFile;
 
-    public $outpout;
+    public $output;
 
     /**
      * Returns a Filesystem object for executing filesystem operations
@@ -76,8 +76,7 @@ class Command extends ConsoleCommand
      */
     public function getEnvironments()
     {
-        $this->setEnv();
-        return $this->envFile->getEnvironments();
+        return $this->getEnvFile()->getEnvironments();
     }
 
     /**
@@ -87,8 +86,7 @@ class Command extends ConsoleCommand
      */
     public function checkForEnv($env)
     {
-        $this->setEnv();
-        return $this->envFile->checkForEnvironment($env);
+        return $this->getEnvFile()->checkForEnvironment($env);
     }
 
     /**
@@ -98,8 +96,7 @@ class Command extends ConsoleCommand
      */
     public function addEnv($envName, $envPath = '')
     {
-        $this->setEnv();
-        return $this->envFile->addEnv($envName, $envPath);
+        return $this->getEnvFile()->addEnv($envName, $envPath);
     }
 
     /**
@@ -109,18 +106,18 @@ class Command extends ConsoleCommand
      */
     public function removeEnvFromList($path)
     {
-        $this->setEnv();
-        return $this->envFile->removeEnvFromList($path);
+        return $this->getEnvFile()->removeEnvFromList($path);
     }
 
     /**
      * Set Environment object
      *
      */
-    public function setEnv()
+    public function getEnvFile()
     {
         if (empty($this->envFile)) {
             $this->envFile = new EnvironmentFile($this->output);
         }
+        return $this->envFile;
     }
 }
