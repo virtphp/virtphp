@@ -1,3 +1,12 @@
+### 0.4.0-alpha (2014-05-14)
+
+  * Changed the default behavior of the `create` command to create all new virtPHP environments in `~/.virtphp/envs/`; this may be overridden with the `--install-path` option
+  * Added ability to delete a virtPHP environment by name with `delete envname`
+  * Fixed issue in which we failed to remove an environment from the environments list
+  * Updated all code in the project to conform to PSR-2 standard
+  * Various improvements to tests and raised level of code coverage
+  * Various bug fixes and docs improvements
+
 ### 0.3.0-alpha (2014-03-24)
 
   * Added `show` command to show all environments created with virtphp
