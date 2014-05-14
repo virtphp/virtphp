@@ -102,6 +102,6 @@ class CommandTest extends TestCase
     public function testGetEnvironments()
     {
         $this->command->getEnvironments();
-        $this->assertNotEmpty($this->command->envFile);
+        $this->assertNotEmpty($this->command->getEnvFile());
     }
 }

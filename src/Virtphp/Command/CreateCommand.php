@@ -93,7 +93,7 @@ class CreateCommand extends Command
         if ($this->checkForEnv($envName)) {
             $output->writeln(
                 '<error>'
-                . 'The environment you specified has alredy been created.'
+                . 'The environment you specified has already been created.'
                 . '</error>'
             );
 
