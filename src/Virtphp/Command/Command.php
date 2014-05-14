@@ -16,9 +16,14 @@ namespace Virtphp\Command;
 use Symfony\Component\Console\Command\Command as ConsoleCommand;
 use Symfony\Component\Process\Process;
 use Virtphp\Util\Filesystem;
+use Virtphp\Util\EnvironmentFile;
 
 class Command extends ConsoleCommand
 {
+    private $envFile;
+
+    public $output;
+
     /**
      * Returns a Filesystem object for executing filesystem operations
      *
@@ -62,5 +67,57 @@ class Command extends ConsoleCommand
         $reflectionObj = new \ReflectionClass($worker);
 
         return $reflectionObj->newInstanceArgs($args);
+    }
+
+    /**
+     * Returns list of all the environments that have been created
+     *
+     * @return array
+     */
+    public function getEnvironments()
+    {
+        return $this->getEnvFile()->getEnvironments();
+    }
+
+    /**
+     * Do a check for one particular environment
+     *
+     * @return boolean
+     */
+    public function checkForEnv($env)
+    {
+        return $this->getEnvFile()->checkForEnvironment($env);
+    }
+
+    /**
+     * Add a new record to environments.json
+     *
+     * @return boolean
+     */
+    public function addEnv($envName, $envPath = '')
+    {
+        return $this->getEnvFile()->addEnv($envName, $envPath);
+    }
+
+    /**
+     * Add a new record to environments.json
+     *
+     * @return boolean
+     */
+    public function removeEnvFromList($path)
+    {
+        return $this->getEnvFile()->removeEnvFromList($path);
+    }
+
+    /**
+     * Set Environment object
+     *
+     */
+    public function getEnvFile()
+    {
+        if (empty($this->envFile)) {
+            $this->envFile = new EnvironmentFile($this->output);
+        }
+        return $this->envFile;
     }
 }

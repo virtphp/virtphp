@@ -76,6 +76,11 @@ class CreateCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $envName = $input->getArgument('env-name');
+        $envPath = getenv('HOME') . DIRECTORY_SEPARATOR .  '.virtphp';
+        $envFolder = $envPath . DIRECTORY_SEPARATOR . 'envs';
+
+        // Pass the output object to the parent
+        $this->output = $output;
 
         // Check to make sure environment name is valid
         if (!Virtphp::isValidName($envName)) {
@@ -84,10 +89,21 @@ class CreateCommand extends Command
             return false;
         }
 
+        // Make sure the env hasn't been created before
+        if ($this->checkForEnv($envName)) {
+            $output->writeln(
+                '<error>'
+                . 'The environment you specified has already been created.'
+                . '</error>'
+            );
+
+            return false;
+        }
+
         $binDir = $input->getOption('php-bin-dir');
         $installPath = $input->getOption('install-path');
         if ($installPath === null) {
-            $installPath = getcwd();
+            $installPath = $envFolder;
         }
 
         // Check for old .pearrc file conflict
@@ -101,7 +117,10 @@ class CreateCommand extends Command
         }
 
         // Setup environment
-        $creator = $this->getWorker('Creator', array($input, $output, $envName, $installPath, $binDir));
+        $creator = $this->getWorker(
+            'Creator',
+            array($input, $output, $envName, $installPath, $binDir)
+        );
         $creator->setCustomPhpIni($input->getOption('php-ini'));
         $creator->setCustomPearConf($input->getOption('pear-conf'));
         if ($creator->execute()) {
@@ -112,9 +131,11 @@ class CreateCommand extends Command
             );
             $output->writeln(
                 '<info>'
-                . "You can activate your new environment using: ~\$ source $envName/bin/activate"
+                . "You can activate your new environment using: ~\$ source $installPath/bin/activate"
                 . "</info>\n"
             );
+
+            $this->addEnv($envName, $installPath);
 
             return true;
         }

@@ -63,15 +63,6 @@ class CloneCommandTest extends TestCase
         $result = $execute->invoke($command, $input, $output);
 
         $this->assertTrue($result);
-        $this->assertCount(2, $output->messages);
-        $this->assertEquals(
-            'Your new cloned virtual php environment has been created.',
-            $output->messages[0]
-        );
-        $this->assertStringMatchesFormat(
-            'Cloned from:%s',
-            $output->messages[1]
-        );
     }
 
     /**
@@ -186,7 +177,12 @@ class CloneCommandTest extends TestCase
 
         $output = new TestOutput();
 
-        $result = $isValidPath->invoke($command, '/example/foo/bar', $output);
+        $env = array(
+            'path' => '/example/foo/bar',
+            'name' => 'testEnv',
+        );
+
+        $result = $isValidPath->invoke($command, $env, $output);
 
         $this->assertTrue($result);
         $this->assertCount(0, $output->messages);
@@ -212,7 +208,12 @@ class CloneCommandTest extends TestCase
 
         $output = new TestOutput();
 
-        $result = $isValidPath->invoke($command, '/example/foo/bar', $output);
+        $env = array(
+            'path' => '/example/foo/bar',
+            'name' => 'testEnv',
+        );
+
+        $result = $isValidPath->invoke($command, $env, $output);
 
         $this->assertFalse($result);
         $this->assertCount(1, $output->messages);
@@ -242,7 +243,12 @@ class CloneCommandTest extends TestCase
 
         $output = new TestOutput();
 
-        $result = $isValidPath->invoke($command, '/example/foo/bar', $output);
+        $env = array(
+            'path' => '/example/foo/bar',
+            'name' => 'testEnv',
+        );
+
+        $result = $isValidPath->invoke($command, $env, $output);
 
         $this->assertFalse($result);
         $this->assertCount(1, $output->messages);

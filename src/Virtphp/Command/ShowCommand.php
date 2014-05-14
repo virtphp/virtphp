@@ -61,7 +61,7 @@ class ShowCommand extends Command
         ) {
             $output->writeln(
                 '<error>You must provide both an environment'
-                . 'name and path to resync.</error>'
+                . ' name and path to resync.</error>'
             );
 
             return false;
@@ -75,6 +75,9 @@ class ShowCommand extends Command
                 array($output)
             );
             if ($sync->updatePath($envName, $updatedPath)) {
+                $output->writeln(
+                    'Environment updated to new path.'
+                );
                 return true;
             }
         }

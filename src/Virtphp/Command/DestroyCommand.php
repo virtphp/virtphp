@@ -45,6 +45,26 @@ class DestroyCommand extends Command
     {
         $path = $input->getArgument('env-path');
 
+        // Pass the output object to the parent
+        $this->output = $output;
+
+        // get the list of created environments
+        $envs = $this->getEnvironments();
+
+        // check to see if active environment and then get the path
+        if (!isset($envs[$path])) {
+            $output->writeln(
+                '<error>'
+                . 'The environment you specified has not been created.'
+                . '</error>'
+            );
+
+            return false;
+        }
+
+        // set the path to one on record
+        $path = $envs[$path]['path'] . DIRECTORY_SEPARATOR . $path;
+
         $virtPath = getenv('VIRTPHP_ENV_PATH');
         if ($virtPath !== false && $virtPath == realpath($path)) {
             $output->writeln(
@@ -79,6 +99,10 @@ class DestroyCommand extends Command
                 . '</bg=green;options=bold>'
             );
             $output->writeln("<info>We deleted the contents of: $path</info>");
+
+            // Remove from list
+            $output->writeln('<info>Removing environment from list</info>');
+            $this->removeEnvFromList($path);
 
             return true;
         }

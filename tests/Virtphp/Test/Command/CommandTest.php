@@ -25,6 +25,7 @@ class CommandTest extends TestCase
     protected function setUp()
     {
         $this->command = new Command('Foo');
+        $this->command->output = new TestOutput();
     }
 
     /**
@@ -93,5 +94,14 @@ class CommandTest extends TestCase
     public function testGetWorker()
     {
         $this->command->getWorker('Foobar', array(1, 2, 3));
+    }
+
+    /**
+     * @covers Virtphp\Command\Command::getEnvironments
+     */
+    public function testGetEnvironments()
+    {
+        $this->command->getEnvironments();
+        $this->assertNotEmpty($this->command->getEnvFile());
     }
 }

@@ -347,9 +347,6 @@ class Creator extends AbstractWorker
             return false;
         }
 
-        // Now, let's see if the the environments file has been created
-        $this->addEnvFile();
-
         return true;
     }
 
@@ -760,56 +757,5 @@ EOD;
     protected function getDestroyer()
     {
         return new Destroyer($this->input, $this->output, $this->getEnvBasePath());
-    }
-
-    /**
-     * Method to check to see if env json file is there and if not create it and
-     * add new env with path
-     */
-    protected function addEnvFile()
-    {
-        $envPath = $_SERVER['HOME'] . DIRECTORY_SEPARATOR .  '.virtphp';
-        $envFile = 'environments.json';
-
-        if (!$this->getFilesystem()->exists($envPath . DIRECTORY_SEPARATOR . $envFile)) {
-            $this->output->writeln(
-                'Creating .virtphp directory in user home folder.'
-            );
-            $this->getFilesystem()->mkdir($envPath);
-            $this->output->writeln(
-                'Create the environments.json file.'
-            );
-            $this->getFilesystem()->touch(
-                $envPath . DIRECTORY_SEPARATOR . $envFile
-            );
-        }
-
-        $this->output->writeln(
-            'Getting the contents of current environments file.'
-        );
-        // get contents, convert to array, add this env and path
-        $envContents = $this->getFilesystem()->getContents(
-            $envPath . DIRECTORY_SEPARATOR . $envFile
-        );
-
-        // Convert the contents to array
-        $envList = json_decode($envContents, true);
-
-        // Create new record to add
-        $newRecord = array(
-            'name' => $this->getEnvName(),
-            'path' => $this->getEnvBasePath(),
-        );
-
-        // Add to final object and then write to file
-        $envList[$this->getEnvName()] = $newRecord;
-
-        $this->output->writeln(
-            'Write updated list to environments file.'
-        );
-        $this->getFilesystem()->dumpFile(
-            $envPath . DIRECTORY_SEPARATOR . $envFile,
-            json_encode($envList)
-        );
     }
 }

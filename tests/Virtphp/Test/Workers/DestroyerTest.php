@@ -77,7 +77,6 @@ class DestroyerTest extends TestCase
     /**
      * @covers Virtphp\Workers\Destroyer::execute
      * @covers Virtphp\Workers\Destroyer::removeStructure
-     * @covers Virtphp\Workers\Destroyer::removeFromList
      */
     public function testExecute()
     {
