@@ -46,6 +46,11 @@ deactivate () {
     if [ "$VIRTPHP_ENV_PATH" ]; then
         unset VIRTPHP_ENV_PATH
     fi
+    
+    if [ "$VIRTPHP_OLD_COMPOSER_HOME" ]; then
+        export COMPOSER_PATH="$VIRTPHP_OLD_COMPOSER_HOME"
+        unset VIRTPHP_OLD_COMPOSER_HOME
+    fi
 
     # This should detect bash and zsh, which have a hash command that must
     # be called to get it to forget past commands.  Without forgetting
@@ -87,4 +92,10 @@ fi
 # past commands the $PATH changes we made may not be respected
 if [ -n "$BASH" -o -n "$ZSH_VERSION" ] ; then
     hash -r 2>/dev/null
+fi
+
+VIRTPHP_OLD_COMPOSER_HOME="$COMPOSER_HOME"
+export COMPOSER_HOME="$VIRTPHP_ENV_PATH/.composer"
+if [ ! -d "$COMPOSER_HOME" ] ; then
+  mkdir "$COMPOSER_HOME"
 fi
