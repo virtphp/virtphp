@@ -131,7 +131,7 @@ class CreateCommand extends Command
             );
             $output->writeln(
                 '<info>'
-                . "You can activate your new environment using: ~\$ source $installPath/bin/activate"
+                . "You can activate your new environment using: ~\$ source $installPath/$envName/bin/activate"
                 . "</info>\n"
             );
 

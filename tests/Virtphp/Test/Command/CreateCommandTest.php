@@ -95,9 +95,13 @@ class CreateCommandTest extends TestCase
             'Your virtual php environment (%s) has been created!',
             $output->messages[0]
         );
-        $this->assertStringMatchesFormat(
-            'You can activate your new environment using: ~$ source %s/bin/activate',
-            $output->messages[1]
+        $this->assertEquals(
+            sprintf(
+                'You can activate your new environment using: ~$ source %s/%s/bin/activate',
+                $input->getOption('install-path'),
+                $input->getArgument('env-name')
+            ),
+            trim($output->messages[1])
         );
     }
 
