@@ -46,10 +46,11 @@ deactivate () {
     if [ "$VIRTPHP_ENV_PATH" ]; then
         unset VIRTPHP_ENV_PATH
     fi
-    
-    if [ "$VIRTPHP_OLD_COMPOSER_HOME" ]; then
-        export COMPOSER_PATH="$VIRTPHP_OLD_COMPOSER_HOME"
+
+    if [ "$VIRTPHP_COMPOSER_GLOBAL" ]; then
+        export COMPOSER_HOME="$VIRTPHP_OLD_COMPOSER_HOME"
         unset VIRTPHP_OLD_COMPOSER_HOME
+        unset VIRTPHP_COMPOSER_GLOBAL
     fi
 
     # This should detect bash and zsh, which have a hash command that must
@@ -94,7 +95,11 @@ if [ -n "$BASH" -o -n "$ZSH_VERSION" ] ; then
     hash -r 2>/dev/null
 fi
 
-VIRTPHP_OLD_COMPOSER_HOME="$COMPOSER_HOME"
+# COMPOSER_HOME can be empty or not set, so we want to set a flag variable so
+# that our deactivate command can tell whether or not we originally touched
+# the Composer settings.
+export VIRTPHP_COMPOSER_GLOBAL="1"
+export VIRTPHP_OLD_COMPOSER_HOME="$COMPOSER_HOME"
 export COMPOSER_HOME="$VIRTPHP_ENV_PATH/.composer"
 if [ ! -d "$COMPOSER_HOME" ] ; then
   mkdir "$COMPOSER_HOME"
