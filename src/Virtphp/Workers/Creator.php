@@ -563,7 +563,7 @@ EOD;
         // move it back.
         $pearrc = getenv('HOME') . DIRECTORY_SEPARATOR . '.pearrc';
         $pearrcMoved = getenv('HOME') . DIRECTORY_SEPARATOR . '.virtphp_pearrc';
-        if (file_exists($pearrc)) {
+        if ($this->getFilesystem()->exists($pearrc)) {
             $this->getFilesystem()->rename($pearrc, $pearrcMoved);
         }
 
@@ -591,7 +591,7 @@ EOD;
         );
 
         // put the .pearrc file back in place
-        if (file_exists($pearrcMoved)) {
+        if ($this->getFilesystem()->exists($pearrcMoved)) {
             $this->getFilesystem()->rename($pearrcMoved, $pearrc);
         }
 
