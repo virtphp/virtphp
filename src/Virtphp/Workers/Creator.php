@@ -563,8 +563,13 @@ EOD;
         // move it back.
         $pearrc = getenv('HOME') . DIRECTORY_SEPARATOR . '.pearrc';
         $pearrcMoved = getenv('HOME') . DIRECTORY_SEPARATOR . '.virtphp_pearrc';
-        if ($this->getFilesystem()->exists($pearrc)) {
-            $this->getFilesystem()->rename($pearrc, $pearrcMoved);
+        try {
+            if ($this->getFilesystem()->exists($pearrc)) {
+                $this->getFilesystem()->rename($pearrc, $pearrcMoved);
+            }
+        } catch (\Exception $e) {
+            $this->output->writeln('<error>Error installing Pear, issue with .pearrc file.</error>');
+            throw new \Exception('');
         }
 
         $this->getFilesystem()->chdir($this->getEnvPath());
