@@ -522,14 +522,20 @@ class CreatorTest extends TestCase
      */
     public function testExecute()
     {
-        $filesystemMock = $this->getMock('Virtphp\Test\Mock\FilesystemMock', array('exists'));
+        $filesystemMock = $this->getMock(
+            'Virtphp\Test\Mock\FilesystemMock',
+            array('exists', 'rename')
+        );
         $filesystemMock->expects($this->any())
             ->method('exists')
             ->will($this->onConsecutiveCalls(true, true, false, true, true));
+        $filesystemMock->expects($this->any())
+            ->method('rename')
+            ->will($this->returnValue(true));
 
         $creator = $this->getMockBuilder('Virtphp\Workers\Creator')
             ->disableOriginalConstructor()
-            ->setMethods(array('getFilesystem', 'getProcess'))
+            ->setMethods(array('getFilesystem', 'getProcess', 'rename'))
             ->getMock();
         $creator->expects($this->any())
             ->method('getFilesystem')
@@ -698,7 +704,7 @@ EOD;
 
         $filesystemMock = $this->getMock(
             'Virtphp\Test\Mock\FilesystemMock',
-            array('exists', 'getContents')
+            array('exists', 'getContents', 'rename')
         );
         $filesystemMock->expects($this->any())
             ->method('exists')
@@ -706,6 +712,9 @@ EOD;
         $filesystemMock->expects($this->any())
             ->method('getContents')
             ->will($this->returnValue($customPhpIni));
+        $filesystemMock->expects($this->any())
+            ->method('rename')
+            ->will($this->returnValue(true));
 
         $creator = $this->getMockBuilder('Virtphp\Workers\Creator')
             ->disableOriginalConstructor()
@@ -782,7 +791,7 @@ EOD;
 
         $filesystemMock = $this->getMock(
             'Virtphp\Test\Mock\FilesystemMock',
-            array('exists', 'getContents')
+            array('exists', 'getContents', 'rename')
         );
         $filesystemMock->expects($this->any())
             ->method('exists')
@@ -790,6 +799,9 @@ EOD;
         $filesystemMock->expects($this->any())
             ->method('getContents')
             ->will($this->returnValue($customPhpIni));
+        $filesystemMock->expects($this->any())
+            ->method('rename')
+            ->will($this->returnValue(true));
 
         $creator = $this->getMockBuilder('Virtphp\Workers\Creator')
             ->disableOriginalConstructor()
@@ -845,10 +857,16 @@ EOD;
             ->method('execute')
             ->will($this->returnValue(true));
 
-        $filesystemMock = $this->getMock('Virtphp\Test\Mock\FilesystemMock', array('exists'));
+        $filesystemMock = $this->getMock(
+            'Virtphp\Test\Mock\FilesystemMock',
+            array('exists', 'rename')
+        );
         $filesystemMock->expects($this->any())
             ->method('exists')
             ->will($this->onConsecutiveCalls(true, true, false));
+        $filesystemMock->expects($this->any())
+            ->method('rename')
+            ->will($this->returnValue(true));
 
         $processMock = $this->getMockBuilder('Virtphp\Test\Mock\ProcessMock')
             ->disableOriginalConstructor()
@@ -897,10 +915,16 @@ EOD;
      */
     public function testExecuteWithMissingPhpConfig()
     {
-        $filesystemMock = $this->getMock('Virtphp\Test\Mock\FilesystemMock', array('exists'));
+        $filesystemMock = $this->getMock(
+            'Virtphp\Test\Mock\FilesystemMock',
+            array('exists', 'rename')
+        );
         $filesystemMock->expects($this->any())
             ->method('exists')
             ->will($this->onConsecutiveCalls(true, true, false, false));
+        $filesystemMock->expects($this->any())
+            ->method('rename')
+            ->will($this->returnValue(true));
 
         $creator = $this->getMockBuilder('Virtphp\Workers\Creator')
             ->disableOriginalConstructor()
@@ -940,10 +964,16 @@ EOD;
      */
     public function testExecuteWithMissingPhpize()
     {
-        $filesystemMock = $this->getMock('Virtphp\Test\Mock\FilesystemMock', array('exists'));
+        $filesystemMock = $this->getMock(
+            'Virtphp\Test\Mock\FilesystemMock',
+            array('exists', 'rename')
+        );
         $filesystemMock->expects($this->any())
             ->method('exists')
             ->will($this->onConsecutiveCalls(true, true, false, true, false));
+        $filesystemMock->expects($this->any())
+            ->method('rename')
+            ->will($this->returnValue(true));
 
         $creator = $this->getMockBuilder('Virtphp\Workers\Creator')
             ->disableOriginalConstructor()
@@ -991,10 +1021,16 @@ EOD;
             ->method('execute')
             ->will($this->returnValue(true));
 
-        $filesystemMock = $this->getMock('Virtphp\Test\Mock\FilesystemMock', array('exists'));
+        $filesystemMock = $this->getMock(
+            'Virtphp\Test\Mock\FilesystemMock',
+            array('exists', 'rename')
+        );
         $filesystemMock->expects($this->any())
             ->method('exists')
             ->will($this->onConsecutiveCalls(true, true, false, true, true));
+        $filesystemMock->expects($this->any())
+            ->method('rename')
+            ->will($this->returnValue(true));
 
         $processMock = $this->getMockBuilder('Virtphp\Test\Mock\ProcessMock')
             ->disableOriginalConstructor()
