@@ -558,29 +558,43 @@ EOD;
             0644
         );
 
+        // pearrc files can give you a ton of issues, so we're going to move
+        // the current, if set in the ~/.pearrc, do our install and then
+        // move it back.
+        $pearrc = getenv('HOME') . DIRECTORY_SEPARATOR . '.pearrc';
+        $pearrcMoved = getenv('HOME') . DIRECTORY_SEPARATOR . '.virtphp_pearrc';
+        $this->getFilesystem()->rename($pearrc, $pearrcMoved);
+
         $this->getFilesystem()->chdir($this->getEnvPath());
 
         $this->output->writeln('Installing PEAR');
-        $process = $this->getProcess(
-            $this->getPhpBinDir() .
+        $pearProcess = $this->getPhpBinDir() .
             DIRECTORY_SEPARATOR . 'php -n -dshort_open_tag=0 -dopen_basedir= '
             . '-derror_reporting=1803 -dmemory_limit=-1 -ddetect_unicode=0 '
-            . 'share' . DIRECTORY_SEPARATOR . 'install-pear-nozlib.phar '
+            . $this->getEnvPath() . DIRECTORY_SEPARATOR . 'share'
+            . DIRECTORY_SEPARATOR . 'install-pear-nozlib.phar '
             . "-d \"".$this->getEnvPath() . DIRECTORY_SEPARATOR . "share"
-            . DIRECTORY_SEPARATOR . "php\" -b \"bin\" -c \"etc\""
-        );
+            . DIRECTORY_SEPARATOR . "php\" -b \"bin\" -c \"etc\"";
+        $process = $this->getProcess($pearProcess);
 
         if ($process->run() != 0) {
-            throw new \RuntimeException('Encountered a problem while trying to install PEAR.');
+            throw new \RuntimeException(
+                'Encountered a problem while trying to install PEAR.'
+            );
         }
 
         $this->getFilesystem()->remove(
-            $this->getEnvPath() . DIRECTORY_SEPARATOR . 'share' . DIRECTORY_SEPARATOR . 'install-pear-nozlib.phar'
+            $this->getEnvPath() . DIRECTORY_SEPARATOR . 'share'
+            . DIRECTORY_SEPARATOR . 'install-pear-nozlib.phar'
         );
+
+        // put the .pearrc file back in place
+        $this->getFilesystem()->rename($pearrcMoved, $pearrc);
 
         $this->output->writeln('Saving pear.conf file.');
         $this->getFilesystem()->dumpFile(
-            $this->getEnvPath() . DIRECTORY_SEPARATOR . 'etc' . DIRECTORY_SEPARATOR . 'pear.conf',
+            $this->getEnvPath() . DIRECTORY_SEPARATOR . 'etc'
+            . DIRECTORY_SEPARATOR . 'pear.conf',
             serialize($this->getPearConfigSettings()),
             0644
         );
