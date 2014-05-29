@@ -106,16 +106,6 @@ class CreateCommand extends Command
             $installPath = $envFolder;
         }
 
-        // Check for old .pearrc file conflict
-        if ($this->getFilesystem()->exists(getenv('HOME').'/.pearrc')) {
-            $output->writeln(
-                '<warning>There is an old .pearrc file on your '
-                . 'system that may prevent this VirtPHP env from being created.'
-                . ' If an error occurs, you may temporarily move the .pearrc file '
-                . 'while creating your virtual env.</warning>'
-            );
-        }
-
         // Setup environment
         $creator = $this->getWorker(
             'Creator',
