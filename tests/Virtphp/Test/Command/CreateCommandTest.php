@@ -157,21 +157,15 @@ class CreateCommandTest extends TestCase
         $this->assertEquals('/path/to/php', $creatorMock->args[4]);
         $this->assertEquals('/path/to/php.ini', $creatorMock->phpIni);
         $this->assertEquals('/path/to/pear.conf', $creatorMock->pearConf);
-        $this->assertCount(5, $output->messages);
+        $this->assertCount(4, $output->messages);
+        $this->assertContains(
+            'Your virtual php environment (foobar) has been created!',
+            $output->messages
+        );
         $this->assertEquals(
-            '<warning>'
-            . 'There is an old .pearrc file on your system that may prevent this VirtPHP env from being created. '
-            . 'If an error occurs, you may temporarily move the .pearrc file while creating your virtual env.'
-            . '</warning>',
-            $output->messages[0]
-        );
-        $this->assertStringMatchesFormat(
-            'Your virtual php environment (%s) has been created!',
+            'You can activate your new environment using: ~$ source /example/foo/bar/foobar/bin/activate
+',
             $output->messages[1]
-        );
-        $this->assertStringMatchesFormat(
-            'You can activate your new environment using: ~$ source %s/bin/activate',
-            $output->messages[2]
         );
     }
 

@@ -522,10 +522,13 @@ class CreatorTest extends TestCase
      */
     public function testExecute()
     {
-        $filesystemMock = $this->getMock('Virtphp\Test\Mock\FilesystemMock', array('exists'));
+        $filesystemMock = $this->getMock(
+            'Virtphp\Test\Mock\FilesystemMock',
+            array('exists')
+        );
         $filesystemMock->expects($this->any())
             ->method('exists')
-            ->will($this->onConsecutiveCalls(true, true, false, true, true));
+            ->will($this->onConsecutiveCalls(true, true, false, true, true, true, true));
 
         $creator = $this->getMockBuilder('Virtphp\Workers\Creator')
             ->disableOriginalConstructor()
@@ -552,45 +555,45 @@ class CreatorTest extends TestCase
         $this->assertTrue($creator->execute());
 
         // Assert for output messages
-        $this->assertEquals(
+        $this->assertContains(
             'Checking current environment',
-            $this->output->messages[0]
+            $this->output->messages
         );
-        $this->assertEquals(
+        $this->assertContains(
             'Creating directory structure',
-            $this->output->messages[1]
+            $this->output->messages
         );
-        $this->assertEquals(
+        $this->assertContains(
             'Creating VirtPHP version file',
-            $this->output->messages[2]
+            $this->output->messages
         );
-        $this->assertEquals(
+        $this->assertContains(
             'Creating custom php.ini',
-            $this->output->messages[3]
+            $this->output->messages
         );
-        $this->assertEquals(
+        $this->assertContains(
             'Wrapping PHP binary',
-            $this->output->messages[4]
+            $this->output->messages
         );
-        $this->assertEquals(
+        $this->assertContains(
             'Downloading pear phar file, this could take a while...',
-            $this->output->messages[5]
+            $this->output->messages
         );
-        $this->assertEquals(
+        $this->assertContains(
             'Installing PEAR',
-            $this->output->messages[6]
+            $this->output->messages
         );
-        $this->assertEquals(
+        $this->assertContains(
             'Saving pear.conf file.',
-            $this->output->messages[7]
+            $this->output->messages
         );
-        $this->assertEquals(
+        $this->assertContains(
             'Installing Composer locally',
-            $this->output->messages[8]
+            $this->output->messages
         );
-        $this->assertEquals(
+        $this->assertContains(
             'Installing activate/deactive script',
-            $this->output->messages[9]
+            $this->output->messages
         );
     }
 
@@ -845,7 +848,10 @@ EOD;
             ->method('execute')
             ->will($this->returnValue(true));
 
-        $filesystemMock = $this->getMock('Virtphp\Test\Mock\FilesystemMock', array('exists'));
+        $filesystemMock = $this->getMock(
+            'Virtphp\Test\Mock\FilesystemMock',
+            array('exists')
+        );
         $filesystemMock->expects($this->any())
             ->method('exists')
             ->will($this->onConsecutiveCalls(true, true, false));
@@ -897,7 +903,10 @@ EOD;
      */
     public function testExecuteWithMissingPhpConfig()
     {
-        $filesystemMock = $this->getMock('Virtphp\Test\Mock\FilesystemMock', array('exists'));
+        $filesystemMock = $this->getMock(
+            'Virtphp\Test\Mock\FilesystemMock',
+            array('exists')
+        );
         $filesystemMock->expects($this->any())
             ->method('exists')
             ->will($this->onConsecutiveCalls(true, true, false, false));
@@ -940,10 +949,13 @@ EOD;
      */
     public function testExecuteWithMissingPhpize()
     {
-        $filesystemMock = $this->getMock('Virtphp\Test\Mock\FilesystemMock', array('exists'));
+        $filesystemMock = $this->getMock(
+            'Virtphp\Test\Mock\FilesystemMock',
+            array('exists')
+        );
         $filesystemMock->expects($this->any())
             ->method('exists')
-            ->will($this->onConsecutiveCalls(true, true, false, true, false));
+            ->will($this->onConsecutiveCalls(true, true, false, true, true, true, false));
 
         $creator = $this->getMockBuilder('Virtphp\Workers\Creator')
             ->disableOriginalConstructor()
@@ -991,10 +1003,13 @@ EOD;
             ->method('execute')
             ->will($this->returnValue(true));
 
-        $filesystemMock = $this->getMock('Virtphp\Test\Mock\FilesystemMock', array('exists'));
+        $filesystemMock = $this->getMock(
+            'Virtphp\Test\Mock\FilesystemMock',
+            array('exists')
+        );
         $filesystemMock->expects($this->any())
             ->method('exists')
-            ->will($this->onConsecutiveCalls(true, true, false, true, true));
+            ->will($this->onConsecutiveCalls(true, true, false, true, true, true, true));
 
         $processMock = $this->getMockBuilder('Virtphp\Test\Mock\ProcessMock')
             ->disableOriginalConstructor()

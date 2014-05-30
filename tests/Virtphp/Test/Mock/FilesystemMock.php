@@ -76,4 +76,9 @@ class FilesystemMock
     {
         return true;
     }
+
+    public function rename()
+    {
+        return true;
+    }
 }
