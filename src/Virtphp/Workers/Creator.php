@@ -187,6 +187,14 @@ class Creator extends AbstractWorker
     /**
      * @return string
      */
+    public function getPhpSbinDir()
+    {
+        return $this->getFilesystem()->realpath($this->getPhpBinDir() . '/../sbin');
+    }
+
+    /**
+     * @return string
+     */
     public function getPearConfigSettings()
     {
         return $this->pearConfigSettings;
@@ -339,6 +347,7 @@ class Creator extends AbstractWorker
             $this->installPhpConfigPhpize();
             $this->installComposer();
             $this->copyActivateScript();
+            $this->createPhpFpmBinWrapper();
         } catch (\Exception $e) {
             $this->output->writeln('<error>ERROR: ' . $e->getMessage() . '</error>');
             $this->getDestroyer()->execute();
@@ -529,6 +538,31 @@ EOD;
 
         $this->getFilesystem()->dumpFile(
             $this->getEnvBinDir() . DIRECTORY_SEPARATOR . 'php',
+            $phpBinWrapper,
+            0755
+        );
+    }
+
+    /**
+     * Creates a wrapper shell script around the actual PHP-FPM binary in order
+     * to use our custom php.ini and php-fpm.conf (and any other options we may need)
+     */
+    protected function createPhpFpmBinWrapper()
+    {
+        $process = $this->getProcess("{$this->getPhpBinDir()}/php -i | grep 'enable-fpm'");
+        if ($process->run() != 0) {
+            return false;
+        }
+
+        $this->output->writeln('Wrapping PHP-FPM binary');
+
+        $phpBinWrapper = <<<EOD
+#!/bin/sh
+exec {$this->getPhpSbinDir()}/php-fpm -c {$this->getEnvPath()}/etc/php.ini -y {$this->getEnvPath()}/etc/php-fpm.conf "$@"
+EOD;
+
+        $this->getFilesystem()->dumpFile(
+            $this->getEnvBinDir() . DIRECTORY_SEPARATOR . 'php-fpm',
             $phpBinWrapper,
             0755
         );
