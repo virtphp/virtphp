@@ -1,3 +1,9 @@
+### 0.5.0-alpha (2014-06-06)
+
+  * Added support for global Composer installs in the active virtPHP environment
+  * Fixed a bug on OS X involving the presence of an existing `~/.pearrc` file
+  * Various bug fixes and docs improvements
+
 ### 0.4.0-alpha (2014-05-14)
 
   * Changed the default behavior of the `create` command to create all new virtPHP environments in `~/.virtphp/envs/`; this may be overridden with the `--install-path` option
