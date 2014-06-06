@@ -100,7 +100,7 @@ fi
 # the Composer settings.
 export VIRTPHP_COMPOSER_GLOBAL="1"
 export VIRTPHP_OLD_COMPOSER_HOME="$COMPOSER_HOME"
-export COMPOSER_HOME="$VIRTPHP_ENV_PATH/.composer"
+export COMPOSER_HOME="$VIRTPHP_ENV_PATH/composer"
 if [ ! -d "$COMPOSER_HOME" ] ; then
   mkdir "$COMPOSER_HOME"
 fi
