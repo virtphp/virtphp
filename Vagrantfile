@@ -7,7 +7,7 @@ Vagrant.configure("2") do |config|
 
     config.vm.provider :virtualbox do |virtualbox|
         config.vm.box_url = "http://files.vagrantup.com/precise64.box"
-        virtualbox.customize ["modifyvm", :id, "--name", "virtphp"]
+        virtualbox.customize ["modifyvm", :id, "--name", "virtPHP"]
         virtualbox.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
         virtualbox.customize ["modifyvm", :id, "--memory", "1024"]
     end

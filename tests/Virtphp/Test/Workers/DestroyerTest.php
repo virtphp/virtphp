@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of VirtPHP.
+ * This file is part of virtPHP.
  *
  * (c) Jordan Kasper <github @jakerella>
  *     Ben Ramsey <github @ramsey>
@@ -132,7 +132,7 @@ class DestroyerTest extends TestCase
 
         $this->assertFalse($destroyer->execute());
         $this->assertEquals(
-            'This directory does not contain a valid VirtPHP environment!',
+            'This directory does not contain a valid virtPHP environment!',
             $this->output->messages[0]
         );
     }

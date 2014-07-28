@@ -1,5 +1,5 @@
 ##
-# File activates VirtPHP for BASH
+# File activates virtPHP for BASH
 ##
 
 # Check to see if a Virtual Environment and ask them to exit

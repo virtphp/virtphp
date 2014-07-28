@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of VirtPHP.
+ * This file is part of virtPHP.
  *
  * (c) Jordan Kasper <github @jakerella>
  *     Ben Ramsey <github @ramsey>
@@ -83,7 +83,7 @@ class Destroyer extends AbstractWorker
         }
 
         if (!$this->getFilesystem()->exists($this->rootPath.DIRECTORY_SEPARATOR.'.virtphp')) {
-            $this->output->writeln('<error>This directory does not contain a valid VirtPHP environment!</error>');
+            $this->output->writeln('<error>This directory does not contain a valid virtPHP environment!</error>');
 
             return false;
         }

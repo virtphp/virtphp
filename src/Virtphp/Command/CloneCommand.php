@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of VirtPHP.
+ * This file is part of virtPHP.
  *
  * (c) Jordan Kasper <github @jakerella>
  *     Ben Ramsey <github @ramsey>
@@ -29,7 +29,7 @@ class CloneCommand extends Command
     {
         $this
             ->setName('clone')
-            ->setDescription('Create new virtphp from existing path.')
+            ->setDescription('Create new virtPHP from existing path.')
             ->addArgument(
                 'new-env-name',
                 InputArgument::REQUIRED,
@@ -38,7 +38,7 @@ class CloneCommand extends Command
             ->addArgument(
                 'existing-env-path',
                 InputArgument::REQUIRED,
-                'Location of existing VirtPHP to clone from.'
+                'Location of existing virtPHP to clone from.'
             );
     }
 
@@ -116,7 +116,7 @@ class CloneCommand extends Command
 
         if (!$filesystem->exists($rootPath)) {
             $output->writeln(
-                '<error>Sorry, but there is no VirtPHP environment at that '
+                '<error>Sorry, but there is no virtPHP environment at that '
                 . 'location.</error>'
             );
 
@@ -125,7 +125,7 @@ class CloneCommand extends Command
 
         if (!$filesystem->exists($rootPath . DIRECTORY_SEPARATOR . '.virtphp')) {
             $output->writeln(
-                '<error>This directory does not contain a valid VirtPHP '
+                '<error>This directory does not contain a valid virtPHP '
                 . 'environment!</error>'
             );
 

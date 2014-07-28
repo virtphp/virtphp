@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of VirtPHP.
+ * This file is part of virtPHP.
  *
  * (c) Jordan Kasper <github @jakerella>
  *     Ben Ramsey <github @ramsey>
@@ -30,10 +30,10 @@ use Virtphp\Virtphp;
 class Application extends BaseApplication
 {
     /**
-     * VirtPHP ASCII logo
+     * virtPHP ASCII logo
      */
-    private static $logo = ' _    ___      __  ____  __  ______
-| |  / (_)____/ /_/ __ \/ / / / __ \
+    private static $logo = '        _      __  ____  __  ______
+ _   __(_)____/ /_/ __ \/ / / / __ \
 | | / / / ___/ __/ /_/ / /_/ / /_/ /
 | |/ / / /  / /_/ ____/ __  / ____/
 |___/_/_/   \__/_/   /_/ /_/_/
@@ -55,7 +55,7 @@ class Application extends BaseApplication
         }
 
         ErrorHandler::register();
-        parent::__construct('VirtPHP', Virtphp::VERSION);
+        parent::__construct('virtPHP', Virtphp::VERSION);
     }
 
     /**
@@ -83,7 +83,7 @@ class Application extends BaseApplication
     {
         if (version_compare(PHP_VERSION, '5.3.3', '<') || self::$testPhpVersion) {
             $output->writeln(
-                '<warning>VirtPHP only officially supports PHP 5.3.3 and above,'
+                '<warning>virtPHP only officially supports PHP 5.3.3 and above,'
                 . ' you will most likely encounter problems with your PHP '
                 . PHP_VERSION
                 . ', upgrading is strongly recommended.</warning>'
@@ -96,7 +96,7 @@ class Application extends BaseApplication
             if (time() > VIRTPHP_DEV_WARNING_TIME) {
                 $output->writeln(
                     sprintf(
-                        '<warning>Warning: This development build of VirtPHP is over 30 days old.'
+                        '<warning>Warning: This development build of virtPHP is over 30 days old.'
                         . " It is recommended to update it by running \"%s self-update\""
                         . ' to get the latest version.</warning>',
                         $_SERVER['PHP_SELF']
@@ -111,7 +111,7 @@ class Application extends BaseApplication
     }
 
     /**
-     * Return all help information and the VirtPHP ASCII logo
+     * Return all help information and the virtPHP ASCII logo
      *
      * @return string
      */
