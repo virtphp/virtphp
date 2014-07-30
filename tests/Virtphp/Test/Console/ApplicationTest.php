@@ -2,7 +2,7 @@
 namespace Virtphp\Test\Console;
 
 /*
- * This file is part of VirtPHP.
+ * This file is part of virtPHP.
  *
  * (c) Jordan Kasper <github @jakerella>
  *     Ben Ramsey <github @ramsey>
@@ -56,7 +56,7 @@ class ApplicationTest extends TestCase
         $app = new Application();
 
         $this->assertInstanceOf('Virtphp\\Console\\Application', $app);
-        $this->assertEquals('VirtPHP', $app->getName());
+        $this->assertEquals('virtPHP', $app->getName());
         $this->assertEquals('@package_version@', $app->getVersion());
         $this->assertEmpty(ini_get('xdebug.show_exception_trace'));
         $this->assertEmpty(ini_get('xdebug.scream'));
@@ -95,7 +95,7 @@ class ApplicationTest extends TestCase
         $this->assertCount(1, $this->output->messages);
         $this->assertStringMatchesFormat(
             '<warning>'
-            . 'VirtPHP only officially supports PHP 5.3.3 and above, '
+            . 'virtPHP only officially supports PHP 5.3.3 and above, '
             . 'you will most likely encounter problems with your PHP %s, upgrading is strongly recommended.'
             . '</warning>',
             $this->output->messages[0]
@@ -113,7 +113,7 @@ class ApplicationTest extends TestCase
         $this->assertCount(1, $this->output->messages);
         $this->assertStringMatchesFormat(
             '<warning>'
-            . 'Warning: This development build of VirtPHP is over 30 days old. '
+            . 'Warning: This development build of virtPHP is over 30 days old. '
             . 'It is recommended to update it by running "%s self-update" to get the latest version.'
             . '</warning>',
             $this->output->messages[0]

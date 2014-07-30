@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of VirtPHP.
+ * This file is part of virtPHP.
  *
  * (c) Jordan Kasper <github @jakerella>
  *     Ben Ramsey <github @ramsey>
@@ -418,12 +418,12 @@ class Creator extends AbstractWorker
 
     /**
      * Creates the tracking file (.virtphp) which indicates that that
-     * directory is a VirtPHP virtual environment (useful for
+     * directory is a virtPHP virtual environment (useful for
      * Destroying and Cloning)
      */
     protected function createVersionFile()
     {
-        $this->output->writeln('Creating VirtPHP version file');
+        $this->output->writeln('Creating virtPHP version file');
 
         $this->getFilesystem()->dumpFile(
             $this->getEnvPath() . DIRECTORY_SEPARATOR . '.virtphp',
@@ -471,7 +471,7 @@ class Creator extends AbstractWorker
                 $phpIni = preg_replace(
                     "/^\s*(include_path\s*\=\s*[^\n]+)/im",
                     "\n\n;; Old include_path value\n; $1\n"
-                    . ";; New VirtPHP include_path value:\n"
+                    . ";; New virtPHP include_path value:\n"
                     . "include_path = \".:" . $this->getEnvPhpIncDir() . "\"\n",
                     $phpIni
                 );
@@ -480,7 +480,7 @@ class Creator extends AbstractWorker
                 // there was no active include_path, so add to the end
                 $this->output->writeln('  adding new include_path setting with virtual env path');
 
-                $phpIni .= "\n\n;; New VirtPHP include_path value:\n"
+                $phpIni .= "\n\n;; New virtPHP include_path value:\n"
                            . "include_path = \".:" . $this->getEnvPhpIncDir() . "\"\n";
 
             }
@@ -492,7 +492,7 @@ class Creator extends AbstractWorker
                 $phpIni = preg_replace(
                     "/^\s*(extension_dir\s*\=\s*[^\n]+)/im",
                     "\n\n;; Old extension_dir value\n; $1\n"
-                    . ";; New VirtPHP extension_dir value:\n"
+                    . ";; New virtPHP extension_dir value:\n"
                     . "extension_dir = \"" . $this->getEnvPhpExtDir() . "\"\n",
                     $phpIni
                 );
@@ -501,7 +501,7 @@ class Creator extends AbstractWorker
                 // there was no active extension_dir, so add to the end
                 $this->output->writeln('  adding new extension_dir setting with virtual env path');
 
-                $phpIni .= "\n\n;; New VirtPHP extension_dir value:\n"
+                $phpIni .= "\n\n;; New virtPHP extension_dir value:\n"
                            . "extension_dir = \"" . $this->getEnvPhpExtDir() . "\"\n";
             }
 
@@ -635,7 +635,7 @@ EOD;
                 '<comment>'
                 . "Could not find php-config in {$this->getPhpBinDir()}."
                 . ' You will be unable to use pecl in this virtual environment.'
-                . ' Install the PHP development package first, and then re-run VirtPHP.'
+                . ' Install the PHP development package first, and then re-run virtPHP.'
                 . '</comment>'
             );
             return;
@@ -646,7 +646,7 @@ EOD;
                 '<comment>'
                 . "Could not find phpize in {$this->getPhpBinDir()}."
                 . ' You will be unable to use pecl in this virtual environment.'
-                . ' Install the PHP development package first, and then re-run VirtPHP.'
+                . ' Install the PHP development package first, and then re-run virtPHP.'
                 . '</comment>'
             );
             return;
@@ -663,7 +663,7 @@ EOD;
         $phpConfigSource = preg_replace(
             "/^(prefix\=[^\n]+)/im",
             "\n# Old prefix value\n# $1\n"
-            . "# New VirtPHP prefix value:\n"
+            . "# New virtPHP prefix value:\n"
             . "prefix=\"{$this->getEnvPath()}\"\n",
             $phpConfigSource
         );
@@ -672,7 +672,7 @@ EOD;
         $phpConfigSource = preg_replace(
             "/^(exec_prefix\=[^\n]+)/im",
             "\n# Old exec_prefix value\n# $1\n"
-            . "# New VirtPHP exec_prefix value:\n"
+            . "# New virtPHP exec_prefix value:\n"
             . "exec_prefix=\"{$this->getEnvPath()}\"\n",
             $phpConfigSource
         );
@@ -682,7 +682,7 @@ EOD;
             $phpConfigSource = preg_replace(
                 "/^(include_dir\=[^\n]+)/im",
                 "\n# Old include_dir value\n# $1\n"
-                . "# New VirtPHP include_dir value:\n"
+                . "# New virtPHP include_dir value:\n"
                 . "include_dir=\"{$phpBuildIncludeDir}\"\n",
                 $phpConfigSource
             );
@@ -692,7 +692,7 @@ EOD;
         $phpConfigSource = preg_replace(
             "/^(extension_dir\=[^\n]+)/im",
             "\n# Old extension_dir value\n# $1\n"
-            . "# New VirtPHP extension_dir value:\n"
+            . "# New virtPHP extension_dir value:\n"
             . "extension_dir=\"{$this->getEnvPhpExtDir()}\"\n",
             $phpConfigSource
         );

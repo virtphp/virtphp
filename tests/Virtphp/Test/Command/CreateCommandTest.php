@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of VirtPHP.
+ * This file is part of virtPHP.
  *
  * (c) Jordan Kasper <github @jakerella>
  *     Ben Ramsey <github @ramsey>
@@ -29,7 +29,7 @@ class CreateCommandTest extends TestCase
         $command = new CreateCommand();
 
         $this->assertEquals('create', $command->getName());
-        $this->assertEquals('Create new virtphp environment.', $command->getDescription());
+        $this->assertEquals('Create new virtPHP environment.', $command->getDescription());
         $this->assertTrue($command->getDefinition()->hasArgument('env-name'));
         $this->assertTrue($command->getDefinition()->hasOption('php-bin-dir'));
         $this->assertTrue($command->getDefinition()->hasOption('install-path'));

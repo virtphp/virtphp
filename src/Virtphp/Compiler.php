@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of VirtPHP.
+ * This file is part of virtPHP.
  *
  * (c) Jordan Kasper <github @jakerella>
  *     Ben Ramsey <github @ramsey>
@@ -17,7 +17,7 @@ use Symfony\Component\Finder\Finder;
 use Symfony\Component\Process\Process;
 
 /**
- * The Compiler class compiles virtphp into a phar
+ * The Compiler class compiles virtPHP into a phar
  */
 class Compiler
 {
@@ -27,7 +27,7 @@ class Compiler
     private $versionDate;
 
     /**
-     * Compiles virtphp into a single phar file
+     * Compiles virtPHP into a single phar file
      *
      * @throws \RuntimeException
      * @param  string            $pharFile The full path to the file to create
@@ -42,7 +42,7 @@ class Compiler
         if ($process->run() != 0) {
             throw new \RuntimeException(
                 'Can\'t run git log.'
-                . ' You must ensure to run compile from virtphp git repository clone and that git binary is available.'
+                . ' You must ensure to run compile from virtPHP git repository clone and that git binary is available.'
             );
         }
         $this->version = trim($process->getOutput());
@@ -51,7 +51,7 @@ class Compiler
         if ($process->run() != 0) {
             throw new \RuntimeException(
                 'Can\'t run git log.'
-                . ' You must ensure to run compile from virtphp git repository clone and that git binary is available.'
+                . ' You must ensure to run compile from virtPHP git repository clone and that git binary is available.'
             );
         }
         $date = new \DateTime(trim($process->getOutput()));
@@ -171,7 +171,7 @@ class Compiler
 #!/usr/bin/env php
 <?php
 /*
- * This file is part of VirtPHP.
+ * This file is part of virtPHP.
  *
  * (c) Jordan Kasper <github @jakerella>
  *     Ben Ramsey <github @ramsey>

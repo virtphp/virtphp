@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of VirtPHP.
+ * This file is part of virtPHP.
  *
  * (c) Jordan Kasper <github @jakerella>
  *     Ben Ramsey <github @ramsey>
@@ -104,7 +104,7 @@ class CompilerTest extends TestCase
      * @expectedException \RuntimeException
      * @expectedExceptionMessage Can't run git log.
      *                           You must ensure to run compile
-     *                           from virtphp git repository clone
+     *                           from virtPHP git repository clone
      *                           and that git binary is available.
      */
     public function testCompileGitLogException()
@@ -128,7 +128,7 @@ class CompilerTest extends TestCase
      * @expectedException \RuntimeException
      * @expectedExceptionMessage Can't run git log.
      *                           You must ensure to run compile
-     *                           from virtphp git repository clone
+     *                           from virtPHP git repository clone
      *                           and that git binary is available.
      */
     public function testCompileGitLogExceptionPartDeux()
@@ -183,11 +183,11 @@ class CompilerTest extends TestCase
         $cmdOutput = null;
         exec("php {$this->testPhar} -V", $cmdOutput);
 
-        // The expected string reads "VirtPHP version 2.4.0-9-g3645455 2013-09-17 22:34:06"
+        // The expected string reads "virtPHP version 2.4.0-9-g3645455 2013-09-17 22:34:06"
         // but since it has console coloring, it comes out as a binary string,
         // so we have it base64-encoded for testing
         $expected = base64_decode(
-            'G1szMm1WaXJ0UEhQG1swbSB2ZXJzaW9uIBtbMzNtMi40LjAtOS1nMzY0NTQ1NRtbMG0gMjAxMy0wOS0xNyAyMjozNDowNg=='
+            'G1szMm12aXJ0UEhQG1swbSB2ZXJzaW9uIBtbMzNtMi40LjAtOS1nMzY0NTQ1NRtbMG0gMjAxMy0wOS0xNyAyMjozNDowNg=='
         );
         $actual = $cmdOutput[0];
 
