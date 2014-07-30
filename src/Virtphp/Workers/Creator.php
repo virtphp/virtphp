@@ -55,6 +55,11 @@ class Creator extends AbstractWorker
      */
     protected $customPearConf = null;
 
+	/**
+	 * @var string
+	 */
+	protected $customFpmConf = null;
+
     /**
      * @var array
      */
@@ -216,6 +221,12 @@ class Creator extends AbstractWorker
         return $this->customPearConf;
     }
 
+	/**
+	 * @return string
+	 */
+	public function getCustomFpmConf() {
+		return $this->customFpmConf;
+	}
 
     /**
      * @param string $name Name of the new virtual env
@@ -319,6 +330,19 @@ class Creator extends AbstractWorker
             $this->setPearConfigSettings($this->updatePearConfigSettings($pearConfOptions));
         }
     }
+
+	/**
+	 * @param null $fpmConfFilePath Path to custom php-fpm.conf to use
+	 */
+	public function setCustomFpmConf($fpmConfFilePath = null) {
+		if ($fpmConfFilePath !== null) {
+			$fpmConfFilePath = $this->getFilesystem()->realpath($fpmConfFilePath);
+			if ($fpmConfFilePath === false) {
+				$fpmConfFilePath = null;
+			}
+		}
+		$this->customFpmConf = $fpmConfFilePath;
+	}
 
 
     /**

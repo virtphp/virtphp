@@ -35,6 +35,7 @@ class CreateCommandTest extends TestCase
         $this->assertTrue($command->getDefinition()->hasOption('install-path'));
         $this->assertTrue($command->getDefinition()->hasOption('php-ini'));
         $this->assertTrue($command->getDefinition()->hasOption('pear-conf'));
+        $this->assertTrue($command->getDefinition()->hasOption('fpm-conf'));
     }
 
     /**
@@ -76,6 +77,7 @@ class CreateCommandTest extends TestCase
                 '--install-path=/example/foo/bar',
                 '--php-ini=/path/to/php.ini',
                 '--pear-conf=/path/to/pear.conf',
+                '--fpm-conf=/path/to/fpm.conf',
             ),
             $command->getDefinition()
         );
@@ -90,6 +92,7 @@ class CreateCommandTest extends TestCase
         $this->assertEquals('/path/to/php', $creatorMock->args[4]);
         $this->assertEquals('/path/to/php.ini', $creatorMock->phpIni);
         $this->assertEquals('/path/to/pear.conf', $creatorMock->pearConf);
+        $this->assertEquals('/path/to/fpm.conf', $creatorMock->fpmConf);
         $this->assertCount(4, $output->messages);
         $this->assertStringMatchesFormat(
             'Your virtual php environment (%s) has been created!',
