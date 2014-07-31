@@ -375,6 +375,7 @@ class Creator extends AbstractWorker
             $this->installComposer();
             $this->copyActivateScript();
             $this->createPhpFpmBinWrapper();
+            $this->createFpmConf();
         } catch (\Exception $e) {
             $this->output->writeln('<error>ERROR: ' . $e->getMessage() . '</error>');
             $this->getDestroyer()->execute();
@@ -547,6 +548,25 @@ class Creator extends AbstractWorker
             $this->getEnvPath() . DIRECTORY_SEPARATOR . "etc" . DIRECTORY_SEPARATOR . "php.ini",
             $phpIni,
             0644
+        );
+    }
+
+    /**
+     * Creates the new php-fpm.conf for the virtual env
+     */
+    protected function createFpmConf()
+    {
+        if ($this->getCustomPhpIni() !== null) {
+            $this->output->writeln('Configuring custom php-fpm.conf from ' . $this->getCustomFpmConf());
+            $fpmConfPath = $this->getCustomFpmConf();
+        } else {
+            $this->output->writeln('Creating custom php-fpm.conf');
+            $fpmConfPath = __DIR__ . '/../../../res/php-fpm.conf';
+        }
+
+        $this->getFilesystem()->copy(
+            $fpmConfPath,
+            $this->getEnvPath() . DIRECTORY_SEPARATOR . 'etc' . DIRECTORY_SEPARATOR . 'php-fpm.conf'
         );
     }
 

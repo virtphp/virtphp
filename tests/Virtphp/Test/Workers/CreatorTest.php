@@ -544,7 +544,7 @@ class CreatorTest extends TestCase
     {
         $filesystemMock = $this->getMock(
             'Virtphp\Test\Mock\FilesystemMock',
-            array('exists')
+            array('exists', 'copy')
         );
         $filesystemMock->expects($this->any())
             ->method('exists')
@@ -613,6 +613,10 @@ class CreatorTest extends TestCase
         );
         $this->assertContains(
             'Installing activate/deactive script',
+            $this->output->messages
+        );
+        $this->assertContains(
+            'Creating custom php-fpm.conf',
             $this->output->messages
         );
     }
