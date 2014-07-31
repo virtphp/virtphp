@@ -247,6 +247,26 @@ class CreatorTest extends TestCase
     }
 
     /**
+     * @covers Virtphp\Workers\Creator::getCustomFpmConf
+     * @covers Virtphp\Workers\Creator::getCustomFpmConf
+     */
+    public function testGetSetCustomFpmConfWithNonNullValue()
+    {
+        $this->assertEmpty($this->dumbCreator->setCustomFpmConf('/path/to/php-fpm.conf'));
+        $this->assertEquals('/path/to/php-fpm.conf', $this->dumbCreator->getCustomFpmConf());
+    }
+
+    /**
+     * @covers Virtphp\Workers\Creator::getCustomFpmConf
+     * @covers Virtphp\Workers\Creator::setCustomFpmConf
+     */
+    public function testGetSetCustomFpmConfWithFalseValue()
+    {
+        $this->assertEmpty($this->dumbCreator->setCustomFpmConf(false));
+        $this->assertNull($this->dumbCreator->getCustomFpmConf());
+    }
+
+    /**
      * @covers Virtphp\Workers\Creator::getPhpBinDir
      * @covers Virtphp\Workers\Creator::setPhpBinDir
      */
@@ -524,7 +544,7 @@ class CreatorTest extends TestCase
     {
         $filesystemMock = $this->getMock(
             'Virtphp\Test\Mock\FilesystemMock',
-            array('exists')
+            array('exists', 'copy')
         );
         $filesystemMock->expects($this->any())
             ->method('exists')
@@ -593,6 +613,10 @@ class CreatorTest extends TestCase
         );
         $this->assertContains(
             'Installing activate/deactive script',
+            $this->output->messages
+        );
+        $this->assertContains(
+            'Creating custom php-fpm.conf',
             $this->output->messages
         );
     }
@@ -1051,5 +1075,122 @@ EOD;
             'System reverted',
             $this->output->messages[10]
         );
+    }
+
+    public function testFpmBinIsNotCreatedIfPHPWasNotCompileWithIt()
+    {
+        $filesystemMock = $this->getMock(
+            'Virtphp\Test\Mock\FilesystemMock',
+            array('exists', 'dumpFile')
+        );
+        $filesystemMock->expects($this->any())
+            ->method('exists')
+            ->will($this->onConsecutiveCalls(true, true, false, true, true, true, true));
+        $filesystemMock->expects($this->exactly(9))
+            ->method('dumpFile');
+
+        $processMock = $this->getMockBuilder('Virtphp\Test\Mock\ProcessMock')
+            ->disableOriginalConstructor()
+            ->setMethods(array('run'))
+            ->getMock();
+        // php -i | grep 'enable-fpm' exit with non 0 status
+        $processMock->expects($this->at(4))
+            ->method('run')
+            ->will($this->returnValue(1));
+
+        $creator = $this->getMockBuilder('Virtphp\Workers\Creator')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getFilesystem', 'getProcess'))
+            ->getMock();
+        $creator->expects($this->any())
+            ->method('getFilesystem')
+            ->will($this->returnValue($filesystemMock));
+        $creator->expects($this->any())
+            ->method('getProcess')
+            ->will($this->returnValue($processMock));
+
+        $creator->__construct(
+            $this->input,
+            $this->output,
+            'myenv',
+            '/path/to/virtphp/project',
+            '/path/to/bin'
+        );
+
+        $creator->execute();
+
+        $this->assertNotContains(
+            'Wrapping PHP-FPM binary',
+            $this->output->messages
+        );
+    }
+
+    public function testFpmBinIsCreatedIfPHPWasCompileWithIt()
+    {
+        $filesystemMock = $this->getMock(
+            'Virtphp\Test\Mock\FilesystemMock',
+            array('exists', 'dumpFile')
+        );
+        $filesystemMock->expects($this->any())
+            ->method('exists')
+            ->will($this->onConsecutiveCalls(true, true, false, true, true, true, true));
+        $filesystemMock->expects($this->exactly(10))
+            ->method('dumpFile');
+
+        $processMock = $this->getMockBuilder('Virtphp\Test\Mock\ProcessMock')
+            ->disableOriginalConstructor()
+            ->setMethods(array('run'))
+            ->getMock();
+        // php -i | grep 'enable-fpm' exit with non 0 status
+        $processMock->expects($this->at(4))
+            ->method('run')
+            ->will($this->returnValue(0));
+
+        $creator = $this->getMockBuilder('Virtphp\Workers\Creator')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getFilesystem', 'getProcess'))
+            ->getMock();
+        $creator->expects($this->any())
+            ->method('getFilesystem')
+            ->will($this->returnValue($filesystemMock));
+        $creator->expects($this->any())
+            ->method('getProcess')
+            ->will($this->returnValue($processMock));
+
+        $creator->__construct(
+            $this->input,
+            $this->output,
+            'myenv',
+            '/path/to/virtphp/project',
+            '/path/to/bin'
+        );
+
+        $creator->execute();
+
+        $this->assertContains(
+            'Wrapping PHP-FPM binary',
+            $this->output->messages
+        );
+    }
+
+    public function testGetSbinBirShouldReturnTheCorrectDir()
+    {
+        $binPath = '/path/to/php/bin';
+        $filesystemMock = $this->getMock('Virtphp\Test\Mock\FilesystemMock', array('realpath'));
+        $filesystemMock->expects($this->once())
+            ->method('realpath')
+            ->with($binPath . '/../sbin');
+        $creator = $this->getMockBuilder('Virtphp\Workers\Creator')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getFilesystem', 'getPhpBinDir'))
+            ->getMock();
+        $creator->expects($this->any())
+            ->method('getFilesystem')
+            ->will($this->returnValue($filesystemMock));
+        $creator->expects($this->once())
+            ->method('getPhpBinDir')
+            ->will($this->returnValue($binPath));
+
+        $creator->getPhpSbinDir();
     }
 }
