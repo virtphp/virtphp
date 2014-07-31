@@ -246,25 +246,25 @@ class CreatorTest extends TestCase
         $this->assertNull($this->dumbCreator->getCustomPhpIni());
     }
 
-	/**
-	 * @covers Virtphp\Workers\Creator::getCustomFpmConf
-	 * @covers Virtphp\Workers\Creator::getCustomFpmConf
-	 */
-	public function testGetSetCustomFpmConfWithNonNullValue()
-	{
-		$this->assertEmpty($this->dumbCreator->setCustomFpmConf('/path/to/php-fpm.conf'));
-		$this->assertEquals('/path/to/php-fpm.conf', $this->dumbCreator->getCustomFpmConf());
-	}
+    /**
+     * @covers Virtphp\Workers\Creator::getCustomFpmConf
+     * @covers Virtphp\Workers\Creator::getCustomFpmConf
+     */
+    public function testGetSetCustomFpmConfWithNonNullValue()
+    {
+        $this->assertEmpty($this->dumbCreator->setCustomFpmConf('/path/to/php-fpm.conf'));
+        $this->assertEquals('/path/to/php-fpm.conf', $this->dumbCreator->getCustomFpmConf());
+    }
 
-	/**
-	 * @covers Virtphp\Workers\Creator::getCustomFpmConf
-	 * @covers Virtphp\Workers\Creator::setCustomFpmConf
-	 */
-	public function testGetSetCustomFpmConfWithFalseValue()
-	{
-		$this->assertEmpty($this->dumbCreator->setCustomFpmConf(false));
-		$this->assertNull($this->dumbCreator->getCustomFpmConf());
-	}
+    /**
+     * @covers Virtphp\Workers\Creator::getCustomFpmConf
+     * @covers Virtphp\Workers\Creator::setCustomFpmConf
+     */
+    public function testGetSetCustomFpmConfWithFalseValue()
+    {
+        $this->assertEmpty($this->dumbCreator->setCustomFpmConf(false));
+        $this->assertNull($this->dumbCreator->getCustomFpmConf());
+    }
 
     /**
      * @covers Virtphp\Workers\Creator::getPhpBinDir

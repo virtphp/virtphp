@@ -55,10 +55,10 @@ class Creator extends AbstractWorker
      */
     protected $customPearConf = null;
 
-	/**
-	 * @var string
-	 */
-	protected $customFpmConf = null;
+    /**
+     * @var string
+     */
+    protected $customFpmConf = null;
 
     /**
      * @var array
@@ -70,24 +70,24 @@ class Creator extends AbstractWorker
      * @var array
      */
     protected static $DEFAULT_PEAR_CONFIG = array(
-        'php_dir'       => '{env_path}/share/php',
-        'data_dir'      => '{env_path}/share/php/data',
-        'www_dir'       => '{env_path}/share/pear/www',
-        'cfg_dir'       => '{env_path}/share/pear/cfg',
-        'ext_dir'       => '{env_path}/lib/php',
-        'doc_dir'       => '{env_path}/share/php/doc',
-        'test_dir'      => '{env_path}/share/pear/tests',
-        'cache_dir'     => '{env_path}/share/pear/cache',
-        'download_dir'  => '{env_path}/share/pear/download',
-        'temp_dir'      => '{env_path}/share/pear/temp',
-        'bin_dir'       => '{env_path}/bin',
-        '__channels'    => array(
+        'php_dir' => '{env_path}/share/php',
+        'data_dir' => '{env_path}/share/php/data',
+        'www_dir' => '{env_path}/share/pear/www',
+        'cfg_dir' => '{env_path}/share/pear/cfg',
+        'ext_dir' => '{env_path}/lib/php',
+        'doc_dir' => '{env_path}/share/php/doc',
+        'test_dir' => '{env_path}/share/pear/tests',
+        'cache_dir' => '{env_path}/share/pear/cache',
+        'download_dir' => '{env_path}/share/pear/download',
+        'temp_dir' => '{env_path}/share/pear/temp',
+        'bin_dir' => '{env_path}/bin',
+        '__channels' => array(
             'pecl.php.net' => array('foo' => '{env_path}/bar'),
-            '__uri'        => array(),
-            'doc.php.net'  => array(),
+            '__uri' => array(),
+            'doc.php.net' => array(),
         ),
-        'php_bin'       => '{env_path}/bin/php',
-        'php_ini'       => '{env_path}/etc/php.ini',
+        'php_bin' => '{env_path}/bin/php',
+        'php_ini' => '{env_path}/etc/php.ini',
         'auto_discover' => 1,
     );
 
@@ -108,7 +108,8 @@ class Creator extends AbstractWorker
         $envName,
         $envBasePath,
         $phpBinDir = null
-    ) {
+    )
+    {
         $this->input = $input;
         $this->output = $output;
         $this->setEnvName($envName);
@@ -221,12 +222,13 @@ class Creator extends AbstractWorker
         return $this->customPearConf;
     }
 
-	/**
-	 * @return string
-	 */
-	public function getCustomFpmConf() {
-		return $this->customFpmConf;
-	}
+    /**
+     * @return string
+     */
+    public function getCustomFpmConf()
+    {
+        return $this->customFpmConf;
+    }
 
     /**
      * @param string $name Name of the new virtual env
@@ -260,10 +262,10 @@ class Creator extends AbstractWorker
         if (!$this->getFilesystem()->exists($dir)) {
             throw new InvalidArgumentException('The specified php bin directory does not exist.');
         }
-        if (!$this->getFilesystem()->exists($dir.DIRECTORY_SEPARATOR.'php')) {
+        if (!$this->getFilesystem()->exists($dir . DIRECTORY_SEPARATOR . 'php')) {
             throw new InvalidArgumentException('There is no php binary in the specified directory.');
         }
-        $process = $this->getProcess($dir.DIRECTORY_SEPARATOR.'php -v');
+        $process = $this->getProcess($dir . DIRECTORY_SEPARATOR . 'php -v');
         if ($process->run() != 0) {
             throw new InvalidArgumentException(
                 'The "php" file in the specified directory is not a valid php binary executable.'
@@ -310,7 +312,7 @@ class Creator extends AbstractWorker
         $this->customPearConf = $pearConfFilePath;
 
         if ($this->customPearConf !== null) {
-            $this->output->writeln('Getting custom pear.conf info from '.$this->customPearConf);
+            $this->output->writeln('Getting custom pear.conf info from ' . $this->customPearConf);
             $pearConfFile = $this->getFilesystem()->getContents($this->customPearConf);
             if ($pearConfFile === false) {
                 throw new InvalidArgumentException('Unable to get contents of custom PEAR config file');
@@ -331,18 +333,19 @@ class Creator extends AbstractWorker
         }
     }
 
-	/**
-	 * @param null $fpmConfFilePath Path to custom php-fpm.conf to use
-	 */
-	public function setCustomFpmConf($fpmConfFilePath = null) {
-		if ($fpmConfFilePath !== null) {
-			$fpmConfFilePath = $this->getFilesystem()->realpath($fpmConfFilePath);
-			if ($fpmConfFilePath === false) {
-				$fpmConfFilePath = null;
-			}
-		}
-		$this->customFpmConf = $fpmConfFilePath;
-	}
+    /**
+     * @param null $fpmConfFilePath Path to custom php-fpm.conf to use
+     */
+    public function setCustomFpmConf($fpmConfFilePath = null)
+    {
+        if ($fpmConfFilePath !== null) {
+            $fpmConfFilePath = $this->getFilesystem()->realpath($fpmConfFilePath);
+            if ($fpmConfFilePath === false) {
+                $fpmConfFilePath = null;
+            }
+        }
+        $this->customFpmConf = $fpmConfFilePath;
+    }
 
 
     /**
@@ -472,7 +475,7 @@ class Creator extends AbstractWorker
     protected function createPhpIni()
     {
         if ($this->getCustomPhpIni() !== null) {
-            $this->output->writeln('Configuring custom php.ini from '.$this->getCustomPhpIni());
+            $this->output->writeln('Configuring custom php.ini from ' . $this->getCustomPhpIni());
             $phpIniPath = $this->getCustomPhpIni();
         } else {
             $this->output->writeln('Creating custom php.ini');
@@ -638,7 +641,7 @@ EOD;
             . '-derror_reporting=1803 -dmemory_limit=-1 -ddetect_unicode=0 '
             . $this->getEnvPath() . DIRECTORY_SEPARATOR . 'share'
             . DIRECTORY_SEPARATOR . 'install-pear-nozlib.phar '
-            . "-d \"".$this->getEnvPath() . DIRECTORY_SEPARATOR . "share"
+            . "-d \"" . $this->getEnvPath() . DIRECTORY_SEPARATOR . "share"
             . DIRECTORY_SEPARATOR . "php\" -b \"bin\" -c \"etc\"";
         $process = $this->getProcess($pearProcess);
 

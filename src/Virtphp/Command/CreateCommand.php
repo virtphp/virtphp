@@ -68,13 +68,13 @@ class CreateCommand extends Command
                 . 'file WILL BE OVERRIDDEN in order for virtPHP to work!',
                 null
             )
-			->addOption(
-				'fpm-conf',
-				null,
-				InputOption::VALUE_REQUIRED,
-				'Path to a specific php-fpm.conf to use - ',
-				null
-			);
+            ->addOption(
+                'fpm-conf',
+                null,
+                InputOption::VALUE_REQUIRED,
+                'Path to a specific php-fpm.conf to use - ',
+                null
+            );
     }
 
     /*
@@ -83,7 +83,7 @@ class CreateCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $envName = $input->getArgument('env-name');
-        $envPath = getenv('HOME') . DIRECTORY_SEPARATOR .  '.virtphp';
+        $envPath = getenv('HOME') . DIRECTORY_SEPARATOR . '.virtphp';
         $envFolder = $envPath . DIRECTORY_SEPARATOR . 'envs';
 
         // Pass the output object to the parent
