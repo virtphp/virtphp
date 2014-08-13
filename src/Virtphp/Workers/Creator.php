@@ -572,6 +572,12 @@ EOD;
             throw new \Exception('');
         }
 
+        // check that log folder exists
+        $logFolder = getenv('HOME') . DIRECTORY_SEPARATOR . '.virtphp' . DIRECTORY_SEPARATOR . '/logs';
+        if (!$this->getFilesystem()->exists($logFolder)) {
+            $this->getFilesystem()->mkdir($logFolder);
+        }
+
         $this->getFilesystem()->chdir($this->getEnvPath());
 
         $this->output->writeln('Installing PEAR');
@@ -581,7 +587,7 @@ EOD;
             . $this->getEnvPath() . DIRECTORY_SEPARATOR . 'share'
             . DIRECTORY_SEPARATOR . 'install-pear-nozlib.phar '
             . "-d \"".$this->getEnvPath() . DIRECTORY_SEPARATOR . "share"
-            . DIRECTORY_SEPARATOR . "php\" -b \"bin\" -c \"etc\"";
+            . DIRECTORY_SEPARATOR . "php\" -b \"bin\" -c \"etc\" > ~/.virtphp/logs/pear_log.txt";
         $process = $this->getProcess($pearProcess);
 
         if ($process->run() != 0) {
