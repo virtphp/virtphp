@@ -935,11 +935,11 @@ EOD;
 
         $this->assertTrue($creator->execute());
 
-        $this->assertEquals(
+        $this->assertContains(
             'Could not find php-config in /path/to/bin.'
             . ' You will be unable to use pecl in this virtual environment.'
             . ' Install the PHP development package first, and then re-run virtPHP.',
-            $this->output->messages[8]
+            $this->output->messages
         );
     }
 
@@ -955,7 +955,7 @@ EOD;
         );
         $filesystemMock->expects($this->any())
             ->method('exists')
-            ->will($this->onConsecutiveCalls(true, true, false, true, true, true, false));
+            ->will($this->onConsecutiveCalls(true, true, false, true, true, true, true, false));
 
         $creator = $this->getMockBuilder('Virtphp\Workers\Creator')
             ->disableOriginalConstructor()
@@ -981,11 +981,11 @@ EOD;
 
         $this->assertTrue($creator->execute());
 
-        $this->assertEquals(
+        $this->assertContains(
             'Could not find phpize in /path/to/bin.'
             . ' You will be unable to use pecl in this virtual environment.'
             . ' Install the PHP development package first, and then re-run virtPHP.',
-            $this->output->messages[8]
+            $this->output->messages
         );
     }
 
@@ -1009,7 +1009,7 @@ EOD;
         );
         $filesystemMock->expects($this->any())
             ->method('exists')
-            ->will($this->onConsecutiveCalls(true, true, false, true, true, true, true));
+            ->will($this->onConsecutiveCalls(true, true, false, true, true, true, true, true));
 
         $processMock = $this->getMockBuilder('Virtphp\Test\Mock\ProcessMock')
             ->disableOriginalConstructor()
