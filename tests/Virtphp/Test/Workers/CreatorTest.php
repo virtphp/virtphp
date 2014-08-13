@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of VirtPHP.
+ * This file is part of virtPHP.
  *
  * (c) Jordan Kasper <github @jakerella>
  *     Ben Ramsey <github @ramsey>
@@ -564,7 +564,7 @@ class CreatorTest extends TestCase
             $this->output->messages
         );
         $this->assertContains(
-            'Creating VirtPHP version file',
+            'Creating virtPHP version file',
             $this->output->messages
         );
         $this->assertContains(
@@ -690,11 +690,11 @@ EOD;
 foo = "myfoo"
 bar = "mybar"
 
-;; New VirtPHP include_path value:
+;; New virtPHP include_path value:
 include_path = ".:/path/to/virtphp/project/myenv/share/php"
 
 
-;; New VirtPHP extension_dir value:
+;; New virtPHP extension_dir value:
 extension_dir = "/path/to/virtphp/project/myenv/lib/php"
 
 EOD;
@@ -772,13 +772,13 @@ bar = "mybar"
 
 ;; Old include_path value
 ; include_path = ".:/path/to/old/share/php"
-;; New VirtPHP include_path value:
+;; New virtPHP include_path value:
 include_path = ".:/path/to/virtphp/project/myenv/share/php"
 
 
 ;; Old extension_dir value
 ; extension_dir = "/path/to/old/lib/php"
-;; New VirtPHP extension_dir value:
+;; New virtPHP extension_dir value:
 extension_dir = "/path/to/virtphp/project/myenv/lib/php"
 
 EOD;
@@ -938,7 +938,7 @@ EOD;
         $this->assertEquals(
             'Could not find php-config in /path/to/bin.'
             . ' You will be unable to use pecl in this virtual environment.'
-            . ' Install the PHP development package first, and then re-run VirtPHP.',
+            . ' Install the PHP development package first, and then re-run virtPHP.',
             $this->output->messages[8]
         );
     }
@@ -984,7 +984,7 @@ EOD;
         $this->assertEquals(
             'Could not find phpize in /path/to/bin.'
             . ' You will be unable to use pecl in this virtual environment.'
-            . ' Install the PHP development package first, and then re-run VirtPHP.',
+            . ' Install the PHP development package first, and then re-run virtPHP.',
             $this->output->messages[8]
         );
     }

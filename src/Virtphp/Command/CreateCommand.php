@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of VirtPHP.
+ * This file is part of virtPHP.
  *
  * (c) Jordan Kasper <github @jakerella>
  *     Ben Ramsey <github @ramsey>
@@ -31,7 +31,7 @@ class CreateCommand extends Command
 
         $this
             ->setName('create')
-            ->setDescription('Create new virtphp environment.')
+            ->setDescription('Create new virtPHP environment.')
             ->addArgument(
                 'env-name',
                 InputArgument::REQUIRED,
@@ -65,7 +65,7 @@ class CreateCommand extends Command
                 InputOption::VALUE_REQUIRED,
                 'Path to a specific pear.conf file to use - '
                 . 'WARNING: many of the directory paths in this '
-                . 'file WILL BE OVERRIDDEN in order for VirtPHP to work!',
+                . 'file WILL BE OVERRIDDEN in order for virtPHP to work!',
                 null
             );
     }

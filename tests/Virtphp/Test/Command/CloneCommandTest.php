@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of VirtPHP.
+ * This file is part of virtPHP.
  *
  * (c) Jordan Kasper <github @jakerella>
  *     Ben Ramsey <github @ramsey>
@@ -30,7 +30,7 @@ class CloneCommandTest extends TestCase
         $command = new CloneCommand();
 
         $this->assertEquals('clone', $command->getName());
-        $this->assertEquals('Create new virtphp from existing path.', $command->getDescription());
+        $this->assertEquals('Create new virtPHP from existing path.', $command->getDescription());
         $this->assertTrue($command->getDefinition()->hasArgument('new-env-name'));
         $this->assertTrue($command->getDefinition()->hasArgument('existing-env-path'));
     }
@@ -218,7 +218,7 @@ class CloneCommandTest extends TestCase
         $this->assertFalse($result);
         $this->assertCount(1, $output->messages);
         $this->assertEquals(
-            'Sorry, but there is no VirtPHP environment at that location.',
+            'Sorry, but there is no virtPHP environment at that location.',
             $output->messages[0]
         );
     }
@@ -253,7 +253,7 @@ class CloneCommandTest extends TestCase
         $this->assertFalse($result);
         $this->assertCount(1, $output->messages);
         $this->assertEquals(
-            'This directory does not contain a valid VirtPHP environment!',
+            'This directory does not contain a valid virtPHP environment!',
             $output->messages[0]
         );
     }
