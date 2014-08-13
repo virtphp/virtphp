@@ -1,3 +1,7 @@
+### 0.5.1-alpha (2014-08-13)
+
+  * Added logging in the ~/.virtphp/log/ directory for pear_log.txt.
+
 ### 0.5.0-alpha (2014-06-06)
 
   * Added support for global Composer installs in the active virtPHP environment
