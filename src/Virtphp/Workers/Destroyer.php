@@ -83,7 +83,7 @@ class Destroyer extends AbstractWorker
         }
 
         if (!$this->getFilesystem()->exists($this->rootPath.DIRECTORY_SEPARATOR.'.virtphp')) {
-            $this->output->writeln('<error>This directory does not contain a valid virtPHP environment!</error>');
+            $this->output->writeln('<error>This directory does not contain a valid virtPHP environment, and as such will not be removed!</error>');
 
             return false;
         }

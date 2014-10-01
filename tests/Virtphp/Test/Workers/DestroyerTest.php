@@ -132,7 +132,7 @@ class DestroyerTest extends TestCase
 
         $this->assertFalse($destroyer->execute());
         $this->assertEquals(
-            'This directory does not contain a valid virtPHP environment!',
+            'This directory does not contain a valid virtPHP environment, and as such will not be removed!',
             $this->output->messages[0]
         );
     }
