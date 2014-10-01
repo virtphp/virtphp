@@ -4,13 +4,15 @@ namespace Virtphp\Test\Mock;
 class ProcessMock
 {
     public $command;
-    public $output = false;
+    public $stdout;
+    public $stderr;
     public $runReturn = 0;
 
-    public function __construct($command, $output = false, $runReturn = 0)
+    public function __construct($command, $stdout = null, $stderr = null, $runReturn = 0)
     {
         $this->command = $command;
-        $this->output = $output;
+        $this->stdout = $stdout;
+        $this->stderr = $stderr;
         $this->runReturn = $runReturn;
     }
 
@@ -21,6 +23,11 @@ class ProcessMock
 
     public function getOutput()
     {
-        return $this->output;
+        return $this->stdout;
+    }
+
+    public function getErrorOutput()
+    {
+        return $this->stderr;
     }
 }

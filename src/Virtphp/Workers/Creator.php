@@ -728,7 +728,10 @@ EOD;
         );
 
         if ($process->run() != 0) {
-            throw new \RuntimeException('Could not install Composer.');
+            $errorMessage = $process->getErrorOutput() ?: $process->getOutput();
+            $errorMessage = preg_replace('{^#!/usr/bin/env php\s*}', "", $errorMessage);
+
+            throw new \RuntimeException('Could not install Composer.' . ($errorMessage ? PHP_EOL.$errorMessage : ''));
         }
 
         $this->getFilesystem()->symlink(
