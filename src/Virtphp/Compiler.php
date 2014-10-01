@@ -54,8 +54,7 @@ class Compiler
                 . ' You must ensure to run compile from virtPHP git repository clone and that git binary is available.'
             );
         }
-        $date = new \DateTime(trim($process->getOutput()));
-        $date->setTimezone(new \DateTimeZone('UTC'));
+        $date = new \DateTime(trim($process->getOutput()), new \DateTimeZone('UTC'));
         $this->versionDate = $date->format('Y-m-d H:i:s');
 
         $process = $this->getProcess('git describe --tags HEAD');
