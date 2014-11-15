@@ -71,7 +71,6 @@ class ActivateCommandTest extends TestCase
         $result = $execute->invoke($command, $input, $output);
 
         $this->assertTrue($result);
-        $this->assertCount(0, $output->messages);
     }
 
     /**
