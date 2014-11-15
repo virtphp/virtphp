@@ -108,12 +108,16 @@ class Activator extends AbstractWorker
                 );
             } else {
                 $this->output->writeln(
-                    '<info>We were able to save the source command to your '
-                    . 'clipboard. </info>'
+                    '<info>Congrats, we were able to save the source command to '
+                    . 'your clipboard. </info>'
                 );
                 $this->output->writeln(
                     '<info>Just hit your paste command to activate this '
                     . 'environment or follow the instructions below.</info>'
+                );
+                $this->output->writeln('');
+                $this->output->writeln(
+                    '<info>or</info>'
                 );
             }
 
