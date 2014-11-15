@@ -13,6 +13,7 @@
 
 namespace Virtphp\Test\Workers;
 
+use Virtphp\Command\ActivateCommand;
 use Virtphp\TestCase;
 use Virtphp\TestOutput;
 use Virtphp\Test\Mock\FilesystemMock;
@@ -20,6 +21,7 @@ use Virtphp\Util\Filesystem;
 use Virtphp\Workers\Activator;
 use Virtphp\Test\Mock\TableMock;
 use Virtphp\Util\EnvironmentFile;
+use Virtphp\Test\Mock\ProcessMock;
 
 class ActivatorTest extends TestCase
 {
@@ -30,9 +32,12 @@ class ActivatorTest extends TestCase
     protected $filesystemMock;
     protected $fs;
     protected $envFile; 
+    protected $command;
 
     protected function setUp()
     {
+        $this->command = new ActivateCommand();
+
         $this->fs = new Filesystem();
 
         $this->fs->mkdir($this->testOriginalEnv);
@@ -58,23 +63,13 @@ class ActivatorTest extends TestCase
             )
         );
 
-        $this->envFile->expects($this->any())
-            ->method('checkForEnvironment')
-            ->will($this->returnValue(''));
-
         $this->activator = $this->getMockBuilder('Virtphp\Workers\Activator')
             ->setConstructorArgs(array($this->output, 'envName', $this->envFile))
-            ->setMethods(array('getFilesystem', 'getOs', 'copyToClipboard'))
+            ->setMethods(array('getFilesystem', 'getOs', 'copyToClipboard', 'getProcess'))
             ->getMock();
         $this->activator->expects($this->any())
             ->method('getFilesystem')
             ->will($this->returnValue($this->filesystemMock));
-        $this->activator->expects($this->any())
-            ->method('getOs')
-            ->will($this->returnValue(true));
-        $this->activator->expects($this->any())
-            ->method('copyToClipboard')
-            ->will($this->returnValue(true));
     }
 
     protected function tearDown()
@@ -89,6 +84,12 @@ class ActivatorTest extends TestCase
     public function testConstruct()
     {
         $activator = new Activator($this->output, 'envName', $this->envFile);
+        $this->activator->expects($this->any())
+            ->method('getOs')
+            ->will($this->returnValue(true));
+        $this->activator->expects($this->any())
+            ->method('copyToClipboard')
+            ->will($this->returnValue(true));
 
         $this->assertInstanceOf('Virtphp\Workers\Activator', $activator);
         // for some reason assertNotEquals was not found.
@@ -102,156 +103,193 @@ class ActivatorTest extends TestCase
     public function testExecute()
     {
 
+        $this->activator->expects($this->any())
+            ->method('getOs')
+            ->will($this->returnValue(true));
+        $this->activator->expects($this->any())
+            ->method('copyToClipboard')
+            ->will($this->returnValue(true));
         $this->filesystemMock->expects($this->any())
             ->method('exists')
             ->will($this->returnValue(true));
+        $this->envFile->expects($this->any())
+            ->method('checkForEnvironment')
+            ->will($this->returnValue($this->envFile->envContents['envName']));
 
         $this->assertTrue($this->activator->execute());
+        $this->assertCount(8, $this->output->messages);
+    }
+
+    /**
+     * @covers Virtphp\Workers\Activator::execute
+     */
+    public function testExecuteFileExistsFail()
+    {
+
+        $this->activator->expects($this->any())
+            ->method('getOs')
+            ->will($this->returnValue(true));
+        $this->activator->expects($this->any())
+            ->method('copyToClipboard')
+            ->will($this->returnValue(true));
+        $this->filesystemMock->expects($this->any())
+            ->method('exists')
+            ->will($this->returnValue(false));
+        $this->envFile->expects($this->any())
+            ->method('checkForEnvironment')
+            ->will($this->returnValue(''));
+
+        $this->assertFalse($this->activator->execute());
         $this->assertCount(1, $this->output->messages);
     }
 
     /**
      * @covers Virtphp\Workers\Activator::execute
      */
-    /*public function testExecuteFailedRealPath()
+    public function testExecuteFail()
     {
-        $filesystemMock = $this->getMock(
-            'Virtphp\Test\Mock\FilesystemMock',
-            array('exists', 'realpath', 'getContents')
-        );
-        $filesystemMock->expects($this->any())
+
+        $this->activator->expects($this->any())
+            ->method('getOs')
+            ->will($this->returnValue(true));
+        $this->activator->expects($this->any())
+            ->method('copyToClipboard')
+            ->will($this->returnValue(true));
+        $this->filesystemMock->expects($this->any())
             ->method('exists')
             ->will($this->returnValue(true));
-        $filesystemMock->expects($this->any())
-            ->method('realpath')
-            ->will($this->returnValue(false));
-        $filesystemMock->expects($this->any())
-            ->method('getContents')
-            ->will($this->returnValue(
-                '{"mytest":'
-                . '{"name":"mytest",'
-                . '"path":"\/Users\/Kite\/work\/virtphp"},'
-                . '"myenv":{"name":"myenv","path":"\/users\/Kite\/work\/theKit"}}'
-            ));
+        $this->envFile->expects($this->any())
+            ->method('checkForEnvironment')
+            ->will($this->returnValue(''));
 
-        $activator = $this->getMockBuilder('Virtphp\Workers\Activator')
-            ->setConstructorArgs(array($this->output))
-            ->setMethods(array('getFilesystem'))
-            ->getMock();
-        $activator->expects($this->any())
-            ->method('getFilesystem')
-            ->will($this->returnValue($filesystemMock));
-
-        $this->assertTrue($activator->execute());
-        $this->assertNotCount(0, $this->output->messages);
-    }*/
+        $this->assertFalse($this->activator->execute());
+        $this->assertCount(1, $this->output->messages);
+    }
 
     /**
      * @covers Virtphp\Workers\Activator::execute
      */
-    /*public function testExecuteExceptionReturnsFalse()
+    public function testExecuteClipboardFail()
     {
-        $filesystemMock = $this->getMock(
-            'Virtphp\Test\Mock\FilesystemMock',
-            array('exists')
-        );
-        $filesystemMock->expects($this->any())
-            ->method('exists')
+
+        $this->activator->expects($this->any())
+            ->method('getOs')
+            ->will($this->returnValue(true));
+        $this->activator->expects($this->any())
+            ->method('copyToClipboard')
             ->will($this->returnValue(false));
+        $this->filesystemMock->expects($this->any())
+            ->method('exists')
+            ->will($this->returnValue(true));
+        $this->envFile->expects($this->any())
+            ->method('checkForEnvironment')
+            ->will($this->returnValue($this->envFile->envContents['envName']));
+
+        $this->assertTrue($this->activator->execute());
+        $this->assertEquals('Could not copy the path to your clipboard. Please copy the instructions below.', $this->output->messages[0]);
+    }
+
+    /**
+     * @covers Virtphp\Workers\Activator::getOs
+     */
+    public function testGetOs()
+    {
+        $process = new ProcessMock('uname', 'jwoodcock', 0);
 
         $activator = $this->getMockBuilder('Virtphp\Workers\Activator')
-            ->setConstructorArgs(array($this->output))
-            ->setMethods(array('getFilesystem'))
+            ->setConstructorArgs(array($this->output, 'envName', $this->envFile))
+            ->setMethods(array('getProcess'))
             ->getMock();
+
         $activator->expects($this->any())
-            ->method('getFilesystem')
-            ->will($this->returnValue($filesystemMock));
+            ->method('getProcess')
+            ->will($this->returnValue($process));
 
-        $this->assertFalse($activator->execute());
-        $this->assertNotCount(0, $this->output->messages);
-    }*/
-
-    /**
-     * @covers Virtphp\Workers\Activator::updatePath
-     */
-    /*public function testUpdatePath()
-    {
-
-        $this->filesystemMock->expects($this->any())
-            ->method('getContents')
-            ->will($this->returnValue(
-                '{"mytest":{"name":"mytest","path":"\/Users\/virtPHP\/work\/virtphp"}}'
-            ));
-        $this->filesystemMock->expects($this->any())
-            ->method('exists')
-            ->will($this->returnValue(true));
-
-        $target = 'mytest';
-        $newPath = '\/Users\/Documents\/virtphp';
-
-        $this->activator->setTableHelper(new TableMock());
-        $this->assertTrue($this->activator->updatePath($target, $newPath));
-        $this->assertCount(1, $this->output->messages);
-        $this->assertEquals(
-            $target .' now has the path of ' . $newPath,
-            $this->output->messages[0]
-        );
-    }*/
+        $this->assertEquals('jwoodcock', $activator->getOs());
+    }
 
     /**
-     * @covers Virtphp\Workers\Activator::updatePath
+     * @covers Virtphp\Workers\Activator::getOs
      */
-    /*public function testUpdatePathFail()
+    public function testGetOsFail()
     {
+        $process = new ProcessMock('uname', 'jwoodcock', 1);
 
-        $this->filesystemMock->expects($this->any())
-            ->method('getContents')
-            ->will($this->returnValue(
-                '{"mytest":{"name":"mytest","path":"\/Users\/virtPHP\/work\/virtphp"}}'
-            ));
-        $this->filesystemMock->expects($this->any())
-            ->method('exists')
-            ->will($this->returnValue(true));
+        $activator = $this->getMockBuilder('Virtphp\Workers\Activator')
+            ->setConstructorArgs(array($this->output, 'envName', $this->envFile))
+            ->setMethods(array('getProcess'))
+            ->getMock();
 
-        $target = 'noRecord';
-        $newPath = '\/Users\/Documents\/virtphp';
+        $activator->expects($this->any())
+            ->method('getProcess')
+            ->will($this->returnValue($process));
 
-        $this->activator->setTableHelper(new TableMock());
-        $this->assertFalse($this->activator->updatePath($target, $newPath));
-        $this->assertCount(1, $this->output->messages);
-        $this->assertEquals(
-            $target .' was not found as a valid virtPHP environment.',
-            $this->output->messages[0]
-        );
-    }*/
+        $this->assertEquals('error', $activator->getOs());
+    }
 
     /**
-     * @covers Virtphp\Workers\Activator::updatePath
+     * @covers Virtphp\Workers\Activator::copyToClipboard
      */
-    /*public function testUpdatePathBadPath()
+    public function testCopyToClipboardDarwin()
     {
+        $process = new ProcessMock('uname', 'jwoodcock', 0);
 
-        $this->filesystemMock->expects($this->any())
-            ->method('getContents')
-            ->will($this->returnValue(
-                '{"mytest":{"name":"mytest","path":"\/Users\/virtPHP\/work\/virtphp"}}'
-            ));
-        $this->filesystemMock->expects($this->any())
-            ->method('exists')
-            ->will($this->returnValue(true));
-        $this->filesystemMock->expects($this->any())
-            ->method('realpath')
-            ->will($this->returnValue(''));
+        $activator = $this->getMockBuilder('Virtphp\Workers\Activator')
+            ->setConstructorArgs(array($this->output, 'envName', $this->envFile))
+            ->setMethods(array('getProcess', 'getOs'))
+            ->getMock();
 
-        $target = 'noRecord';
-        $newPath = '';
+        $activator->expects($this->any())
+            ->method('getProcess')
+            ->will($this->returnValue($process));
+        $activator->expects($this->any())
+            ->method('getOs')
+            ->will($this->returnValue('Darwin'));
 
-        $this->activator->setTableHelper(new TableMock());
-        $this->assertFalse($this->activator->updatePath($target, $newPath));
-        $this->assertCount(1, $this->output->messages);
-        $this->assertEquals(
-            'Path provided is not an actual path.',
-            $this->output->messages[0]
-        );
-    }*/
+        $this->assertTrue($activator->copyToClipboard('not important'));
+    }
+
+    /**
+     * @covers Virtphp\Workers\Activator::copyToClipboard
+     */
+    public function testCopyToClipboardLinux()
+    {
+        $process = new ProcessMock('uname', 'jwoodcock', 0);
+
+        $activator = $this->getMockBuilder('Virtphp\Workers\Activator')
+            ->setConstructorArgs(array($this->output, 'envName', $this->envFile))
+            ->setMethods(array('getProcess', 'getOs'))
+            ->getMock();
+
+        $activator->expects($this->any())
+            ->method('getProcess')
+            ->will($this->returnValue($process));
+        $activator->expects($this->any())
+            ->method('getOs')
+            ->will($this->returnValue('Linux'));
+
+        $this->assertTrue($activator->copyToClipboard('not important'));
+    }
+
+    /**
+     * @covers Virtphp\Workers\Activator::copyToClipboard
+     */
+    public function testCopyToClipboardFail()
+    {
+        $process = new ProcessMock('uname', 'jwoodcock', 0);
+
+        $activator = $this->getMockBuilder('Virtphp\Workers\Activator')
+            ->setConstructorArgs(array($this->output, 'envName', $this->envFile))
+            ->setMethods(array('getProcess', 'getOs'))
+            ->getMock();
+
+        $activator->expects($this->any())
+            ->method('getProcess')
+            ->will($this->returnValue($process));
+        $activator->expects($this->any())
+            ->method('getOs')
+            ->will($this->returnValue('FailOs'));
+
+        $this->assertFalse($activator->copyToClipboard('not important'));
+    }
 }
