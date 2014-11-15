@@ -132,6 +132,7 @@ class Application extends BaseApplication
         $commands[] = new Command\CloneCommand();
         $commands[] = new Command\DestroyCommand();
         $commands[] = new Command\ShowCommand();
+        $commands[] = new Command\ActivateCommand();
 
         return $commands;
     }
