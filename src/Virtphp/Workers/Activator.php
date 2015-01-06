@@ -100,7 +100,7 @@ class Activator extends AbstractWorker
             $path = $envFile['path'] . DIRECTORY_SEPARATOR . $envFile['name']
                 . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'activate';
 
-            // Initiative copy to clipboard process
+            // Initiate copy to clipboard process
             if (!$this->copyToClipboard('source ' . $path)) {
                 $this->output->writeln(
                     '<error>Could not copy the path to your clipboard. '
