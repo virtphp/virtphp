@@ -31,7 +31,7 @@ class Shower extends AbstractWorker
     /**
      * @var string
      */
-    protected $file = 'environments.json';
+    const FILE = 'environments.json';
 
     /**
      * @var string
@@ -56,7 +56,7 @@ class Shower extends AbstractWorker
     public function __construct(OutputInterface $output)
     {
         $this->envPath = getenv('HOME') . DIRECTORY_SEPARATOR . '.virtphp';
-        $this->filePath = $this->envPath . DIRECTORY_SEPARATOR. $this->file;
+        $this->filePath = $this->envPath . DIRECTORY_SEPARATOR. self::FILE;
         $this->output = $output;
         $this->tableHelper = new TableHelper();
     }
