@@ -41,7 +41,7 @@ class Activator extends AbstractWorker
     /**
      * @var string
      */
-    protected $file = 'environments.json';
+    const FILE = 'environments.json';
 
     /**
      * @var string
@@ -68,7 +68,7 @@ class Activator extends AbstractWorker
         $this->envName = $envName;
         $this->envFile = $envFile;
         $this->envPath = getenv('HOME') . DIRECTORY_SEPARATOR . '.virtphp';
-        $this->filePath = $this->envPath . DIRECTORY_SEPARATOR. $this->file;
+        $this->filePath = $this->envPath . DIRECTORY_SEPARATOR. self::FILE;
         $this->output = $output;
         $this->tableHelper = new TableHelper();
     }
