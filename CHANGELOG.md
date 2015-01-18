@@ -1,3 +1,7 @@
+### 0.5.2-alpha (2015-1-18)
+
+  * Introduced the activate command which returns the source command to copy in order to activate an env, and if the system has a supported clipboard, copies the command to said clipboard
+
 ### 0.5.1-alpha (2014-08-13)
 
   * Added logging in the ~/.virtphp/log/ directory for pear_log.txt.
