@@ -135,7 +135,7 @@ class CreatorTest extends TestCase
         $creator->expects($this->any())
             ->method('getProcess')
             ->will($this->returnCallback(function ($command) {
-                return new ProcessMock($command, false, 1);
+                return new ProcessMock($command, false, null, 1);
             }));
 
         $creator->__construct($this->input, $this->output, 'myenv', '/foo/bar');
@@ -320,7 +320,7 @@ class CreatorTest extends TestCase
         $creator->expects($this->any())
             ->method('getProcess')
             ->will($this->returnCallback(function ($command) {
-                return new ProcessMock($command, false, 1);
+                return new ProcessMock($command, false, null, 1);
             }));
 
         $creator->setPhpBinDir('/some/path/to/php/that/is/not/valid');

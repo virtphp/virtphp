@@ -113,7 +113,7 @@ class CompilerTest extends TestCase
         $compiler->expects($this->any())
             ->method('getProcess')
             ->will($this->returnCallback(function ($command) {
-                return new ProcessMock($command, false, -1);
+                return new ProcessMock($command, false, null, -1);
             }));
 
         $compiler->compile($this->testPhar);
