@@ -14,6 +14,8 @@ To install multiple versions of PHP, we suggest taking a look at the [phpenv](ht
 
 ## Installation
 
+[![Join the chat at https://gitter.im/virtphp/virtphp](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/virtphp/virtphp?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Download the `virtphp.phar` file from the [latest release](https://github.com/virtphp/virtphp/releases) and place it in `/usr/local/bin` or wherever it's accessible from your `PATH`.
 
 Optionally, you may clone this repository and [build the phar file yourself](#building-the-phar-file).
