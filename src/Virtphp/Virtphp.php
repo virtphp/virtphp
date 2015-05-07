@@ -26,7 +26,8 @@ class Virtphp
      */
     public static function isValidName($envName)
     {
-        if (preg_match("/^[a-zA-Z][0-9a-zA-Z_\-]*$/", $envName)) {
+        //if (preg_match("/^[a-zA-Z][0-9a-zA-Z_\-]*$/", $envName)) {
+        if (preg_match("^/([a-zA-Z]|\.)[0-9a-zA-Z_\-]*$/", $envName)) {
             return true;
         }
 
