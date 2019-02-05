@@ -540,7 +540,7 @@ EOD;
     protected function installPear()
     {
         $this->output->writeln('<comment>Downloading pear phar file, this could take a while...</comment>');
-        $pearInstall = $this->getFilesystem()->getContents('http://pear.php.net/install-pear-nozlib.phar');
+        $pearInstall = $this->getFilesystem()->getContents('https://github.com/pear/pearweb_phars/raw/master/install-pear-nozlib.phar');
 
         $pearBinSource = <<<EOD
 #!/bin/sh
